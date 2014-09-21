@@ -9,8 +9,201 @@
     tools:context="com.dp1415.ips.MainActivity" >
 
     <TextView
+        android:id="@+id/gps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentTop="true"
+        android:text="@string/gps" />
+    <TextView
+        android:id="@+id/gpsLat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gps"
+        android:layout_toRightOf="@id/gps"
+        android:text="@string/lat" />
+   
+    <TextView
+        android:id="@+id/gpsLon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gpsLat"
+        android:layout_toRightOf="@id/gps"
+        android:text="@string/lon" />
+    <TextView
+        android:id="@+id/accel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gpsLon"
+        android:text="@string/accel" />
+    <TextView
+        android:id="@+id/accelX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/accel"
+        android:layout_toRightOf="@id/gps"
+        android:text="@string/x" />
+    <TextView
+        android:id="@+id/accelY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/accelX"
+        android:layout_toRightOf="@id/gps"
+        android:text="@string/y" />
+    <TextView
+        android:id="@+id/accelZ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/accelY"
+        android:layout_toRightOf="@id/gps"
+        android:text="@string/z" />
+    <TextView
+        android:id="@+id/gyro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/accelZ"
+        android:text="@string/gyro" />
+    <TextView
+        android:id="@+id/gyroX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gyro"
+        android:layout_toRightOf="@id/gps"
+        android:text="@string/x" />
+    <TextView
+        android:id="@+id/gyroY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gyroX"
+        android:layout_toRightOf="@id/gps"
+        android:text="@string/y" />
+    <TextView
+        android:id="@+id/gyroZ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gyroY"
+        android:layout_toRightOf="@id/gps"
+        android:text="@string/z" />
+    <TextView
+        android:id="@+id/magnet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gyroZ"
+        android:text="@string/magnet" />
+    <TextView
+        android:id="@+id/magnetX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/magnet"
+        android:layout_toRightOf="@id/gps"
+        android:text="@string/x" />
+    <TextView
+        android:id="@+id/magnetY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/magnetX"
+        android:layout_toRightOf="@id/gps"
+        android:text="@string/y" />
+    <TextView
+        android:id="@+id/magnetZ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/magnetY"
+        android:layout_toRightOf="@id/gps"
+        android:text="@string/z" />    
+        
+     <TextView
+        android:id="@+id/gpsLatData"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/gpsLon"
+        android:layout_alignBottom="@id/gpsLat"
+        android:text="@string/empty"/>
+     <TextView
+        android:id="@+id/gpsLonData"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/gpsLon"
+        android:layout_alignBottom="@id/gpsLon"
+        android:text="@string/empty"/>
+     <TextView
+        android:id="@+id/accelXData"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/gpsLon"
+        android:layout_alignBottom="@id/accelX"
+        android:text="@string/empty"/>
+     <TextView
+        android:id="@+id/accelYData"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/gpsLon"
+        android:layout_alignBottom="@id/accelY"
+        android:text="@string/empty"/>
+     <TextView
+        android:id="@+id/accelZData"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/gpsLon"
+        android:layout_alignBottom="@id/accelZ"
+        android:text="@string/empty"/>
+     <TextView
+        android:id="@+id/gyroXData"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/gpsLon"
+        android:layout_alignBottom="@id/gyroX"
+        android:text="@string/empty"/>
+     <TextView
+        android:id="@+id/gyroYData"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/gpsLon"
+        android:layout_alignBottom="@id/gyroY"
+        android:text="@string/empty"/>
+     <TextView
+        android:id="@+id/gyroZData"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/gpsLon"
+        android:layout_alignBottom="@id/gyroX"
+        android:text="@string/empty"/>
+     <TextView
+        android:id="@+id/magnetXData"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/gpsLon"
+        android:layout_alignBottom="@id/magnetX"
+        android:text="@string/empty"/>
+     <TextView
+        android:id="@+id/magnetYData"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/gpsLon"
+        android:layout_alignBottom="@id/magnetY"
+        android:text="@string/empty"/>
+     <TextView
+        android:id="@+id/magnetZData"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/gpsLon"
+        android:layout_alignBottom="@id/magnetZ"
+        android:text="@string/empty"/>
+     
+     <Button
+        android:id="@+id/startCollect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/magnetZ"
+        android:text="@string/start"
+        android:visibility="visible"/>
+     <Button
+        android:id="@+id/stopCollect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/magnetZ"
+        android:text="@string/stop"
+        android:visibility="invisible"/>
+          
+     
 
 </RelativeLayout>

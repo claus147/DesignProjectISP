@@ -4,5 +4,22 @@
     <string name="app_name">IPS</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    
+    <string name="gps">GPS</string>
+    <string name="x">X:</string>
+    <string name="y">Y:</string>
+    <string name="z">Z:</string>
+    <string name="lon">Lon:</string>
+    <string name="lat">Lat:</string>
+    <string name="accel">Accelerometer</string>
+    <string name="gyro">Gyrometer</string>
+    <string name="magnet">Magnetometer</string>
+    
+    <string name="start">Start data collection</string>
+    <string name="stop">Stop stat collection</string>
+    
+    <string name="empty">EMPTYEMPTYEMPTY</string>
+
+    
 
 </resources>
