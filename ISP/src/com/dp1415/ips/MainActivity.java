@@ -1,12 +1,16 @@
 package com.dp1415.ips;
 
 import android.support.v7.app.ActionBarActivity;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements SensorEventListener{
 
 	private TextView gpsLat;
 	private TextView gpsLon;
@@ -19,6 +23,9 @@ public class MainActivity extends ActionBarActivity {
 	private TextView magnetX;
 	private TextView magnetY;
 	private TextView magnetZ;
+	private SensorManager sensorManager;
+	private Sensor accelSensor;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +43,9 @@ public class MainActivity extends ActionBarActivity {
 		magnetX = (TextView) findViewById(R.id.magnetX);
 		magnetY = (TextView) findViewById(R.id.magnetY);
 		magnetZ = (TextView) findViewById(R.id.magnetZ);
+		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+		accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
 	}
 
@@ -56,5 +66,25 @@ public class MainActivity extends ActionBarActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	private void getAccelerometer(SensorEvent event) {
+	    float[] values = event.values;
+	    // Movement
+	    accelX.setText(String.valueOf(values[0]));
+	    accelY.setText(String.valueOf(values[1]));
+	    accelZ.setText(String.valueOf(values[2]));
+	}
+	
+	public void onSensorChanged(SensorEvent event) {
+		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+			getAccelerometer(event);
+		}
+	}
+
+	@Override
+	public void onAccuracyChanged(Sensor arg0, int arg1) {
+		// TODO Auto-generated method stub
+		
 	}
 }
