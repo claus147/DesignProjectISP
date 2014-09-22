@@ -160,13 +160,15 @@
         android:layout_toRightOf="@id/gpsLon"
         android:layout_alignBottom="@id/gyroY"
         android:text="@string/empty"/>
+
      <TextView
-        android:id="@+id/gyroZData"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/gpsLon"
-        android:layout_alignBottom="@id/gyroX"
-        android:text="@string/empty"/>
+         android:id="@+id/gyroZData"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_alignBottom="@id/gyroZ"
+         android:layout_toRightOf="@id/gpsLon"
+         android:text="@string/empty" />
+
      <TextView
         android:id="@+id/magnetXData"
         android:layout_width="fill_parent"

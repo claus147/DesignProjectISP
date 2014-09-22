@@ -25,6 +25,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private TextView magnetZ;
 	private SensorManager sensorManager;
 	private Sensor accelSensor;
+	private Sensor gyroSensor;
+	private Sensor magnetSensor;
 	
 	
 	@Override
@@ -32,20 +34,24 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		gpsLat = (TextView) findViewById(R.id.gpsLat);
-		gpsLon = (TextView) findViewById(R.id.gpsLon);
-		accelX = (TextView) findViewById(R.id.accelX);
-		accelY = (TextView) findViewById(R.id.accelY);
-		accelZ = (TextView) findViewById(R.id.accelZ);
-		gyroX = (TextView) findViewById(R.id.gyroX);
-		gyroY = (TextView) findViewById(R.id.gyroY);
-		gyroZ = (TextView) findViewById(R.id.gyroZ);
-		magnetX = (TextView) findViewById(R.id.magnetX);
-		magnetY = (TextView) findViewById(R.id.magnetY);
-		magnetZ = (TextView) findViewById(R.id.magnetZ);
+		gpsLat = (TextView) findViewById(R.id.gpsLatData);
+		gpsLon = (TextView) findViewById(R.id.gpsLonData);
+		accelX = (TextView) findViewById(R.id.accelXData);
+		accelY = (TextView) findViewById(R.id.accelYData);
+		accelZ = (TextView) findViewById(R.id.accelZData);
+		gyroX = (TextView) findViewById(R.id.gyroXData);
+		gyroY = (TextView) findViewById(R.id.gyroYData);
+		gyroZ = (TextView) findViewById(R.id.gyroZData);
+		magnetX = (TextView) findViewById(R.id.magnetXData);
+		magnetY = (TextView) findViewById(R.id.magnetYData);
+		magnetZ = (TextView) findViewById(R.id.magnetZData);
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+		magnetSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 		sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_NORMAL);
+		sensorManager.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
+		sensorManager.registerListener(this, magnetSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
 	}
 
@@ -76,9 +82,31 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    accelZ.setText(String.valueOf(values[2]));
 	}
 	
+	private void getGyrometer(SensorEvent event) {
+	    float[] values = event.values;
+	    // Movement
+	    gyroX.setText(String.valueOf(values[0]));
+	    gyroY.setText(String.valueOf(values[1]));
+	    gyroZ.setText(String.valueOf(values[2]));
+	}
+	
+	private void getMagnetometer(SensorEvent event) {
+	    float[] values = event.values;
+	    // Movement
+	    magnetX.setText(String.valueOf(values[0]));
+	    magnetY.setText(String.valueOf(values[1]));
+	    magnetZ.setText(String.valueOf(values[2]));
+	}
+	
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 			getAccelerometer(event);
+		}
+		if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+			getGyrometer(event);
+		}
+		if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+			getMagnetometer(event);
 		}
 	}
 
