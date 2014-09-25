@@ -1,10 +1,12 @@
 package com.dp1415.ips;
 
 import android.support.v7.app.ActionBarActivity;
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,7 +54,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_NORMAL);
 		sensorManager.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
 		sensorManager.registerListener(this, magnetSensor, SensorManager.SENSOR_DELAY_NORMAL);
-
+		LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+		GPS locationListener = new GPS(gpsLat, gpsLon);
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,locationListener);
 	}
 
 	@Override
@@ -109,6 +113,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			getMagnetometer(event);
 		}
 	}
+	
 
 	@Override
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
