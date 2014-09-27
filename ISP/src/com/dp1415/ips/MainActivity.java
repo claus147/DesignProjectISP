@@ -6,6 +6,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
@@ -29,6 +31,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private Sensor accelSensor;
 	private Sensor gyroSensor;
 	private Sensor magnetSensor;
+
 	
 	
 	@Override
@@ -54,9 +57,21 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_NORMAL);
 		sensorManager.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
 		sensorManager.registerListener(this, magnetSensor, SensorManager.SENSOR_DELAY_NORMAL);
-		LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-		GPS locationListener = new GPS(gpsLat, gpsLon);
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,locationListener);
+		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		
+	    LocationListener locationListener = new LocationListener() {
+	        public void onLocationChanged(Location location) {
+	        	gpsLat.setText(String.valueOf(location.getLatitude()));  
+	    		gpsLon.setText(String.valueOf(location.getLongitude())); 
+	        }
+
+	        public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+	        public void onProviderEnabled(String provider) {}
+
+	        public void onProviderDisabled(String provider) {}
+	      };
+	    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,locationListener);
 	}
 
 	@Override
@@ -120,4 +135,5 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		// TODO Auto-generated method stub
 		
 	}
+	
 }
