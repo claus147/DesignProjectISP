@@ -1,5 +1,10 @@
 package com.dp1415.ips;
 
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import android.support.v7.app.ActionBarActivity;
 import android.content.Context;
 import android.hardware.Sensor;
@@ -10,8 +15,11 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity implements SensorEventListener{
@@ -31,8 +39,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private Sensor accelSensor;
 	private Sensor gyroSensor;
 	private Sensor magnetSensor;
-
-	
+	private FileWriter writer;
+	private static Context context;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +66,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		sensorManager.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
 		sensorManager.registerListener(this, magnetSensor, SensorManager.SENSOR_DELAY_NORMAL);
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		context = getApplicationContext();
 		
 	    LocationListener locationListener = new LocationListener() {
 	        public void onLocationChanged(Location location) {
@@ -99,6 +108,15 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    accelX.setText(String.valueOf(values[0]));
 	    accelY.setText(String.valueOf(values[1]));
 	    accelZ.setText(String.valueOf(values[2]));
+	    if(writer!=null){
+			try {
+				Log.i("Rita_Check", "write accel");
+				writer.write("accel: "+values[0]+","+values[1]+","+values[2]+"\n");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private void getGyrometer(SensorEvent event) {
@@ -107,6 +125,15 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    gyroX.setText(String.valueOf(values[0]));
 	    gyroY.setText(String.valueOf(values[1]));
 	    gyroZ.setText(String.valueOf(values[2]));
+		if(writer!=null){
+			try {
+				Log.i("Rita_Check", "write gyro");
+				writer.write("gyro: "+values[0]+","+values[1]+","+values[2]+"\n");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			}
 	}
 	
 	private void getMagnetometer(SensorEvent event) {
@@ -115,7 +142,52 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    magnetX.setText(String.valueOf(values[0]));
 	    magnetY.setText(String.valueOf(values[1]));
 	    magnetZ.setText(String.valueOf(values[2]));
+	    if(writer !=null){
+			try {
+				Log.i("Rita_Check", "write magnet");
+				writer.write("magnet: " + values[0]+","+values[1]+","+values[2]+"\n");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    }
 	}
+	
+	public boolean enoughExternalStorage(){
+		//check if external storage is enough for read and write
+		String state = Environment.getExternalStorageState();
+		 if (Environment.MEDIA_MOUNTED.equals(state)) {
+		        return true;
+		    }
+		    return false;
+	}
+
+	public void onStartClick(View view) {
+	    sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_NORMAL);
+	    sensorManager.registerListener(this,gyroSensor,SensorManager.SENSOR_DELAY_NORMAL);
+	    sensorManager.registerListener(this,magnetSensor,SensorManager.SENSOR_DELAY_NORMAL);
+
+			try {
+				Log.i("Rita_Check", "new file");
+				File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "sensorData.txt");
+				writer = new FileWriter(outFile,false);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+	}
+
+	public void onStopClick(View view) {
+	   sensorManager.unregisterListener(this);
+	   try {
+		writer.close();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	}
+
 	
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -123,10 +195,14 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		}
 		if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
 			getGyrometer(event);
+		
 		}
 		if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
 			getMagnetometer(event);
+			
 		}
+		
+		
 	}
 	
 

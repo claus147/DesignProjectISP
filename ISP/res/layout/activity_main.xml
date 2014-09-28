@@ -197,14 +197,16 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/magnetZ"
         android:text="@string/start"
-        android:visibility="visible"/>
+        android:visibility="visible"
+        android:onClick = "onStartClick"/>
      <Button
         android:id="@+id/stopCollect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/magnetZ"
+        android:layout_below="@id/startCollect"
         android:text="@string/stop"
-        android:visibility="invisible"/>
+        android:visibility="visible"
+        android:onClick = "onStopClick"/>
           
      
 
