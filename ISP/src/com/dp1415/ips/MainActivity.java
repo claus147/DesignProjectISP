@@ -169,7 +169,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 
 			try {
 				Log.i("Rita_Check", "new file");
-				File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "sensorData.txt");
+				File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "sensorData.csv");
 				writer = new FileWriter(outFile,false);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
