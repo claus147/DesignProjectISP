@@ -4,7 +4,7 @@ package com.dp1415.ips;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Date;
+
 
 import android.support.v7.app.ActionBarActivity;
 import android.content.Context;
@@ -46,7 +46,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private float[] magnetValues;
 	private double latitude;
 	private double longitude;
-	private int delayTime;
+	private long initialTime;
 	
 	
 	@Override
@@ -69,10 +69,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 		magnetSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-		delayTime = 1000000;
-		sensorManager.registerListener(this, accelSensor, delayTime);
-		sensorManager.registerListener(this, gyroSensor, delayTime);
-		sensorManager.registerListener(this, magnetSensor, delayTime);
+		sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_NORMAL);
+		sensorManager.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
+		sensorManager.registerListener(this, magnetSensor, SensorManager.SENSOR_DELAY_NORMAL);
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		
 		
@@ -115,7 +114,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private void getAccelerometer(SensorEvent event) {
 	    float[] values = event.values;
 	    accelValues = event.values;
-	    Date date = new Date(event.timestamp/1000000);
+	    long timer = System.nanoTime() - initialTime;
+	    double timerInMs = (double)timer / 1000000.0;
 	    // Movement
 	    accelX.setText(String.valueOf(values[0]));
 	    accelY.setText(String.valueOf(values[1]));
@@ -123,7 +123,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    if(writer!=null){
 			try {
 				Log.i("Rita_Check", "write accel");
-				writer.write(date + "," + values[0] + "," + values[1] + "," + values[2] + 
+				writer.write(timerInMs + "ms ," + values[0] + "," + values[1] + "," + values[2] + 
 						"," + gyroValues[0] + "," + gyroValues[1] + "," + gyroValues[2] + 
 						"," + magnetValues[0] + "," + magnetValues[1] + "," + magnetValues[2] + 
 						"," + latitude + "," + longitude + "\n");
@@ -137,7 +137,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private void getGyrometer(SensorEvent event) {
 	    float[] values = event.values;
 	    gyroValues = event.values;
-	    Date date = new Date(event.timestamp/1000000);
+	    long timer = System.nanoTime() - initialTime;
+	    double timerInMs = (double)timer / 1000000.0;
 	    // Movement
 	    gyroX.setText(String.valueOf(values[0]));
 	    gyroY.setText(String.valueOf(values[1]));
@@ -145,7 +146,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		if(writer!=null){
 			try {
 				Log.i("Rita_Check", "write gyro");
-				writer.write(date + "," + accelValues[0] + "," + accelValues[1] + "," + accelValues[2] + 
+				writer.write(timerInMs + "ms ," + accelValues[0] + "," + accelValues[1] + "," + accelValues[2] + 
 						"," + values[0] + "," + values[1] + "," + values[2] + 
 						"," + magnetValues[0] + "," + magnetValues[1] + "," + magnetValues[2]  + 
 						"," + latitude + "," + longitude + "\n");
@@ -159,7 +160,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private void getMagnetometer(SensorEvent event) {
 	    float[] values = event.values;
 	    magnetValues = event.values;
-	    Date date = new Date(event.timestamp/1000000);
+	    long timer = System.nanoTime() - initialTime;
+	    double timerInMs = (double)timer / 1000000.0;
 	    // Movement
 	    magnetX.setText(String.valueOf(values[0]));
 	    magnetY.setText(String.valueOf(values[1]));
@@ -167,7 +169,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    if(writer !=null){
 			try {
 				Log.i("Rita_Check", "write magnet");
-				writer.write(date + "," + accelValues[0] + "," + accelValues[1] + "," + accelValues[2] + 
+				writer.write(timerInMs + "ms ," + accelValues[0] + "," + accelValues[1] + "," + accelValues[2] + 
 						"," + gyroValues[0] + "," + gyroValues[1] + "," + gyroValues[2] + 
 						"," + values[0] + "," + values[1] + "," + values[2] + 
 						"," + latitude + "," + longitude + "\n");
@@ -188,10 +190,10 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	}
 
 	public void onStartClick(View view) {
-	    sensorManager.registerListener(this, accelSensor, delayTime);
-	    sensorManager.registerListener(this,gyroSensor,delayTime);
-	    sensorManager.registerListener(this,magnetSensor,delayTime);
-
+	    sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_NORMAL);
+	    sensorManager.registerListener(this,gyroSensor,SensorManager.SENSOR_DELAY_NORMAL);
+	    sensorManager.registerListener(this,magnetSensor,SensorManager.SENSOR_DELAY_NORMAL);
+	    initialTime = System.nanoTime();
 			try {
 				Log.i("Rita_Check", "new file");
 				File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "sensorData.csv");
@@ -240,9 +242,6 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		
 	}
 	
-
-	
-
 	@Override
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
 		// TODO Auto-generated method stub
