@@ -215,7 +215,6 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	}
 
 	public void onStopClick(View view) {
-	   sensorManager.unregisterListener(this);
 	   try {
 		writer.close();
 	} catch (IOException e) {
