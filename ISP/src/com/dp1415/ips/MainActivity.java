@@ -123,7 +123,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    if(writer!=null){
 			try {
 				Log.i("Rita_Check", "write accel");
-				writer.write(timerInMs + "ms ," + values[0] + "," + values[1] + "," + values[2] + 
+				writer.write(timerInMs + "," + values[0] + "," + values[1] + "," + values[2] + 
 						"," + gyroValues[0] + "," + gyroValues[1] + "," + gyroValues[2] + 
 						"," + magnetValues[0] + "," + magnetValues[1] + "," + magnetValues[2] + 
 						"," + latitude + "," + longitude + "\n");
@@ -146,7 +146,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		if(writer!=null){
 			try {
 				Log.i("Rita_Check", "write gyro");
-				writer.write(timerInMs + "ms ," + accelValues[0] + "," + accelValues[1] + "," + accelValues[2] + 
+				writer.write(timerInMs + "," + accelValues[0] + "," + accelValues[1] + "," + accelValues[2] + 
 						"," + values[0] + "," + values[1] + "," + values[2] + 
 						"," + magnetValues[0] + "," + magnetValues[1] + "," + magnetValues[2]  + 
 						"," + latitude + "," + longitude + "\n");
@@ -169,7 +169,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    if(writer !=null){
 			try {
 				Log.i("Rita_Check", "write magnet");
-				writer.write(timerInMs + "ms ," + accelValues[0] + "," + accelValues[1] + "," + accelValues[2] + 
+				writer.write(timerInMs + "," + accelValues[0] + "," + accelValues[1] + "," + accelValues[2] + 
 						"," + gyroValues[0] + "," + gyroValues[1] + "," + gyroValues[2] + 
 						"," + values[0] + "," + values[1] + "," + values[2] + 
 						"," + latitude + "," + longitude + "\n");
@@ -204,7 +204,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			}
 			if (writer!=null){
 			try {
-				writer.write("Time" +"," + "accelX" +"," + "accelY" + "," + "accelZ" + "," + "gyroX" + "," + "gyroY" + "," + "gyroZ" + "," + "magnetX" + "," + "magnetY" + "," + "magnetZ" + "," + "Latitude" + "," + "Longitude" + "\n" );
+				writer.write("Time (ms)" +"," + "accelX" +"," + "accelY" + "," + "accelZ" + "," + "gyroX" + "," + "gyroY" + "," + "gyroZ" + "," + "magnetX" + "," + "magnetY" + "," + "magnetZ" + "," + "Latitude" + "," + "Longitude" + "\n" );
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
