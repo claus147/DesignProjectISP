@@ -190,9 +190,6 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	}
 
 	public void onStartClick(View view) {
-	    sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_NORMAL);
-	    sensorManager.registerListener(this,gyroSensor,SensorManager.SENSOR_DELAY_NORMAL);
-	    sensorManager.registerListener(this,magnetSensor,SensorManager.SENSOR_DELAY_NORMAL);
 	    initialTime = System.nanoTime();
 			try {
 				Log.i("Rita_Check", "new file");
