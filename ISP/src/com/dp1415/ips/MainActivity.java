@@ -17,6 +17,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,7 +48,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private double latitude;
 	private double longitude;
 	private long initialTime;
-	
+	private boolean dataCollection = false;
+	Handler handle = new Handler();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -114,70 +116,28 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private void getAccelerometer(SensorEvent event) {
 	    float[] values = event.values;
 	    accelValues = event.values;
-	    long timer = System.nanoTime() - initialTime;
-	    double timerInMs = (double)timer / 1000000.0;
 	    // Movement
 	    accelX.setText(String.valueOf(values[0]));
 	    accelY.setText(String.valueOf(values[1]));
 	    accelZ.setText(String.valueOf(values[2]));
-	    if(writer!=null){
-			try {
-				Log.i("Rita_Check", "write accel");
-				writer.write(timerInMs + "," + values[0] + "," + values[1] + "," + values[2] + 
-						"," + gyroValues[0] + "," + gyroValues[1] + "," + gyroValues[2] + 
-						"," + magnetValues[0] + "," + magnetValues[1] + "," + magnetValues[2] + 
-						"," + latitude + "," + longitude + "\n");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 	}
 	
 	private void getGyrometer(SensorEvent event) {
 	    float[] values = event.values;
 	    gyroValues = event.values;
-	    long timer = System.nanoTime() - initialTime;
-	    double timerInMs = (double)timer / 1000000.0;
 	    // Movement
 	    gyroX.setText(String.valueOf(values[0]));
 	    gyroY.setText(String.valueOf(values[1]));
 	    gyroZ.setText(String.valueOf(values[2]));
-		if(writer!=null){
-			try {
-				Log.i("Rita_Check", "write gyro");
-				writer.write(timerInMs + "," + accelValues[0] + "," + accelValues[1] + "," + accelValues[2] + 
-						"," + values[0] + "," + values[1] + "," + values[2] + 
-						"," + magnetValues[0] + "," + magnetValues[1] + "," + magnetValues[2]  + 
-						"," + latitude + "," + longitude + "\n");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			}
 	}
 	
 	private void getMagnetometer(SensorEvent event) {
 	    float[] values = event.values;
 	    magnetValues = event.values;
-	    long timer = System.nanoTime() - initialTime;
-	    double timerInMs = (double)timer / 1000000.0;
 	    // Movement
 	    magnetX.setText(String.valueOf(values[0]));
 	    magnetY.setText(String.valueOf(values[1]));
 	    magnetZ.setText(String.valueOf(values[2]));
-	    if(writer !=null){
-			try {
-				Log.i("Rita_Check", "write magnet");
-				writer.write(timerInMs + "," + accelValues[0] + "," + accelValues[1] + "," + accelValues[2] + 
-						"," + gyroValues[0] + "," + gyroValues[1] + "," + gyroValues[2] + 
-						"," + values[0] + "," + values[1] + "," + values[2] + 
-						"," + latitude + "," + longitude + "\n");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	    }
 	}
 	
 	public boolean enoughExternalStorage(){
@@ -190,9 +150,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	}
 
 	public void onStartClick(View view) {
-	    initialTime = System.nanoTime();
+		dataCollection = true;
 			try {
-				Log.i("Rita_Check", "new file");
 				File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "sensorData.csv");
 				writer = new FileWriter(outFile,false);
 			} catch (IOException e) {
@@ -208,10 +167,13 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			}
 			
 			}
-		
+		// set initial time and call the recursive loop
+		initialTime = System.nanoTime();
+		handle.post(collectionLoop);
 	}
 
 	public void onStopClick(View view) {
+		dataCollection = false;
 	   try {
 		writer.close();
 	} catch (IOException e) {
@@ -223,19 +185,14 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-			getAccelerometer(event);
-			
+			getAccelerometer(event);			
 		}
 		if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-			getGyrometer(event);
-		
+			getGyrometer(event);		
 		}
 		if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-			getMagnetometer(event);
-			
-		}
-		
-		
+			getMagnetometer(event);		
+		}		
 	}
 	
 	@Override
@@ -244,4 +201,27 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		
 	}
 	
+	Runnable collectionLoop = new Runnable() {
+	    @Override
+	    public void run(){
+		    if(writer !=null){
+			try {
+				long timer = System.nanoTime() - initialTime;
+			    double timerInMs = (double)timer / 1000000.0;
+			    //write all the sensor data
+				writer.write(timerInMs + "," + accelValues[0] + "," + accelValues[1] + "," + accelValues[2] + 
+						"," + gyroValues[0] + "," + gyroValues[1] + "," + gyroValues[2] + 
+						"," + magnetValues[0] + "," + magnetValues[1] + "," + magnetValues[2] + 
+						"," + latitude + "," + longitude + "\n");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		    if (dataCollection){
+		    	//calls itself every 100ms delay until stop button
+		    	handle.postDelayed(collectionLoop,100);
+		    }
+	    }
+	};
 }
