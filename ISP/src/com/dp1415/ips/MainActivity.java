@@ -45,6 +45,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private float[] accelValues;
 	private float[] gyroValues;
 	private float[] magnetValues;
+	private double[] orientValues;
 	private double latitude;
 	private double longitude;
 	private long initialTime;
@@ -113,32 +114,6 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		return super.onOptionsItemSelected(item);
 	}
 	
-	private void getAccelerometer(SensorEvent event) {
-	    float[] values = event.values;
-	    accelValues = event.values;
-	    // Movement
-	    accelX.setText(String.valueOf(values[0]));
-	    accelY.setText(String.valueOf(values[1]));
-	    accelZ.setText(String.valueOf(values[2]));
-	}
-	
-	private void getGyrometer(SensorEvent event) {
-	    float[] values = event.values;
-	    gyroValues = event.values;
-	    // Movement
-	    gyroX.setText(String.valueOf(values[0]));
-	    gyroY.setText(String.valueOf(values[1]));
-	    gyroZ.setText(String.valueOf(values[2]));
-	}
-	
-	private void getMagnetometer(SensorEvent event) {
-	    float[] values = event.values;
-	    magnetValues = event.values;
-	    // Movement
-	    magnetX.setText(String.valueOf(values[0]));
-	    magnetY.setText(String.valueOf(values[1]));
-	    magnetZ.setText(String.valueOf(values[2]));
-	}
 	
 	public boolean enoughExternalStorage(){
 		//check if external storage is enough for read and write
@@ -160,7 +135,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			}
 			if (writer!=null){
 			try {
-				writer.write("Time (ms)" +"," + "accelX" +"," + "accelY" + "," + "accelZ" + "," + "gyroX" + "," + "gyroY" + "," + "gyroZ" + "," + "magnetX" + "," + "magnetY" + "," + "magnetZ" + "," + "Latitude" + "," + "Longitude" + "\n" );
+				writer.write("Time (ms)" +"," + "accelX" +"," + "accelY" + "," + "accelZ" + "," + "gyroX" + "," + "gyroY" + "," + "gyroZ" + "," + "magnetX" + "," + "magnetY" + "," + "magnetZ" + "," + "Latitude" + "," + "Longitude" + "," + "orientX" + "," + "orientY" + "," + "orientZ" + "\n" );
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -185,14 +160,41 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-			getAccelerometer(event);			
+			accelValues = event.values;
+		    // Movement
+		    accelX.setText(String.valueOf(accelValues[0]));
+		    accelY.setText(String.valueOf(accelValues[1]));
+		    accelZ.setText(String.valueOf(accelValues[2]));			
 		}
 		if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-			getGyrometer(event);		
+			gyroValues = event.values;
+		    // Movement
+		    gyroX.setText(String.valueOf(gyroValues[0]));
+		    gyroY.setText(String.valueOf(gyroValues[1]));
+		    gyroZ.setText(String.valueOf(gyroValues[2]));		
 		}
 		if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-			getMagnetometer(event);		
-		}		
+			magnetValues = event.values;
+		    // Movement
+		    magnetX.setText(String.valueOf(magnetValues[0]));
+		    magnetY.setText(String.valueOf(magnetValues[1]));
+		    magnetZ.setText(String.valueOf(magnetValues[2]));	
+		}
+		 if (accelValues != null && magnetValues != null) {
+		      float R[] = new float[9];
+		      float I[] = new float[9];
+		      boolean success = SensorManager.getRotationMatrix(R, I, accelValues, magnetValues);
+		      if (success) {
+		        float orientation[] = new float[3];
+		        orientValues = new double[3];
+		        //get orientation
+		        SensorManager.getOrientation(R, orientation);
+		        //convert radians to degrees
+		        orientValues[0] = Math.toDegrees(orientation[0]);
+		        orientValues[1] = Math.toDegrees(orientation[1]);
+		        orientValues[2] = Math.toDegrees(orientation[2]);
+		      }
+		    }
 	}
 	
 	@Override
@@ -212,7 +214,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 				writer.write(timerInMs + "," + accelValues[0] + "," + accelValues[1] + "," + accelValues[2] + 
 						"," + gyroValues[0] + "," + gyroValues[1] + "," + gyroValues[2] + 
 						"," + magnetValues[0] + "," + magnetValues[1] + "," + magnetValues[2] + 
-						"," + latitude + "," + longitude + "\n");
+						"," + latitude + "," + longitude + "," + orientValues[0] + "," + orientValues[1] + "," + orientValues[2] + "\n");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
