@@ -72,9 +72,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 		magnetSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-		sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_NORMAL);
-		sensorManager.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
-		sensorManager.registerListener(this, magnetSensor, SensorManager.SENSOR_DELAY_NORMAL);
+		sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_FASTEST);
+		sensorManager.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_FASTEST);
+		sensorManager.registerListener(this, magnetSensor, SensorManager.SENSOR_DELAY_FASTEST);
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		
 		
@@ -222,7 +222,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		}
 		    if (dataCollection){
 		    	//calls itself every 100ms delay until stop button
-		    	handle.postDelayed(collectionLoop,100);
+		    	handle.postDelayed(collectionLoop,50);
 		    }
 	    }
 	};
