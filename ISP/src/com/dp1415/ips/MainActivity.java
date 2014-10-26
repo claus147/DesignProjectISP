@@ -39,6 +39,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private TextView magnetX;
 	private TextView magnetY;
 	private TextView magnetZ;
+	private TextView orientX;
+	private TextView orientY;
+	private TextView orientZ;
 	private Button startCollection;
 	private Button stopCollection;
 	private SensorManager sensorManager;
@@ -72,6 +75,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		magnetX = (TextView) findViewById(R.id.magnetXData);
 		magnetY = (TextView) findViewById(R.id.magnetYData);
 		magnetZ = (TextView) findViewById(R.id.magnetZData);
+		orientX = (TextView) findViewById(R.id.orientXData);		//orientation labels to work with
+		orientY = (TextView) findViewById(R.id.orientYData);		//orientation labels to work with
+		orientZ = (TextView) findViewById(R.id.orientZData);		//orientation labels to work with
 		startCollection = (Button) findViewById(R.id.startCollect);
 		stopCollection = (Button) findViewById(R.id.stopCollect);
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);

@@ -14,6 +14,7 @@
     <string name="accel">Accelerometer</string>
     <string name="gyro">Gyrometer</string>
     <string name="magnet">Magnetometer</string>
+    <string name="orient">Orientation</string>
     
     <string name="start">Start data collection</string>
     <string name="stop">Stop data collection</string>
