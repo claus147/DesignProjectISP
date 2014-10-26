@@ -203,9 +203,9 @@
         android:id="@+id/stopCollect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/startCollect"
+        android:layout_below="@id/magnetZ"
         android:text="@string/stop"
-        android:visibility="visible"
+        android:visibility="gone"
         android:onClick = "onStopClick"/>
           
      

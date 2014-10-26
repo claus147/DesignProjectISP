@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 
+
 import android.support.v7.app.ActionBarActivity;
 import android.content.Context;
 import android.hardware.Sensor;
@@ -22,6 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity implements SensorEventListener{
@@ -37,6 +39,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private TextView magnetX;
 	private TextView magnetY;
 	private TextView magnetZ;
+	private Button startCollection;
+	private Button stopCollection;
 	private SensorManager sensorManager;
 	private Sensor accelSensor;
 	private Sensor gyroSensor;
@@ -68,6 +72,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		magnetX = (TextView) findViewById(R.id.magnetXData);
 		magnetY = (TextView) findViewById(R.id.magnetYData);
 		magnetZ = (TextView) findViewById(R.id.magnetZData);
+		startCollection = (Button) findViewById(R.id.startCollect);
+		stopCollection = (Button) findViewById(R.id.stopCollect);
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -126,6 +132,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 
 	public void onStartClick(View view) {
 		dataCollection = true;
+		startCollection.setVisibility(View.GONE);
+		stopCollection.setVisibility(View.VISIBLE);
 			try {
 				File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "sensorData.csv");
 				writer = new FileWriter(outFile,false);
@@ -149,6 +157,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 
 	public void onStopClick(View view) {
 		dataCollection = false;
+		startCollection.setVisibility(View.VISIBLE);
+		stopCollection.setVisibility(View.GONE);
 	   try {
 		writer.close();
 	} catch (IOException e) {
