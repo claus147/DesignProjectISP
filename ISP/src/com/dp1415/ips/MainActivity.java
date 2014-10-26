@@ -196,21 +196,25 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		    magnetY.setText(String.valueOf(magnetValues[1]));
 		    magnetZ.setText(String.valueOf(magnetValues[2]));	
 		}
-		 if (accelValues != null && magnetValues != null) {
-		      float R[] = new float[9];
-		      float I[] = new float[9];
-		      boolean success = SensorManager.getRotationMatrix(R, I, accelValues, magnetValues);
-		      if (success) {
-		        float orientation[] = new float[3];
-		        orientValues = new double[3];
-		        //get orientation
-		        SensorManager.getOrientation(R, orientation);
-		        //convert radians to degrees
-		        orientValues[0] = Math.toDegrees(orientation[0]);
-		        orientValues[1] = Math.toDegrees(orientation[1]);
-		        orientValues[2] = Math.toDegrees(orientation[2]);
-		      }
-		    }
+		if (accelValues != null && magnetValues != null) {
+			float R[] = new float[9];
+			float I[] = new float[9];
+			boolean success = SensorManager.getRotationMatrix(R, I, accelValues, magnetValues);
+			if (success) {
+				float orientation[] = new float[3];
+				orientValues = new double[3];
+				//get orientation
+				SensorManager.getOrientation(R, orientation);
+				//convert radians to degrees
+				orientValues[0] = Math.toDegrees(orientation[0]);
+				orientValues[1] = Math.toDegrees(orientation[1]);
+				orientValues[2] = Math.toDegrees(orientation[2]);
+				
+			    orientX.setText(String.valueOf(orientValues[0]));
+			    orientY.setText(String.valueOf(orientValues[1]));
+			    orientZ.setText(String.valueOf(orientValues[2]));	
+			}
+		}
 	}
 	
 	@Override
