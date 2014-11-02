@@ -9,10 +9,11 @@
     <string name="x">X:</string>
     <string name="y">Y:</string>
     <string name="z">Z:</string>
+    <string name="s">S:</string>
     <string name="lon">Lon:</string>
     <string name="lat">Lat:</string>
     <string name="accel">Accelerometer</string>
-    <string name="gyro">Gyrometer</string>
+    <string name="rotate">Rotation Vector</string>
     <string name="magnet">Magnetometer</string>
     <string name="orient">Orientation</string>
     

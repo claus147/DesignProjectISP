@@ -33,26 +33,18 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private TextView accelX;
 	private TextView accelY;
 	private TextView accelZ;
-	private TextView gyroX;
-	private TextView gyroY;
-	private TextView gyroZ;
-	private TextView magnetX;
-	private TextView magnetY;
-	private TextView magnetZ;
-	private TextView orientX;
-	private TextView orientY;
-	private TextView orientZ;
+	private TextView rotateX;
+	private TextView rotateY;
+	private TextView rotateZ;
+	private TextView rotateS;
 	private Button startCollection;
 	private Button stopCollection;
 	private SensorManager sensorManager;
 	private Sensor accelSensor;
-	private Sensor gyroSensor;
-	private Sensor magnetSensor;
+	private Sensor rotateSensor;
 	private FileWriter writer;
 	private float[] accelValues;
-	private float[] gyroValues;
-	private float[] magnetValues;
-	private double[] orientValues;
+	private float[] rotateValues;
 	private double latitude;
 	private double longitude;
 	private long initialTime;
@@ -69,24 +61,17 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		accelX = (TextView) findViewById(R.id.accelXData);
 		accelY = (TextView) findViewById(R.id.accelYData);
 		accelZ = (TextView) findViewById(R.id.accelZData);
-		gyroX = (TextView) findViewById(R.id.gyroXData);
-		gyroY = (TextView) findViewById(R.id.gyroYData);
-		gyroZ = (TextView) findViewById(R.id.gyroZData);
-		magnetX = (TextView) findViewById(R.id.magnetXData);
-		magnetY = (TextView) findViewById(R.id.magnetYData);
-		magnetZ = (TextView) findViewById(R.id.magnetZData);
-		orientX = (TextView) findViewById(R.id.orientXData);		//orientation labels to work with
-		orientY = (TextView) findViewById(R.id.orientYData);		//orientation labels to work with
-		orientZ = (TextView) findViewById(R.id.orientZData);		//orientation labels to work with
+		rotateX = (TextView) findViewById(R.id.rotateXData);
+		rotateY = (TextView) findViewById(R.id.rotateYData);
+		rotateZ = (TextView) findViewById(R.id.rotateZData);
+		rotateS= (TextView) findViewById(R.id.rotateSData);
 		startCollection = (Button) findViewById(R.id.startCollect);
 		stopCollection = (Button) findViewById(R.id.stopCollect);
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-		accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-		magnetSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+		accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+		rotateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 		sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_FASTEST);
-		sensorManager.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_FASTEST);
-		sensorManager.registerListener(this, magnetSensor, SensorManager.SENSOR_DELAY_FASTEST);
+		sensorManager.registerListener(this, rotateSensor, SensorManager.SENSOR_DELAY_FASTEST);
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		
 		
@@ -149,7 +134,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			}
 			if (writer!=null){
 			try {
-				writer.write("Time (ms)" +"," + "accelX" +"," + "accelY" + "," + "accelZ" + "," + "gyroX" + "," + "gyroY" + "," + "gyroZ" + "," + "magnetX" + "," + "magnetY" + "," + "magnetZ" + "," + "Latitude" + "," + "Longitude" + "," + "orientX" + "," + "orientY" + "," + "orientZ" + "\n" );
+				writer.write("Time (ms)" +"," + "accelX" +"," + "accelY" + "," + "accelZ" + "," + "rotateX" + "," + "rotateY" + "," + "rotateZ" + "," + "rotateS" + "," + "Latitude" + "," + "Longitude" + "\n" );
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -175,45 +160,20 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 
 	
 	public void onSensorChanged(SensorEvent event) {
-		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+		if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
 			accelValues = event.values;
 		    // Movement
 		    accelX.setText(String.valueOf(accelValues[0]));
 		    accelY.setText(String.valueOf(accelValues[1]));
 		    accelZ.setText(String.valueOf(accelValues[2]));			
 		}
-		if (event.sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-			gyroValues = event.values;
+		if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+			rotateValues = event.values;
 		    // Movement
-		    gyroX.setText(String.valueOf(gyroValues[0]));
-		    gyroY.setText(String.valueOf(gyroValues[1]));
-		    gyroZ.setText(String.valueOf(gyroValues[2]));		
-		}
-		if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-			magnetValues = event.values;
-		    // Movement
-		    magnetX.setText(String.valueOf(magnetValues[0]));
-		    magnetY.setText(String.valueOf(magnetValues[1]));
-		    magnetZ.setText(String.valueOf(magnetValues[2]));	
-		}
-		if (accelValues != null && magnetValues != null) {
-			float R[] = new float[9];
-			float I[] = new float[9];
-			boolean success = SensorManager.getRotationMatrix(R, I, accelValues, magnetValues);
-			if (success) {
-				float orientation[] = new float[3];
-				orientValues = new double[3];
-				//get orientation
-				SensorManager.getOrientation(R, orientation);
-				//convert radians to degrees
-				orientValues[0] = Math.toDegrees(orientation[0]);
-				orientValues[1] = Math.toDegrees(orientation[1]);
-				orientValues[2] = Math.toDegrees(orientation[2]);
-				
-			    orientX.setText(String.valueOf(orientValues[0]));
-			    orientY.setText(String.valueOf(orientValues[1]));
-			    orientZ.setText(String.valueOf(orientValues[2]));	
-			}
+			rotateX.setText(String.valueOf(rotateValues[0]));
+			rotateY.setText(String.valueOf(rotateValues[1]));
+			rotateZ.setText(String.valueOf(rotateValues[2]));	
+			rotateS.setText(String.valueOf(rotateValues[3]));	
 		}
 	}
 	
@@ -232,9 +192,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			    double timerInMs = (double)timer / 1000000.0;
 			    //write all the sensor data
 				writer.write(timerInMs + "," + accelValues[0] + "," + accelValues[1] + "," + accelValues[2] + 
-						"," + gyroValues[0] + "," + gyroValues[1] + "," + gyroValues[2] + 
-						"," + magnetValues[0] + "," + magnetValues[1] + "," + magnetValues[2] + 
-						"," + latitude + "," + longitude + "," + orientValues[0] + "," + orientValues[1] + "," + orientValues[2] + "\n");
+						"," + rotateValues[0] + "," + rotateValues[1] + "," + rotateValues[2] + 
+						"," + rotateValues[3] + "," + latitude + "," + longitude + "\n");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -58,86 +58,40 @@
         android:layout_toRightOf="@id/gps"
         android:text="@string/z" />
     <TextView
-        android:id="@+id/gyro"
+        android:id="@+id/rotate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/accelZ"
-        android:text="@string/gyro" />
+        android:text="@string/rotate" />
     <TextView
-        android:id="@+id/gyroX"
+        android:id="@+id/rotateX"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/gyro"
+        android:layout_below="@id/rotate"
         android:layout_toRightOf="@id/gps"
         android:text="@string/x" />
     <TextView
-        android:id="@+id/gyroY"
+        android:id="@+id/rotateY"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/gyroX"
+        android:layout_below="@id/rotateX"
         android:layout_toRightOf="@id/gps"
         android:text="@string/y" />
     <TextView
-        android:id="@+id/gyroZ"
+        android:id="@+id/rotateZ"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/gyroY"
+        android:layout_below="@id/rotateY"
         android:layout_toRightOf="@id/gps"
         android:text="@string/z" />
     <TextView
-        android:id="@+id/magnet"
+        android:id="@+id/rotateS"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/gyroZ"
-        android:text="@string/magnet" />
-    <TextView
-        android:id="@+id/magnetX"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/magnet"
+        android:layout_below="@id/rotateZ"
         android:layout_toRightOf="@id/gps"
-        android:text="@string/x" />
-    <TextView
-        android:id="@+id/magnetY"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/magnetX"
-        android:layout_toRightOf="@id/gps"
-        android:text="@string/y" />
-    <TextView
-        android:id="@+id/magnetZ"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/magnetY"
-        android:layout_toRightOf="@id/gps"
-        android:text="@string/z" />  
-    <TextView
-        android:id="@+id/orient"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/magnetZ"
-        android:text="@string/orient" />
-    <TextView
-        android:id="@+id/orientX"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/orient"
-        android:layout_toRightOf="@id/gps"
-        android:text="@string/x" />
-    <TextView
-        android:id="@+id/orientY"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/orientX"
-        android:layout_toRightOf="@id/gps"
-        android:text="@string/y" />
-    <TextView
-        android:id="@+id/orientZ"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/orientY"
-        android:layout_toRightOf="@id/gps"
-        android:text="@string/z" />     
+        android:text="@string/s" />
+    
        
     <!-- DATA STARTS HERE -->
      <TextView
@@ -176,78 +130,42 @@
         android:layout_alignBottom="@id/accelZ"
         android:text="@string/empty"/>
      <TextView
-        android:id="@+id/gyroXData"
+        android:id="@+id/rotateXData"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/gpsLon"
-        android:layout_alignBottom="@id/gyroX"
+        android:layout_alignBottom="@id/rotateX"
         android:text="@string/empty"/>
      <TextView
-        android:id="@+id/gyroYData"
+        android:id="@+id/rotateYData"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/gpsLon"
-        android:layout_alignBottom="@id/gyroY"
+        android:layout_alignBottom="@id/rotateY"
         android:text="@string/empty"/>
 
      <TextView
-         android:id="@+id/gyroZData"
+         android:id="@+id/rotateZData"
          android:layout_width="fill_parent"
          android:layout_height="wrap_content"
-         android:layout_alignBottom="@id/gyroZ"
+         android:layout_alignBottom="@id/rotateZ"
          android:layout_toRightOf="@id/gpsLon"
          android:text="@string/empty" />
 
      <TextView
-        android:id="@+id/magnetXData"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/gpsLon"
-        android:layout_alignBottom="@id/magnetX"
-        android:text="@string/empty"/>
-     <TextView
-        android:id="@+id/magnetYData"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/gpsLon"
-        android:layout_alignBottom="@id/magnetY"
-        android:text="@string/empty"/>
-     <TextView
-        android:id="@+id/magnetZData"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/gpsLon"
-        android:layout_alignBottom="@id/magnetZ"
-        android:text="@string/empty"/>
-     
-     <TextView
-        android:id="@+id/orientXData"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/gpsLon"
-        android:layout_alignBottom="@id/orientX"
-        android:text="@string/empty"/>
-     <TextView
-        android:id="@+id/orientYData"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/gpsLon"
-        android:layout_alignBottom="@id/orientY"
-        android:text="@string/empty"/>
-     <TextView
-        android:id="@+id/orientZData"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/gpsLon"
-        android:layout_alignBottom="@id/orientZ"
-        android:text="@string/empty"/>
+         android:id="@+id/rotateSData"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_alignBottom="@id/rotateS"
+         android:layout_toRightOf="@id/gpsLon"
+         android:text="@string/empty" />
      
      <!-- BUTTONS -->
      <Button
         android:id="@+id/startCollect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/orientZ"
+        android:layout_below="@id/rotateS"
         android:text="@string/start"
         android:visibility="visible"
         android:onClick = "onStartClick"/>
@@ -255,7 +173,7 @@
         android:id="@+id/stopCollect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/orientZ"
+        android:layout_below="@id/rotateS"
         android:text="@string/stop"
         android:visibility="gone"
         android:onClick = "onStopClick"/>
