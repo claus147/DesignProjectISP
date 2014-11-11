@@ -20,6 +20,9 @@
     <string name="start">Start data collection</string>
     <string name="stop">Stop data collection</string>
     
+    <string name="map">Map</string>
+    <string name="confirmOrientation">Confirm</string>
+    
     <string name="empty">EMPTYEMPTYEMPTY</string>
 
     

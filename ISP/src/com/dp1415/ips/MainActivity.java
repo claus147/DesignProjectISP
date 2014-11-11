@@ -7,8 +7,10 @@ import java.io.IOException;
 
 
 
+
 import android.support.v7.app.ActionBarActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -150,12 +152,17 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		dataCollection = false;
 		startCollection.setVisibility(View.VISIBLE);
 		stopCollection.setVisibility(View.GONE);
-	   try {
-		writer.close();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+		try {
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
+	
+	public void onMapClick(View view) {
+		Intent intent = new Intent(this,MapViewActivity.class);
+		startActivity(intent);
 	}
 
 	
