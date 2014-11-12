@@ -182,7 +182,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/startCollect"
-        android:layout_below="@id/rotateZ"
+        android:layout_below="@id/rotateS"
         android:text="@string/map"
         android:onClick = "onMapClick"/>
      

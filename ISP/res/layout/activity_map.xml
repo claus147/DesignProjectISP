@@ -28,6 +28,33 @@
 			android:text="@string/confirmOrientation"
 			android:visibility="visible"
 			android:onClick = "onConfirmOrientationClick"/>
+		<Button
+			android:id="@+id/redoOrientation"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentLeft="true"
+			android:text="@string/redoOrientation"
+			android:visibility="gone"
+			android:onClick = "onRedoOrientationClick"/>
+		<Button
+			android:id="@+id/goForward"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentRight="true"
+			android:text="@string/forward"
+			android:visibility="visible"
+			android:onClick = "onGoForwardClick"/>
+		<Button
+			android:id="@+id/turn"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_above="@id/goForward"
+			android:layout_alignParentRight="true"
+			android:text="@string/turn"
+			android:visibility="visible"
+			android:onClick = "onTurnClick"/>		
 
 	</RelativeLayout>
 	
