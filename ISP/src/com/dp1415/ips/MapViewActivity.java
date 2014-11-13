@@ -6,6 +6,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -15,12 +16,14 @@ import android.media.MediaRouter.RouteCategory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 public class MapViewActivity extends Activity {
 	GoogleMap map;
 	boolean isStartMarked = false;
 	private Button confirmOrientation;
 	private Button redoOrientation;
+	private EditText turnAngle;
 	private PolylineOptions route;
 	private LatLng currentLoc = null;
     @Override
@@ -30,6 +33,8 @@ public class MapViewActivity extends Activity {
         
         confirmOrientation = (Button) findViewById(R.id.confirmOrientation);
 		redoOrientation = (Button) findViewById(R.id.redoOrientation);
+		turnAngle = (EditText) findViewById(R.id.angle);
+		
 		route = new PolylineOptions();
 		//MarkerOptions startLocation = new MarkerOptions();
 		
@@ -38,7 +43,17 @@ public class MapViewActivity extends Activity {
         map.getUiSettings().setCompassEnabled(false);
         
         LatLng mcgill = new LatLng(45.504785,-73.577151);		//lat lon coordinates of McGill
-
+        
+        LatLng dist = new LatLng(45.504885,-73.577051);
+        //checking distance
+        map.addMarker(new MarkerOptions()
+                .position(mcgill)
+                .title("mcgill"));
+        map.addMarker(new MarkerOptions()
+        		.position(dist)
+        		.title("new distance"));
+        
+        
         map.setMyLocationEnabled(true);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(mcgill, 15));	//15 is a good zoom level
         map.setOnMapClickListener(new OnMapClickListener() {	//add pin on click
@@ -88,15 +103,20 @@ public class MapViewActivity extends Activity {
      * 111,111 meters (111.111 km) in the y direction is 1 degree (of latitude) and 
      * 111,111 * cos(latitude) meters in the x direction is 1 degree (of longitude).
      */
+    
+    //for the purpose of testing will add 0.0001 to lat (if moving directly north)
     public void onGoForwardClick(View view) {	
     	
     	//float bearing = map.getCameraPosition().bearing;
     	//currentLoc = new LatLng(currentLoc.latitude,currentLoc.longitude);
     	
 	}
-    
-    public void onGoTurnClick(View view) {
+    //VERY GOOD RESOURCE http://stackoverflow.com/questions/14320015/android-maps-auto-rotate
+    public void onTurnClick(View view) {	
     	
+    	CameraPosition curPos = map.getCameraPosition();
+    	CameraPosition newPos = CameraPosition.builder(curPos).bearing(curPos.bearing + Float.parseFloat(turnAngle.getText().toString())).build();
+    	map.moveCamera(CameraUpdateFactory.newCameraPosition(newPos));
 	}
 
 

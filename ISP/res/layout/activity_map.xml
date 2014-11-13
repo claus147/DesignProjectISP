@@ -54,7 +54,17 @@
 			android:layout_alignParentRight="true"
 			android:text="@string/turn"
 			android:visibility="visible"
-			android:onClick = "onTurnClick"/>		
+			android:onClick = "onTurnClick"/>
+		<EditText
+		    android:id="@+id/angle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_above="@id/goForward"
+			android:layout_toLeftOf="@id/turn"
+			android:inputType="numberDecimal"
+			android:text="@string/defaultAngle"/>	
+		
+	
 
 	</RelativeLayout>
 	

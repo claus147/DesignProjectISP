@@ -25,6 +25,7 @@
     <string name="redoOrientation">Re-Orient</string>
     <string name="forward">Forward</string>
     <string name="turn">Turn</string>
+    <string name="defaultAngle">90</string>
     
     <string name="empty">EMPTYEMPTYEMPTY</string>
 
