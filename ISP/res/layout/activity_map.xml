@@ -27,6 +27,7 @@
 			android:layout_alignParentLeft="true"
 			android:text="@string/confirmOrientation"
 			android:visibility="visible"
+			android:enabled="false"
 			android:onClick = "onConfirmOrientationClick"/>
 		<Button
 			android:id="@+id/redoOrientation"
@@ -44,7 +45,7 @@
 			android:layout_alignParentBottom="true"
 			android:layout_alignParentRight="true"
 			android:text="@string/forward"
-			android:visibility="visible"
+			android:visibility="gone"
 			android:onClick = "onGoForwardClick"/>
 		<Button
 			android:id="@+id/turn"
@@ -53,7 +54,7 @@
 			android:layout_above="@id/goForward"
 			android:layout_alignParentRight="true"
 			android:text="@string/turn"
-			android:visibility="visible"
+			android:visibility="gone"
 			android:onClick = "onTurnClick"/>
 		<EditText
 		    android:id="@+id/angle"
@@ -62,6 +63,7 @@
 			android:layout_above="@id/goForward"
 			android:layout_toLeftOf="@id/turn"
 			android:inputType="numberDecimal"
+			android:visibility="gone"
 			android:text="@string/defaultAngle"/>	
 		
 	

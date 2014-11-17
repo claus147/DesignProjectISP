@@ -24,6 +24,8 @@ public class MapViewActivity extends Activity {
 	private Button confirmOrientation;
 	private Button redoOrientation;
 	private EditText turnAngle;
+	private Button goForward;
+	private Button turn;
 	private PolylineOptions route;
 	private LatLng currentLoc = null;
     @Override
@@ -34,6 +36,8 @@ public class MapViewActivity extends Activity {
         confirmOrientation = (Button) findViewById(R.id.confirmOrientation);
 		redoOrientation = (Button) findViewById(R.id.redoOrientation);
 		turnAngle = (EditText) findViewById(R.id.angle);
+		goForward = (Button) findViewById(R.id.goForward);
+		turn = (Button) findViewById(R.id.turn);
 		
 		route = new PolylineOptions();
 		//MarkerOptions startLocation = new MarkerOptions();
@@ -44,14 +48,14 @@ public class MapViewActivity extends Activity {
         
         LatLng mcgill = new LatLng(45.504785,-73.577151);		//lat lon coordinates of McGill
         
-        LatLng dist = new LatLng(45.504885,-73.577051);
+        //LatLng dist = new LatLng(45.504885,-73.577051);
         //checking distance
-        map.addMarker(new MarkerOptions()
-                .position(mcgill)
-                .title("mcgill"));
-        map.addMarker(new MarkerOptions()
-        		.position(dist)
-        		.title("new distance"));
+//        map.addMarker(new MarkerOptions()
+//                .position(mcgill)
+//                .title("mcgill"));
+//        map.addMarker(new MarkerOptions()
+//        		.position(dist)
+//        		.title("new distance"));
         
         
         map.setMyLocationEnabled(true);
@@ -68,9 +72,11 @@ public class MapViewActivity extends Activity {
                     .title("Start Location")
                     .draggable(true));
             		route.add(latLng);
-            		currentLoc = latLng;
+            		currentLoc = latLng;	//current loc is the clicked start point
             		            		
             		isStartMarked = true;
+            		
+            		confirmOrientation.setEnabled(true); 		//can only confirm if we put a point down
             	} else {	//do add polyline (path)
             		route.add(latLng);
             		map.addPolyline(route);
@@ -84,14 +90,25 @@ public class MapViewActivity extends Activity {
     
     public void onConfirmOrientationClick(View view) {
     	map.getUiSettings().setRotateGesturesEnabled(false);
+    	CameraPosition curPos = map.getCameraPosition();
+    	CameraPosition newPos = CameraPosition.builder(curPos).target(currentLoc).build();
+    	map.moveCamera(CameraUpdateFactory.newCameraPosition(newPos));
     	confirmOrientation.setVisibility(View.GONE);
     	redoOrientation.setVisibility(View.VISIBLE);
+    	
+    	turn.setVisibility(View.VISIBLE);
+    	turnAngle.setVisibility(View.VISIBLE);
+    	goForward.setVisibility(View.VISIBLE);
 	}
     
     public void onRedoOrientationClick(View view) {
     	map.getUiSettings().setRotateGesturesEnabled(true);
     	confirmOrientation.setVisibility(View.VISIBLE);
     	redoOrientation.setVisibility(View.GONE);
+    	
+    	turn.setVisibility(View.GONE);
+    	turnAngle.setVisibility(View.GONE);
+    	goForward.setVisibility(View.GONE);
 	}
     
     //adds a polyline in the direction the camera is facing 1m ahead
@@ -107,7 +124,18 @@ public class MapViewActivity extends Activity {
     //for the purpose of testing will add 0.0001 to lat (if moving directly north)
     public void onGoForwardClick(View view) {	
     	
-    	//float bearing = map.getCameraPosition().bearing;
+    	CameraPosition curPos = map.getCameraPosition();
+    	float bearing = curPos.bearing;
+    	double newLat = currentLoc.latitude + 0.0001*Math.cos((double)bearing);	//calculating new angles
+    	double newLng = currentLoc.longitude + 0.0001*Math.sin((double)bearing);
+    	LatLng newLoc = new LatLng(newLat,newLng);
+    	route.add(newLoc);
+		map.addPolyline(route);//adding the polyline
+		
+		CameraPosition newPos = CameraPosition.builder(curPos).target(newLoc).build();	//move camera
+    	map.moveCamera(CameraUpdateFactory.newCameraPosition(newPos));
+		
+    	currentLoc = newLoc;
     	//currentLoc = new LatLng(currentLoc.latitude,currentLoc.longitude);
     	
 	}
