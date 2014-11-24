@@ -14,11 +14,14 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import android.app.Activity;
 import android.media.MediaRouter.RouteCategory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 public class MapViewActivity extends Activity {
+	
+	private static final String TAG = "MapView";
 	GoogleMap map;
 	boolean isStartMarked = false;
 	private Button confirmOrientation;
@@ -126,8 +129,9 @@ public class MapViewActivity extends Activity {
     	
     	CameraPosition curPos = map.getCameraPosition();
     	float bearing = curPos.bearing;
-    	double newLat = currentLoc.latitude + 0.0001*Math.cos((double)bearing);	//calculating new angles
-    	double newLng = currentLoc.longitude + 0.0001*Math.sin((double)bearing);
+    	double newLat = currentLoc.latitude + 0.0001*Math.cos(Math.toRadians(bearing));	//calculating new angles
+    	double newLng = currentLoc.longitude + 0.0001*Math.sin(Math.toRadians(bearing));
+    	
     	LatLng newLoc = new LatLng(newLat,newLng);
     	route.add(newLoc);
 		map.addPolyline(route);//adding the polyline
