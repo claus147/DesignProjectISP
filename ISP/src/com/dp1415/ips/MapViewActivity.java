@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.media.MediaRouter.RouteCategory;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,6 +32,7 @@ public class MapViewActivity extends Activity {
 	private Button turn;
 	private PolylineOptions route;
 	private LatLng currentLoc = null;
+	//private LatLng start = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +50,7 @@ public class MapViewActivity extends Activity {
         // Get a handle to the Map Fragment
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
         map.getUiSettings().setCompassEnabled(false);
+        map.setMyLocationEnabled(false);
         
         LatLng mcgill = new LatLng(45.504785,-73.577151);		//lat lon coordinates of McGill
         
@@ -83,9 +86,11 @@ public class MapViewActivity extends Activity {
             	} else {	//do add polyline (path)
             		route.add(latLng);
             		map.addPolyline(route);
+            		currentLoc = latLng;
             		//map.addMarker(startLocation.draggable(false));
 
             	}
+            	//start = latLng;
             	
             }
         });
@@ -106,6 +111,12 @@ public class MapViewActivity extends Activity {
     
     public void onRedoOrientationClick(View view) {
     	map.getUiSettings().setRotateGesturesEnabled(true);
+    	
+    	CameraPosition curPos = map.getCameraPosition();
+    	
+    	CameraPosition newPos = CameraPosition.builder(curPos).target(currentLoc).build();	//move camera
+    	map.moveCamera(CameraUpdateFactory.newCameraPosition(newPos));
+    	
     	confirmOrientation.setVisibility(View.VISIBLE);
     	redoOrientation.setVisibility(View.GONE);
     	
@@ -149,6 +160,11 @@ public class MapViewActivity extends Activity {
     	CameraPosition curPos = map.getCameraPosition();
     	CameraPosition newPos = CameraPosition.builder(curPos).bearing(curPos.bearing + Float.parseFloat(turnAngle.getText().toString())).build();
     	map.moveCamera(CameraUpdateFactory.newCameraPosition(newPos));
+	}
+    
+    public void onToMainClick(View view) {
+		Intent intent = new Intent(this,MainActivity.class);
+		startActivity(intent);
 	}
 
 
