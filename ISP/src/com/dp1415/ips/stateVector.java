@@ -1,6 +1,7 @@
 package com.dp1415.ips;
 
-
+import java.util.HashMap;
+import java.util.Map;
 //this class creates a state vectors from sensor data and converts to global coordinates 
 public class stateVector {
 	// Constructor
@@ -16,6 +17,11 @@ public class stateVector {
 	// change phone coodinate to world coordinate
 	public float[] phoneToWorldCoordinates() {
 		return null;
-		
+	}
+	
+	public Map<String, Float> getStateVector(){
+		Map<String, Float> stateVector = new HashMap<String, Float>(); 
+		//store the state vactors into a hashmap 
+		return stateVector;
 	}
 }
