@@ -15,7 +15,10 @@ public class stateVector {
 	double rotateZ;
 	double rotateS;
 	Matrix quaternion;
-	
+	Map<String, Double> stateVector = new HashMap<String, Double>(); 
+	double timeStamp; 
+	double[] velocities = new double[3];
+	double[] accelerations = new double[3]; 
 	
 	// Constructor
 	public stateVector(float[] accelValues, float[] rotateValues) {
@@ -27,25 +30,22 @@ public class stateVector {
 		rotateZ = rotateValues[2];
 		rotateS = rotateValues[3];
 
-		Map<String, Float> stateVector = new HashMap<String, Float>(); 
-		//store the state vactors into a hashmap 
-		
 		//Initialize the state vector assuming initially stop 
-		stateVector.put("AccelX", new Float(0));
-		stateVector.put("AccelY", new Float(0));
-		stateVector.put("AccelZ", new Float(0));
-		stateVector.put("VelocityX", new Float(0));
-		stateVector.put("VelocityY", new Float(0));
-		stateVector.put("VelocityZ", new Float(0));
-		stateVector.put("DistanceX", new Float(0));
-		stateVector.put("DistanceY", new Float(0));
-		stateVector.put("DistanceZ", new Float(0));
-		stateVector.put("QuaX", new Float(0));
-		stateVector.put("QuaY", new Float(0));
-		stateVector.put("QuaZ", new Float(0));
-		stateVector.put("QuaS", new Float(1));
-		stateVector.put("Time", new Float(0));
-		stateVector.put("Mode", new Float(0));
+		stateVector.put("AccelX", 0d);
+		stateVector.put("AccelY", 0d);
+		stateVector.put("AccelZ", 0d);
+		stateVector.put("VelocityX", 0d);
+		stateVector.put("VelocityY", 0d);
+		stateVector.put("VelocityZ", 0d);
+		stateVector.put("DistanceX", 0d);
+		stateVector.put("DistanceY", 0d);
+		stateVector.put("DistanceZ", 0d);
+		stateVector.put("QuaX", 0d);
+		stateVector.put("QuaY", 0d);
+		stateVector.put("QuaZ", 0d);
+		stateVector.put("QuaS", 1d);
+		stateVector.put("Time", 0d);
+		stateVector.put("Mode", 0d);
 	}
 	// change phone coodinate to world coordinate
 	public float[] phoneToWorldCoordinates() {
@@ -58,10 +58,20 @@ public class stateVector {
 		
 	}
 	
+	public final double[] getVelocities(){
+		
+		return velocities;
+		
+	}
 	
+	public final double[] getAccelerations(){
+		
+		return accelerations;
+		
+	}
 	
-	//public Map<String, Float> updateStateVector(){
+	public Map<String, Double> updateStateVector(){
 
-		//return 
-	//}
+		return stateVector; 
+	}
 }
