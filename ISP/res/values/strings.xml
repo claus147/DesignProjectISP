@@ -29,6 +29,10 @@
     <string name="toMain">Sensor View</string>
     
     <string name="empty">EMPTYEMPTYEMPTY</string>
+    
+    <!-- action bar text -->
+    <string name="mapmode">Map View</string>
+    <string name="debugmode">Debug View</string>
 
     
 
