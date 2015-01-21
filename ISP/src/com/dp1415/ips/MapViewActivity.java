@@ -16,6 +16,9 @@ import android.content.Intent;
 import android.media.MediaRouter.RouteCategory;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -161,12 +164,30 @@ public class MapViewActivity extends Activity {
     	CameraPosition newPos = CameraPosition.builder(curPos).bearing(curPos.bearing + Float.parseFloat(turnAngle.getText().toString())).build();
     	map.moveCamera(CameraUpdateFactory.newCameraPosition(newPos));
 	}
-    
-    public void onToMainClick(View view) {
-		Intent intent = new Intent(this,MainActivity.class);
-		startActivity(intent);
+	
+    @Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    // Inflate the menu items for use in the action bar
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.main, menu);
+	    return super.onCreateOptionsMenu(menu);
 	}
-
+    
+    @Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle presses on the action bar items
+	    switch (item.getItemId()) {
+	        case R.id.action_debug:
+	        	Intent intent = new Intent(this,MainActivity.class);
+	    		startActivity(intent);
+	            return true;
+	        case R.id.action_settings:
+	            //openSettings();
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
 
     
 }

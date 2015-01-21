@@ -1,8 +1,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.dp1415.ips.MainActivity" >
-
+    xmlns:tools="http://schemas.android.com/tools">
+    <item 
+ 	    android:id="@+id/action_map"
+ 		android:icon="@drawable/mapicon"
+        android:title="@string/mapmode"
+        app:showAsAction="always" />
+ 	<item 
+ 	    android:id="@+id/action_debug"
+ 		android:icon="@drawable/debugicon"
+        android:title="@string/debugmode"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
