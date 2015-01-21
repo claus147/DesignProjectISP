@@ -14,7 +14,8 @@ public class stateVector {
 	double rotateY;
 	double rotateZ;
 	double rotateS;
-	Matrix quaternion;
+	Matrix q;
+	Matrix qc;
 	
 	
 	// Constructor
@@ -54,8 +55,17 @@ public class stateVector {
 	}
 	//this method will create matrixes.
 	private void createMatrix(){
-		Matrix quaternion = new Matrix(new double[][]{{rotateX},{rotateY},{rotateZ},{rotateS}});
-		
+		q = new Matrix(new double[][]{{rotateX},{rotateY},{rotateZ},{rotateS}});
+		qc = new Matrix(new double[][]{{-rotateX},{-rotateY},{-rotateZ},{rotateS}});
+	}
+	//this method will operate a quaternion multiplication
+	private double[] quaternionMultiplication(double[] fa, double[] sa){
+		return new double[]{
+			fa[3] * sa[0] + fa[0] * sa[3] + fa[1] * sa[2] - fa[2] * sa[1],
+			fa[3] * sa[1] + fa[1] * sa[3] + fa[2] * sa[0] - fa[0] * sa[2],
+			fa[3] * sa[2] + fa[2] * sa[3] + fa[0] * sa[1] - fa[1] * sa[0],
+			fa[3] * sa[3] - fa[0] * sa[0] - fa[1] * sa[1] - fa[2] * sa[2]
+		};
 	}
 	
 	
