@@ -2,18 +2,31 @@ package com.dp1415.ips;
 
 import java.util.HashMap;
 import java.util.Map;
+import Jama.Matrix;
+
+
 //this class creates a state vector matrix from sensor data and converts to global coordinates 
 public class stateVector {
+	double accelX;
+	double accelY;
+	double accelZ;
+	double rotateX;
+	double rotateY;
+	double rotateZ;
+	double rotateS;
+	Matrix quaternion;
+	
+	
 	// Constructor
 	public stateVector(float[] accelValues, float[] rotateValues) {
-		float accelX = accelValues[0];
-		float accelY = accelValues[1];
-		float accelZ = accelValues[2];
-		float rotateX = rotateValues[0];
-		float rotateY = rotateValues[1];
-		float rotateZ = rotateValues[2];
-		float rotateS = rotateValues[3];
-		
+		accelX = accelValues[0];
+		accelY = accelValues[1];
+		accelZ = accelValues[2];
+		rotateX = rotateValues[0];
+		rotateY = rotateValues[1];
+		rotateZ = rotateValues[2];
+		rotateS = rotateValues[3];
+
 		Map<String, Float> stateVector = new HashMap<String, Float>(); 
 		//store the state vactors into a hashmap 
 		
@@ -38,6 +51,11 @@ public class stateVector {
 	public float[] phoneToWorldCoordinates() {
 		
 		return null;
+	}
+	//this method will create matrixes.
+	private void createMatrix(){
+		Matrix quaternion = new Matrix(new double[][]{{rotateX},{rotateY},{rotateZ},{rotateS}});
+		
 	}
 	
 	
