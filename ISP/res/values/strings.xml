@@ -30,10 +30,17 @@
     
     <string name="empty">EMPTYEMPTYEMPTY</string>
     
-    <!-- action bar text -->
+    <!-- action bar -->
     <string name="mapmode">Map View</string>
     <string name="debugmode">Debug View</string>
-
+    
+    <!-- settings -->
+	<string name="sampleRate">Sample Rate</string>
+	<string-array name="array_sample_rate">
+        <item>Fast</item>
+        <item>Normal</item>
+        <item>Slow</item>
+    </string-array>
     
 
 </resources>
