@@ -64,13 +64,13 @@ public class Accelerations {
 		return new Matrix(new double[][]{x_direction,y_direction,z_direction});
 	}
 	
-	public final double getAccelX(){
+	public final double getX(){
 		return accelerations[0];
 	}
-	public final double getAccelY(){
+	public final double getY(){
 		return accelerations[1];
 	}
-	public final double getAccelZ(){
+	public final double getZ(){
 		return accelerations[2];
 	}
 

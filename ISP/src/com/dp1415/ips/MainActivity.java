@@ -54,6 +54,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private long initialTime;
 	private boolean dataCollection = false;
 	Handler handle = new Handler();
+	private Accelerations initialAccel;
+	private Velocities initialVel;
+	private Distances initialDis;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -135,7 +138,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		startCollection.setVisibility(View.GONE);
 		stopCollection.setVisibility(View.VISIBLE);
 			try {
-				File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "sensorData.csv");
+				File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "stateVector.csv");
 				writer = new FileWriter(outFile,false);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -143,7 +146,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			}
 			if (writer!=null){
 			try {
-				writer.write("Time (ms)" +"," + "accelX" +"," + "accelY" + "," + "accelZ" + "," + "rotateX" + "," + "rotateY" + "," + "rotateZ" + "," + "rotateS" + "," + "Latitude" + "," + "Longitude" + "\n" );
+				//writer.write("Time (ms)" +"," + "accelX" +"," + "accelY" + "," + "accelZ" + "," + "rotateX" + "," + "rotateY" + "," + "rotateZ" + "," + "rotateS" + "," + "Latitude" + "," + "Longitude" + "\n" );
+				writer.write("Time (ms)"+ "," + "accelX" +"," + "accelY" + "," + "accelZ"+ "velocityX" +"," + "velocityY" + "," + "velocityZ"
+				+"distanceX" +"," + "distanceY" + "," + "distanceZ"+"QuaX"+"QuaY" +"," + "QuaZ" + "," + "QuaS");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

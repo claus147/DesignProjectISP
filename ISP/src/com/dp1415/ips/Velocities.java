@@ -17,9 +17,9 @@ public class Velocities {
 	//constructor 
 	public Velocities(Accelerations accelStates,double timeStamp,double initialAccelX,
 			double initialAccelY,double initialAccelZ,double initialVelX,double initialVelY, double initialVelZ){
-		accelX = accelStates.getAccelX();
-		accelY = accelStates.getAccelY();
-		accelZ = accelStates.getAccelZ();
+		accelX = accelStates.getX();
+		accelY = accelStates.getY();
+		accelZ = accelStates.getZ();
 		this.timeStamp = timeStamp;
 		this.initialAccelX = initialAccelX;
 		this.initialAccelY = initialAccelY;
@@ -38,17 +38,17 @@ public class Velocities {
 		return velocity;
 	}
 	
-	public final double getVelocityX(){
+	public final double getX(){
 		velocities[0] = integration(initialAccelX,accelX)+initialVelX;
 		return velocities[0];
 	}
 	
-	public final double getVelocityY(){
+	public final double getY(){
 		velocities[1] = integration(initialAccelY,accelY)+initialVelY;
 		return velocities[1];
 	}
 	
-	public final double getVelocityZ(){
+	public final double getZ(){
 		velocities[2] = integration(initialAccelZ,accelZ)+initialVelZ;
 		return velocities[2];
 	}

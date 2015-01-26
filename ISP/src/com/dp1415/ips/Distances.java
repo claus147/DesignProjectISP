@@ -17,9 +17,9 @@ public class Distances {
 	public Distances(Velocities velocityStates, double timeStamp, double initialDistanceX,
 			double initialDistanceY, double initialDistanceZ,double initialVelX, 
 			double initialVelY,double initialVelZ){
-		velX = velocityStates.getVelocityX(); 
-		velY = velocityStates.getVelocityY(); 
-		velZ = velocityStates.getVelocityZ(); 
+		velX = velocityStates.getX(); 
+		velY = velocityStates.getY(); 
+		velZ = velocityStates.getZ(); 
 		this. timeStamp = timeStamp; 
 		this. initialDistanceX = initialDistanceX;
 		this. initialDistanceY = initialDistanceY;
@@ -36,17 +36,17 @@ public class Distances {
 		return distance;
 	}
 	
-	public final double getVelocityX(){
+	public final double getX(){
 		distances[0] = integration(initialVelX,velX)+initialDistanceX;
 		return distances[0];
 	}
 	
-	public final double getVelocityY(){
+	public final double getY(){
 		distances[1] = integration(initialVelY,velY)+initialDistanceY;
 		return distances[1];
 	}
 	
-	public final double getVelocityZ(){
+	public final double getZ(){
 		distances[2] = integration(initialVelZ,velZ)+initialDistanceZ;
 		return distances[2];
 	}
