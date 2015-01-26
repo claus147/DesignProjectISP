@@ -54,9 +54,17 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private long initialTime;
 	private boolean dataCollection = false;
 	Handler handle = new Handler();
-	private Accelerations initialAccel;
-	private Velocities initialVel;
-	private Distances initialDis;
+	private stateVector initStates;
+	private long timer; 
+	private double currentAccelX;
+    private double currentAccelY;
+    private double currentAccelZ;
+    private double currentVelX;
+    private double currentVelY;
+    private double currentVelZ;
+    private double currentDisX;
+    private double currentDisY;
+    private double currentDisZ;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -137,8 +145,20 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		dataCollection = true;
 		startCollection.setVisibility(View.GONE);
 		stopCollection.setVisibility(View.VISIBLE);
+		float[] initAccel = new float[3];
+		initAccel[0] = 0f;
+		initAccel[1] = 0f;
+		initAccel[2] = 0f;
+		float[] initRotate = new float[4];
+		initRotate[0] = 0f;
+		initRotate[1] = 0f;
+		initRotate[2] = 1f;
+		initRotate[3] = 0f;
+		//set initial stateVector to stop mode 
+		initStates = new stateVector (initAccel, initRotate, 0.0, 0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,0.0 ,timer);
+		
 			try {
-				File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "stateVector.csv");
+				File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "movementData.csv");
 				writer = new FileWriter(outFile,false);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -146,9 +166,10 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			}
 			if (writer!=null){
 			try {
-				//writer.write("Time (ms)" +"," + "accelX" +"," + "accelY" + "," + "accelZ" + "," + "rotateX" + "," + "rotateY" + "," + "rotateZ" + "," + "rotateS" + "," + "Latitude" + "," + "Longitude" + "\n" );
-				writer.write("Time (ms)"+ "," + "accelX" +"," + "accelY" + "," + "accelZ"+ "velocityX" +"," + "velocityY" + "," + "velocityZ"
-				+"distanceX" +"," + "distanceY" + "," + "distanceZ"+"QuaX"+"QuaY" +"," + "QuaZ" + "," + "QuaS");
+				writer.write("Time (ms)" +"," + "accelerometerX" +"," + "accelerometerY" + "," + "accelerometerZ" + "," + "rotateX" + "," + "rotateY" + "," + "rotateZ" + "," + "rotateS" + "," + 
+						"Latitude" + "," + "Longitude" + "accelX" +"," + "accelY" + "," + "accelZ" + "velocityX" +"," + "velocityY" + "," + "velocityZ"+"distanceX" +"," + "distanceY" + "," + "distanceZ"+
+						"QuaX"+ "QuaY" + "," + "QuaZ" + "," + "QuaS" + "\n" );
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -178,7 +199,19 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		    // Movement
 		    accelX.setText(String.valueOf(accelValues[0]));
 		    accelY.setText(String.valueOf(accelValues[1]));
-		    accelZ.setText(String.valueOf(accelValues[2]));			
+		    accelZ.setText(String.valueOf(accelValues[2]));	
+		    
+		    currentAccelX = initStates.getAcceleration().getX();
+		    currentAccelY = initStates.getAcceleration().getY();
+		    currentAccelZ = initStates.getAcceleration().getZ();
+		    currentVelX = initStates.getVelocity().getX();
+		    currentVelY = initStates.getVelocity().getY();
+		    currentVelZ = initStates.getVelocity().getZ();
+		    currentDisX = initStates.getDistance().getX();
+		    currentDisY = initStates.getDistance().getY();
+		    currentDisZ = initStates.getDistance().getZ();
+		    initStates = new stateVector(accelValues, rotateValues, currentAccelX,currentAccelY,currentAccelZ, 
+		    		currentVelX, currentVelY,currentVelZ, currentDisX,currentDisY,currentDisZ, timer);
 		}
 		if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
 			rotateValues = event.values;
@@ -225,17 +258,21 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		//update it on map
 	}
 	
+	
+	
 	Runnable collectionLoop = new Runnable() {
 	    @Override
 	    public void run(){
 		    if(writer !=null){
 			try {
-				long timer = System.nanoTime() - initialTime;
+				timer = System.nanoTime() - initialTime;
 			    double timerInMs = (double)timer / 1000000.0;
 			    //write all the sensor data
 				writer.write(timerInMs + "," + accelValues[0] + "," + accelValues[1] + "," + accelValues[2] + 
 						"," + rotateValues[0] + "," + rotateValues[1] + "," + rotateValues[2] + 
-						"," + rotateValues[3] + "," + latitude + "," + longitude + "\n");
+						"," + rotateValues[3] + "," + latitude + "," + longitude + currentAccelX + currentAccelY 
+						+ currentAccelZ + currentVelX + currentVelY + currentVelZ + initStates.getRotationX() + 
+						initStates.getRotationY()+ initStates.getRotationZ() + initStates.getRotationS() + "\n");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

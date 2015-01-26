@@ -1,9 +1,12 @@
 package com.dp1415.ips;
 
+import android.annotation.SuppressLint;
+
 //this class creates a state vector matrix from sensor data and converts to global coordinates 
+
 public class stateVector {
-	private double accelValues[];
-	private double rotateValues[];
+	private float accelValues[];
+	private float rotateValues[];
 	private double initialDistanceX;
 	private double initialDistanceY;
 	private double initialDistanceZ;
@@ -13,8 +16,10 @@ public class stateVector {
 	private double initialVelX;
 	private double initialVelY;
 	private double initialVelZ;
+	private double accelInDouble[];
+	private double rotateInDouble[];
 	private long initialTime;
-	private Accelerations accelStates= new Accelerations(accelValues,rotateValues);
+	private Accelerations accelStates= new Accelerations(accelInDouble,rotateInDouble);
 	private double testInterval = 0.001; //set timeStamp to 1ms for testing purpose
 	private long timeStamp;
 	private long updatedTime;
@@ -24,9 +29,9 @@ public class stateVector {
 			initialDistanceY,initialDistanceZ,initialVelX,initialVelY,initialVelZ);
 
 	// Constructor
-	public stateVector(double[] accelValues, double[] rotateValues,double initialDistanceX, 
-			double initialDistanceY, double initialDistanceZ,double initialAccelX, double initialAccelY, 
-			double initialVelX,double initialVelY,double initialVelZ, double initialAccelZ,long initialTime){
+	public stateVector(float[] accelValues, float[] rotateValues,double initialDistanceX, 
+			double initialDistanceY, double initialDistanceZ,double initialAccelX, double initialAccelY,
+			double initialAccelZ, double initialVelX,double initialVelY,double initialVelZ, long initialTime){
 		
 		this.accelValues = accelValues;
 		this.rotateValues = rotateValues;
@@ -41,6 +46,22 @@ public class stateVector {
 		this.initialVelZ = initialVelZ;
 		this.initialTime = initialTime;	
 	}
+	
+	@SuppressLint("UseValueOf")
+	private double[] AccelToDouble(){
+		accelInDouble[0] = Double.parseDouble(new Float(accelValues[0]).toString());
+		accelInDouble[1] = Double.parseDouble(new Float(accelValues[1]).toString());
+		accelInDouble[2] = Double.parseDouble(new Float(accelValues[2]).toString());
+		return accelInDouble;
+	}
+	@SuppressLint("UseValueOf")
+	private double[] RotateToDouble(){
+		rotateInDouble[0] = Double.parseDouble(new Float(rotateValues[0]).toString());
+		rotateInDouble[1] = Double.parseDouble(new Float(rotateValues[1]).toString());
+		rotateInDouble[2] = Double.parseDouble(new Float(rotateValues[2]).toString());
+		return rotateInDouble;
+	}
+	
 	
 	//return accelerations
 	public final Accelerations getAcceleration(){
