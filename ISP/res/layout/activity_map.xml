@@ -64,7 +64,26 @@
 			android:layout_toLeftOf="@id/turn"
 			android:inputType="numberDecimal"
 			android:visibility="gone"
-			android:text="@string/defaultAngle"/>	
+			android:text="@string/defaultAngle"/>
+		
+		<Button
+			android:id="@+id/move"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_above="@id/turn"
+			android:layout_alignParentRight="true"
+			android:text="@string/move"
+			android:visibility="gone"
+			android:onClick = "onMoveClick"/>
+		<EditText
+		    android:id="@+id/dist"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_above="@id/turn"
+			android:layout_toLeftOf="@id/move"
+			android:inputType="numberDecimal"
+			android:visibility="gone"
+			android:text="@string/defaultDist"/>	
 		
 	
 

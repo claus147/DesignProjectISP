@@ -32,8 +32,10 @@ public class MapViewActivity extends ActionBarActivity {
 	private Button confirmOrientation;
 	private Button redoOrientation;
 	private EditText turnAngle;
+	private EditText distance;
 	private Button goForward;
 	private Button turn;
+	private Button move;
 	private PolylineOptions route;
 	private LatLng currentLoc = null;
 	//private LatLng start = null;
@@ -47,6 +49,8 @@ public class MapViewActivity extends ActionBarActivity {
 		turnAngle = (EditText) findViewById(R.id.angle);
 		goForward = (Button) findViewById(R.id.goForward);
 		turn = (Button) findViewById(R.id.turn);
+		distance = (EditText) findViewById(R.id.dist);
+		move = (Button) findViewById(R.id.move);
 		
 		route = new PolylineOptions();
 		//MarkerOptions startLocation = new MarkerOptions();
@@ -88,10 +92,10 @@ public class MapViewActivity extends ActionBarActivity {
             		
             		confirmOrientation.setEnabled(true); 		//can only confirm if we put a point down
             	} else {	//do add polyline (path)
-            		route.add(latLng);
-            		map.addPolyline(route);
-            		currentLoc = latLng;
-            		//map.addMarker(startLocation.draggable(false));
+//            		route.add(latLng);
+//            		map.addPolyline(route);
+//            		currentLoc = latLng;
+//            		//map.addMarker(startLocation.draggable(false));
 
             	}
             	//start = latLng;
@@ -111,6 +115,8 @@ public class MapViewActivity extends ActionBarActivity {
     	turn.setVisibility(View.VISIBLE);
     	turnAngle.setVisibility(View.VISIBLE);
     	goForward.setVisibility(View.VISIBLE);
+    	move.setVisibility(View.VISIBLE);
+    	distance.setVisibility(View.VISIBLE);
 	}
     
     public void onRedoOrientationClick(View view) {
@@ -127,6 +133,8 @@ public class MapViewActivity extends ActionBarActivity {
     	turn.setVisibility(View.GONE);
     	turnAngle.setVisibility(View.GONE);
     	goForward.setVisibility(View.GONE);
+    	move.setVisibility(View.GONE);
+    	distance.setVisibility(View.GONE);
 	}
     
     //adds a polyline in the direction the camera is facing 1m ahead
@@ -164,6 +172,29 @@ public class MapViewActivity extends ActionBarActivity {
     	CameraPosition curPos = map.getCameraPosition();
     	CameraPosition newPos = CameraPosition.builder(curPos).bearing(curPos.bearing + Float.parseFloat(turnAngle.getText().toString())).build();
     	map.moveCamera(CameraUpdateFactory.newCameraPosition(newPos));
+	}
+    
+    //http://stackoverflow.com/questions/2839533/adding-distance-to-a-gps-coordinate
+    public void onMoveClick(View view) {	
+    	
+    	CameraPosition curPos = map.getCameraPosition();
+    	float bearing = Float.parseFloat(turnAngle.getText().toString());
+//    	double newLat = currentLoc.latitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137);//6378137 earths radius at equator
+//    	double newLng = currentLoc.longitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137);///Math.cos(Math.PI/180.0*currentLoc.longitude);
+    	
+    	double newLat = currentLoc.latitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137)*Math.cos(Math.toRadians(bearing));//6378137 earths radius at equator
+    	double newLng = currentLoc.longitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137)*Math.sin(Math.toRadians(bearing));///Math.cos(Math.PI/180.0*currentLoc.longitude);
+    	
+    	LatLng newLoc = new LatLng(newLat,newLng);
+    	route.add(newLoc);
+		map.addPolyline(route);//adding the polyline
+		
+		CameraPosition newPos = CameraPosition.builder(curPos).target(newLoc).build();	//move camera
+    	map.moveCamera(CameraUpdateFactory.newCameraPosition(newPos));
+		
+    	currentLoc = newLoc;
+    	//currentLoc = new LatLng(currentLoc.latitude,currentLoc.longitude);
+    	
 	}
 	
     @Override

@@ -27,6 +27,8 @@
     <string name="turn">Turn</string>
     <string name="defaultAngle">90</string>
     <string name="toMain">Sensor View</string>
+    <string name="move">Move</string>
+    <string name="defaultDist">5</string>
     
     <string name="empty">EMPTYEMPTYEMPTY</string>
     
