@@ -196,34 +196,6 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		
 	}
 	
-	public void initializeParticles (int numOfParticles, double[][] particle){
-		//particle [0~100][] = particle , [][0] = weight, [][1] = X, [][2] = Y, [][3] = Z
-		particle = new double[numOfParticles][3];
-		for (int x = 0; x < numOfParticles; x++ ){
-			//Gaussian distribution 
-			particle[x][0]= (double)(1/numOfParticles);
-			particle[x][1]= 0/*some gaussian distribution*/;
-			particle[x][2]= 0/*some gaussian distribution*/;
-			particle[x][3]= 0/*some gaussian distribution*/;
-		}
-	}
-	
-	public void particleFilter (double[] state, double[][] particle, int numOfParticles){
-		//Propagate
-		//Determine mode
-		//Implement dynamic models to get the next state
-		//Update the weights
-		//Normalize the weight
-		double totalWeight = 0;
-		for (int x = 0; x < numOfParticles; x++)
-			totalWeight+=particle[x][0];
-		for (int x = 0; x < numOfParticles; x++)
-			particle[x][0]=particle[x][0]/totalWeight;
-		//Resample
-		//Use Random Number Generator to propagate new particle by weight
-		//Calculate expectation to get location
-		//update it on map
-	}
 	
 	Runnable collectionLoop = new Runnable() {
 	    @Override
