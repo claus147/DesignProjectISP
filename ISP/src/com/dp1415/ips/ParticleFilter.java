@@ -1,5 +1,7 @@
 package com.dp1415.ips;
 
+import java.util.Random;
+
 public class ParticleFilter {
 	private particle[] particles;
 	private int numOfParticles;
@@ -63,4 +65,45 @@ public class ParticleFilter {
 		
 	}
 	
+	public void resample(){
+		//create a new set of particles
+		particle[] resampled = new particle[numOfParticles];
+
+		//construct CDF
+		double[] cdf = new double[numOfParticles];
+		for (int i=0;i<numOfParticles;i++){
+			if (i==0){
+				cdf[i]=particles[i].getWeight();
+			}
+			else{
+				cdf[i]=cdf[i-1]+particles[i].getWeight();
+			}
+			//TODO: make cdf[numOfParticles]=1?
+		}
+		
+		// create random number generator
+		Random randomGenerator = new Random();
+
+		for (int x=0;x<numOfParticles;x++){
+			double random=randomGenerator.nextDouble();//this generates a number between 0 and 1
+			int low = 0;
+			int high = numOfParticles;
+			int mid = 0;
+			//binary search to find the particle
+			while (low<=high){
+				mid = low + (high-low)/2;
+				if (random<cdf[mid]){
+					high = mid;
+				}
+				else if (low>cdf[mid]){
+					low = mid+1;
+				}
+				else{
+					break;
+				}
+			}
+			resampled[x] = particles[mid];
+		}
+		particles = resampled;
+	}
 }

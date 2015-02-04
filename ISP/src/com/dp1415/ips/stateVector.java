@@ -14,14 +14,11 @@ public class stateVector {
 	private double initialVelY;
 	private double initialVelZ;
 	private long initialTime;
-	private Accelerations accelStates= new Accelerations(accelValues,rotateValues);
 	private double testInterval = 0.001; //set timeStamp to 1ms for testing purpose
 	private long timeStamp;
 	private long updatedTime;
-	private Velocities velocityStates = new Velocities(accelStates,testInterval, initialAccelX, 
-			initialAccelY,initialAccelZ,initialVelX,initialVelY,initialVelZ);
-	private Distances distanceStates = new Distances(velocityStates, testInterval, initialDistanceX,
-			initialDistanceY,initialDistanceZ,initialVelX,initialVelY,initialVelZ);
+	private Velocities velocityStates;
+	private Distances distanceStates;
 
 	// Constructor
 	public stateVector(double[] accelValues, double[] rotateValues,double initialDistanceX, 
@@ -40,16 +37,20 @@ public class stateVector {
 		this.initialVelY = initialVelY;
 		this.initialVelZ = initialVelZ;
 		this.initialTime = initialTime;	
+		distanceStates = new Distances(accelValues, rotateValues, testInterval,
+				initialAccelX, initialAccelY, initialAccelZ,
+				initialDistanceX, initialDistanceY, initialDistanceZ,
+				initialVelX, initialVelY, initialVelZ);
 	}
 	
 	//return accelerations
 	public final Accelerations getAcceleration(){
-		return accelStates;	
+		return distanceStates.getVelocity().getAcceleration();	
 	}
 	
 	//return velocities 
 	public final Velocities getVelocity(){
-		return velocityStates;
+		return distanceStates.getVelocity();
 	}
 	
 	//return distances 
@@ -82,6 +83,10 @@ public class stateVector {
 		return updatedTime;
 	}
 	
+	//update all data in state vector
+	public void update(double[] nextAccelValues, double[] nextRotateValues){
+		distanceStates.update(nextAccelValues, nextRotateValues);
+	}
 	// return current mode (will add)
-
+	
 }
