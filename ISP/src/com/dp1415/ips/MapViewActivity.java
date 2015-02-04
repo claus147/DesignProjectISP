@@ -5,10 +5,13 @@ import java.io.IOException;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import android.app.Activity;
@@ -24,7 +27,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class MapViewActivity extends ActionBarActivity {
+public class MapViewActivity extends ActionBarActivity{
 	
 	private static final String TAG = "MapView";
 	GoogleMap map;
@@ -37,13 +40,16 @@ public class MapViewActivity extends ActionBarActivity {
 	private Button turn;
 	private Button move;
 	private PolylineOptions route;
+	private Polyline line;
 	private LatLng currentLoc = null;
+	private Marker start = null;
 	//private LatLng start = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         
+        //setting all variables with their corresponding R.id's
         confirmOrientation = (Button) findViewById(R.id.confirmOrientation);
 		redoOrientation = (Button) findViewById(R.id.redoOrientation);
 		turnAngle = (EditText) findViewById(R.id.angle);
@@ -53,26 +59,16 @@ public class MapViewActivity extends ActionBarActivity {
 		move = (Button) findViewById(R.id.move);
 		
 		route = new PolylineOptions();
-		//MarkerOptions startLocation = new MarkerOptions();
 		
         // Get a handle to the Map Fragment
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
         map.getUiSettings().setCompassEnabled(false);
         map.setMyLocationEnabled(false);
         
+        //default map display position
         LatLng mcgill = new LatLng(45.504785,-73.577151);		//lat lon coordinates of McGill
-        
-        //LatLng dist = new LatLng(45.504885,-73.577051);
-        //checking distance
-//        map.addMarker(new MarkerOptions()
-//                .position(mcgill)
-//                .title("mcgill"));
-//        map.addMarker(new MarkerOptions()
-//        		.position(dist)
-//        		.title("new distance"));
-        
-        
-        map.setMyLocationEnabled(true);
+      
+        //map.setMyLocationEnabled(true);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(mcgill, 15));	//15 is a good zoom level
         map.setOnMapClickListener(new OnMapClickListener() {	//add pin on click
         	
@@ -81,22 +77,19 @@ public class MapViewActivity extends ActionBarActivity {
             @Override
             public void onMapClick(LatLng latLng) {
             	if (!isStartMarked){
-            		map.addMarker(startLocation
+            		start = map.addMarker(startLocation
                     .position(latLng)
                     .title("Start Location")
                     .draggable(true));
-            		route.add(latLng);
+            		
+
+            		start.setPosition(latLng);	//needed in order to properly update position when repositioning, otherwise it thinks marker always at original start position
             		currentLoc = latLng;	//current loc is the clicked start point
             		            		
             		isStartMarked = true;
             		
             		confirmOrientation.setEnabled(true); 		//can only confirm if we put a point down
-            	} else {	//do add polyline (path)
-//            		route.add(latLng);
-//            		map.addPolyline(route);
-//            		currentLoc = latLng;
-//            		//map.addMarker(startLocation.draggable(false));
-
+            	
             	}
             	//start = latLng;
             	
@@ -104,7 +97,12 @@ public class MapViewActivity extends ActionBarActivity {
         });
     }
     
+    
+    
     public void onConfirmOrientationClick(View view) {
+    	currentLoc = start.getPosition();
+    	route.add(currentLoc);
+    	
     	map.getUiSettings().setRotateGesturesEnabled(false);
     	CameraPosition curPos = map.getCameraPosition();
     	CameraPosition newPos = CameraPosition.builder(curPos).target(currentLoc).build();
@@ -124,9 +122,13 @@ public class MapViewActivity extends ActionBarActivity {
     	
     	CameraPosition curPos = map.getCameraPosition();
     	
-    	CameraPosition newPos = CameraPosition.builder(curPos).target(currentLoc).build();	//move camera
+    	CameraPosition newPos = CameraPosition.builder(curPos).target(currentLoc).build();	//move camera (changing only focus, every other option stays same)
     	map.moveCamera(CameraUpdateFactory.newCameraPosition(newPos));
     	
+    	line.remove(); //delete the one line
+    	
+    	route = new PolylineOptions();//clear old polyline options
+    	    	
     	confirmOrientation.setVisibility(View.VISIBLE);
     	redoOrientation.setVisibility(View.GONE);
     	
@@ -156,8 +158,10 @@ public class MapViewActivity extends ActionBarActivity {
     	double newLng = currentLoc.longitude + 0.0001*Math.sin(Math.toRadians(bearing));
     	
     	LatLng newLoc = new LatLng(newLat,newLng);
+    	if (line != null)
+    		line.remove(); // get rid of old line
     	route.add(newLoc);
-		map.addPolyline(route);//adding the polyline
+    	line = map.addPolyline(route);//adding the polyline
 		
 		CameraPosition newPos = CameraPosition.builder(curPos).target(newLoc).build();	//move camera
     	map.moveCamera(CameraUpdateFactory.newCameraPosition(newPos));
@@ -186,8 +190,10 @@ public class MapViewActivity extends ActionBarActivity {
     	double newLng = currentLoc.longitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137)*Math.sin(Math.toRadians(bearing));///Math.cos(Math.PI/180.0*currentLoc.longitude);
     	
     	LatLng newLoc = new LatLng(newLat,newLng);
+    	if (line != null)
+    		line.remove(); // get rid of old line
     	route.add(newLoc);
-		map.addPolyline(route);//adding the polyline
+		line = map.addPolyline(route);//adding the polyline
 		
 		CameraPosition newPos = CameraPosition.builder(curPos).target(newLoc).build();	//move camera
     	map.moveCamera(CameraUpdateFactory.newCameraPosition(newPos));
@@ -197,6 +203,7 @@ public class MapViewActivity extends ActionBarActivity {
     	
 	}
 	
+    //display the action bar (menu) from xml file
     @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    // Inflate the menu items for use in the action bar
@@ -205,6 +212,7 @@ public class MapViewActivity extends ActionBarActivity {
 	    return super.onCreateOptionsMenu(menu);
 	}
     
+    //for action bar interactions (top menu)
     @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle presses on the action bar items
@@ -214,12 +222,12 @@ public class MapViewActivity extends ActionBarActivity {
 	    		startActivity(intent);
 	            return true;
 	        case R.id.action_settings:
-	            //openSettings();
+	        	Intent intent2 = new Intent(this,Settings.class);
+	    		startActivity(intent2);
 	            return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
 	}
-
     
 }

@@ -8,19 +8,13 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.dp1415.ips.Settings" >
 
-    <TextView
-        android:id="@+id/setting_sample_rate"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_width="wrap_content"
-    	android:layout_height="wrap_content"
-	    android:text="@string/sampleRate"/>
-
     <Spinner
         android:id="@+id/spinner_sample_rate"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true" 
+        android:entries="@array/array_sample_rate"
+        android:prompt="@string/sampleRate"/>
     
 </RelativeLayout>

@@ -14,20 +14,13 @@ import android.widget.Spinner;
 
 public class Settings extends ActionBarActivity{
 	
-	Spinner spinner = (Spinner) findViewById(R.id.spinner_sample_rate);
-	// Create an ArrayAdapter using the string array and a default spinner layout
-	ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-	        R.array.array_sample_rate, android.R.layout.simple_spinner_item);
-	// Specify the layout to use when the list of choices appears
-//	adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//	// Apply the adapter to the spinner
-//	spinner.setAdapter(adapter);
-	
+	private Spinner spinner;	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
+		spinner = (Spinner) findViewById(R.id.spinner_sample_rate);
 	}
 
 	@Override
@@ -46,8 +39,9 @@ public class Settings extends ActionBarActivity{
 	        	Intent intent = new Intent(this,MapViewActivity.class);
 	    		startActivity(intent);
 	            return true;
-	        case R.id.action_settings:
-	            //openSettings();
+	        case R.id.action_debug:
+	        	Intent intent2 = new Intent(this,MainActivity.class);
+	    		startActivity(intent2);
 	            return true;
 	        default:
 	            return super.onOptionsItemSelected(item);

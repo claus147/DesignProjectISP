@@ -9,6 +9,7 @@ import java.io.IOException;
 
 
 
+
 import android.support.v7.app.ActionBarActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -116,7 +117,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    		startActivity(intent);
 	            return true;
 	        case R.id.action_settings:
-	            //openSettings();
+	        	Intent intent2 = new Intent(this,Settings.class);
+	    		startActivity(intent2);
 	            return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
