@@ -4,40 +4,23 @@ import Jama.Matrix;
 import java.util.Arrays;
 
 public class Accelerations {
-	private double accelX;
-	private double accelY;
-	private double accelZ;
-	private double rotateX;
-	private double rotateY;
-	private double rotateZ;
-	private double rotateS;
 	private double accelValues[];
 	private double rotateValues[];
 	private double[] accelerations = new double[3];
 	
-	Matrix quaternion;
-
-	
 	// Constructor
 	public Accelerations(double[] accelValues, double[] rotateValues) {
-		accelX = accelValues[0];
-		accelY = accelValues[1];
-		accelZ = accelValues[2];
-		rotateX = rotateValues[0];
-		rotateY = rotateValues[1];
-		rotateZ = rotateValues[2];
-		rotateS = rotateValues[3];
 		this.accelValues = accelValues;
-		this.rotateValues = rotateValues;		
+		this.rotateValues = rotateValues;
+		accelerations = phoneToWorldCoordinates();
 	}
+	
 	// change phone coodinate to world coordinate
 	public double[] phoneToWorldCoordinates() {
 		Matrix accel = new Matrix(accelValues,3);
 		Matrix worldAccel = getConversionMatrix().times(accel);
-		accelerations = worldAccel.getRowPackedCopy();
-		return accelerations;
+		return worldAccel.getRowPackedCopy();
 	}
-
 	
 	//this method will operate a quaternion multiplication
 	private double[] quaternionMultiplication(double[] fa, double[] sa){
@@ -67,11 +50,19 @@ public class Accelerations {
 	public final double getX(){
 		return accelerations[0];
 	}
+	
 	public final double getY(){
 		return accelerations[1];
 	}
+	
 	public final double getZ(){
 		return accelerations[2];
+	}
+	
+	public void update(double[] nextAccelValues, double[] nextRotateValues){
+		accelValues = nextAccelValues;
+		rotateValues = nextRotateValues;
+		accelerations = phoneToWorldCoordinates();
 	}
 
 }
