@@ -55,64 +55,11 @@ public class particle {
 	public final double getDistZ(){
 		return distZ;
 	}
-<<<<<<< HEAD
 	
 	public void setDistZ(double newDistZ){
 		distZ = newDistZ;
 	}
 	
-	public final double getVelX(){
-		return velX;
-	}
-	
-	public void setVelX(double newVelX){
-		velX = newVelX;
-	}
-	
-	public final double getVelY(){
-		return velY;
-	}
-	
-	public void setVelY(double newVelY){
-		velY = newVelY;
-	}
-	
-	public final double getVelZ(){
-		return velZ;
-	}
-	
-	public void setVelZ(double newVelZ){
-		velZ = newVelZ;
-	}
-	
-	public final double getAccelX(){
-		return accelX;
-	}
-	
-	public void setAccelX(double newAccelX){
-		accelX = newAccelX;
-	}
-	
-
-	public final double getAccelY(){
-		return accelY;
-	}
-	
-	public void setAccelY(double newAccelY){
-		accelY = newAccelY;
-	}
-	
-
-	public final double getAccelZ(){
-		return accelZ;
-	}
-	
-	
-	public void setAccelZ(double newAccelZ){
-		accelZ = newAccelZ;
-	}
-	
-=======
 	public double getVelX() {
 		return velX;
 	}
@@ -161,7 +108,6 @@ public class particle {
 		this.accelZ = accelZ;
 	}
 
->>>>>>> df8d9db6edbd3491a675ac3625a0fe5d32be9e90
 	public final double getQX(){
 		return qX;
 	}
