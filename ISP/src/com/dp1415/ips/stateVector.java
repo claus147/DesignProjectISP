@@ -22,8 +22,8 @@ public class stateVector {
 
 	// Constructor
 	public stateVector(double[] accelValues, double[] rotateValues,double initialDistanceX, 
-			double initialDistanceY, double initialDistanceZ,double initialAccelX, double initialAccelY, 
-			double initialVelX,double initialVelY,double initialVelZ, double initialAccelZ,long initialTime){
+			double initialDistanceY, double initialDistanceZ,double initialAccelX, double initialAccelY, double initialAccelZ,
+			double initialVelX,double initialVelY,double initialVelZ, long initialTime){
 		
 		this.accelValues = accelValues;
 		this.rotateValues = rotateValues;

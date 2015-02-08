@@ -39,23 +39,116 @@ public class particle {
 	public final double getDistX(){
 		return distX;
 	}
+	
+	public void setDistX(double newDistX){
+		distX = newDistX;
+	}
+	
 	public final double getDistY(){
 		return distY;
 	}
+	
+	public void setDistY(double newDistY){
+		distY = newDistY;
+	}
+	
 	public final double getDistZ(){
 		return distZ;
 	}
+	
+	public void setDistZ(double newDistZ){
+		distZ = newDistZ;
+	}
+	
+	public final double getVelX(){
+		return velX;
+	}
+	
+	public void setVelX(double newVelX){
+		velX = newVelX;
+	}
+	
+	public final double getVelY(){
+		return velY;
+	}
+	
+	public void setVelY(double newVelY){
+		velY = newVelY;
+	}
+	
+	public final double getVelZ(){
+		return velZ;
+	}
+	
+	public void setVelZ(double newVelZ){
+		velZ = newVelZ;
+	}
+	
+	public final double getAccelX(){
+		return accelX;
+	}
+	
+	public void setAccelX(double newAccelX){
+		accelX = newAccelX;
+	}
+	
+
+	public final double getAccelY(){
+		return accelY;
+	}
+	
+	public void setAccelY(double newAccelY){
+		accelY = newAccelY;
+	}
+	
+
+	public final double getAccelZ(){
+		return accelZ;
+	}
+	
+	
+	public void setAccelZ(double newAccelZ){
+		accelZ = newAccelZ;
+	}
+	
 	public final double getQX(){
 		return qX;
 	}
+	
+	public void setQX(double newQX){
+		qX = newQX;
+	}
+	
 	public final double getQY(){
 		return qY;
 	}
+	
+	public void setQY(double newQY){
+		qY = newQY;
+	}
+	
 	public final double getQZ(){
 		return qZ;
 	}
+	
+	public void setQZ(double newQZ){
+		qZ = newQZ;
+	}
+	
 	public final double getQS(){
 		return qS;
+	}
+	
+	public void setQS(double newQS){
+		qS = newQS;
+	}
+	
+	public final long getTime(){
+		return time;
+	}
+	
+	public void setTime(long newTime){
+		time = newTime;
 	}
 
 }
