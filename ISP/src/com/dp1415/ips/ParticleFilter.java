@@ -106,4 +106,19 @@ public class ParticleFilter {
 		}
 		particles = resampled;
 	}
+	
+	/**take a particle as input, compare its measurement model with actual measurements 
+	 * weight accordingly
+	 * 
+	 */
+	public double updateWeight(particle particle){
+		double newWeight = 0;
+		//need to get sensor reading (looking at MainActivity) with MM
+		//need to get the actual probability, need a threshold most likely
+		//give a measurement return prob given mean (real reading) and s.d.
+		//need to fully understand what the normal distribution formula actually shows
+		
+		return newWeight;
+	}
+	
 }
