@@ -2,7 +2,12 @@ package com.dp1415.ips;
 
 import java.util.Random;
 
+import org.apache.commons.math3.distribution.NormalDistribution;
+
 public class ParticleFilter {
+	
+	private stateVector sv = null; //dont want too populate it now, no data to pop with
+	
 	private particle[] particles;
 	private int numOfParticles;
 	//	TO DO:
@@ -107,18 +112,49 @@ public class ParticleFilter {
 		particles = resampled;
 	}
 	
-	/**take a particle as input, compare its measurement model with actual measurements 
-	 * weight accordingly
+	/**Update the StateVector to be the most up to date, take the Accel and Rot values and 
+	 * model them as normal distributions with a given mean (not yet determined)
+	 * 
+	 * iterate through each particle and update the weights accordingly by multiplying the
+	 * prob of the particle compared to the SV (for all the Accel and Rot) and multiplying
+	 * everything together
 	 * 
 	 */
-	public double updateWeight(particle particle){
-		double newWeight = 0;
-		//need to get sensor reading (looking at MainActivity) with MM
-		//need to get the actual probability, need a threshold most likely
-		//give a measurement return prob given mean (real reading) and s.d.
-		//need to fully understand what the normal distribution formula actually shows
+	
+	public void updateWeights(){
+		double [] nextAccelValues = null, nextRotateValues = null; //just so no errors, should be passed in somehow
 		
-		return newWeight;
+		double sdAX = 1, sdAY = 1, sdAZ = 1, sdQX = 1, sdQY = 1, sdQZ = 1,sdQS = 1;//standard deviations
+		
+		sv.update(nextAccelValues, nextRotateValues); //update the values to use
+		
+		//get normal distributions of each measurement
+		NormalDistribution distrAccelX = new NormalDistribution(sv.getAcceleration().getX(),sdAX);
+		NormalDistribution distrAccelY = new NormalDistribution(sv.getAcceleration().getY(),sdAY);
+		NormalDistribution distrAccelZ = new NormalDistribution(sv.getAcceleration().getZ(),sdAZ);
+		NormalDistribution distrQX = new NormalDistribution(sv.getRotationX(),sdQX);
+		NormalDistribution distrQY = new NormalDistribution(sv.getRotationY(),sdQY);
+		NormalDistribution distrQZ = new NormalDistribution(sv.getRotationZ(),sdQZ);
+		NormalDistribution distrQS = new NormalDistribution(sv.getRotationS(),sdQZ);
+		
+		//do actual new weight assignment
+		double newWeight = 0;
+		for (int i = 0; i < particles.length; i++){
+			newWeight = getProbAndMult(distrAccelX, particles[i].getAccelX())*
+					getProbAndMult(distrAccelY, particles[i].getAccelY())*
+					getProbAndMult(distrAccelZ, particles[i].getAccelZ())*
+					getProbAndMult(distrQX, particles[i].getQX())*
+					getProbAndMult(distrQY, particles[i].getQY())*
+					getProbAndMult(distrQZ, particles[i].getQZ())*
+					getProbAndMult(distrQS, particles[i].getQS());
+			particles[i].setWeight(newWeight);
+		}
+	}
+
+	//helper for updateWeights() - to shorten the line basically
+	//this might not be correct... not sure
+	private double getProbAndMult(NormalDistribution distr, double particleItem){
+		return particleItem*(1 - distr.cumulativeProbability(particleItem)); //0.5 is most likely 0 is least likely
 	}
 	
 }
