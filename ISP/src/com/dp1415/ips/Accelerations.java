@@ -43,7 +43,7 @@ public class Accelerations {
 				quaternionMultiplication(rotateValues,new double[]{0,0,1,0}),con_rotate);
 		x_direction = Arrays.copyOf(x_direction, x_direction.length-1);
 		y_direction = Arrays.copyOf(y_direction, y_direction.length-1);
-		y_direction = Arrays.copyOf(z_direction, z_direction.length-1);
+		z_direction = Arrays.copyOf(z_direction, z_direction.length-1);
 		return new Matrix(new double[][]{x_direction,y_direction,z_direction});
 	}
 	
