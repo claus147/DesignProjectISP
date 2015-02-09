@@ -153,7 +153,7 @@ public class ParticleFilter {
 	 */
 	
 	public void updateWeights(){
-		double [] nextAccelValues = null, nextRotateValues = null; //just so no errors, should be passed in somehow
+		float [] nextAccelValues = null, nextRotateValues = null; //just so no errors, should be passed in somehow
 		
 		double sdAX = 1, sdAY = 1, sdAZ = 1, sdQX = 1, sdQY = 1, sdQZ = 1,sdQS = 1;//standard deviations
 		

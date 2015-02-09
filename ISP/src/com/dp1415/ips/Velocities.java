@@ -53,7 +53,7 @@ public class Velocities {
 		return accelStates;
 	}
 	
-	public void update(double[] nextAccelValues, double[] nextRotateValues){
+	public void update(double[] nextAccelValues,double[] nextRotateValues){
 		//update current state accelerations to be next state initial acceleration
 		initialAccelX = accelStates.getX();
 		initialAccelY = accelStates.getY();
