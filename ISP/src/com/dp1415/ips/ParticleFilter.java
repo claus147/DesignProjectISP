@@ -6,8 +6,6 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 
 public class ParticleFilter {
 	
-	private stateVector sv = null; //dont want too populate it now, no data to pop with
-	
 	private particle[] particles;
 	private int numOfParticles;
 	private long timeStamp = (long) 0.1; // 100ms
@@ -143,7 +141,8 @@ public class ParticleFilter {
 		particles = resampled;
 	}
 	
-	/**Update the StateVector to be the most up to date, take the Accel and Rot values and 
+	/**ASSUMES StateVector is the most up to date. 
+	 * Take the Accel and Rot values and 
 	 * model them as normal distributions with a given mean (not yet determined)
 	 * 
 	 * iterate through each particle and update the weights accordingly by multiplying the
@@ -152,13 +151,10 @@ public class ParticleFilter {
 	 * 
 	 */
 	
-	public void updateWeights(){
-		double [] nextAccelValues = null, nextRotateValues = null; //just so no errors, should be passed in somehow
+	public void updateWeights(stateVector sv){
 		
 		double sdAX = 1, sdAY = 1, sdAZ = 1, sdQX = 1, sdQY = 1, sdQZ = 1,sdQS = 1;//standard deviations
-		
-		sv.update(nextAccelValues, nextRotateValues); //update the values to use
-		
+				
 		//get normal distributions of each measurement
 		NormalDistribution distrAccelX = new NormalDistribution(sv.getAcceleration().getX(),sdAX);
 		NormalDistribution distrAccelY = new NormalDistribution(sv.getAcceleration().getY(),sdAY);

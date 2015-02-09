@@ -80,8 +80,17 @@ public class stateVector {
 	}
 	
 	//update all data in state vector
-	public void update(double[] nextAccelValues, double[] nextRotateValues){
-		distanceStates.update(nextAccelValues, nextRotateValues);
+	public void update(float[] nextAccelValues, float[] nextRotateValues){
+		double[] doubleNewAccel = new double[3];
+		doubleNewAccel[0] = Double.parseDouble(new Float(nextAccelValues[0]).toString());
+		doubleNewAccel[1] = Double.parseDouble(new Float(nextAccelValues[1]).toString());
+		doubleNewAccel[2]= Double.parseDouble(new Float(nextAccelValues[2]).toString());
+		double[] doubleNewRotate=new double[3];
+		doubleNewRotate[0]=Double.parseDouble(new Float(nextRotateValues[0]).toString());
+		doubleNewRotate[1]=Double.parseDouble(new Float(nextRotateValues[1]).toString());
+		doubleNewRotate[2]=Double.parseDouble(new Float(nextRotateValues[2]).toString());
+		
+		distanceStates.update(doubleNewAccel, doubleNewRotate);
 	}
 	// return current mode (will add)
 	

@@ -31,7 +31,7 @@ public class MapViewActivity extends ActionBarActivity{
 	
 	private static final String TAG = "MapView";
 	GoogleMap map;
-	boolean isStartMarked = false;
+	private boolean isStartMarked = false;
 	private Button confirmOrientation;
 	private Button redoOrientation;
 	private EditText turnAngle;
@@ -44,7 +44,10 @@ public class MapViewActivity extends ActionBarActivity{
 	private LatLng currentLoc = null;
 	private Marker start = null;
 	//private LatLng start = null;
-    @Override
+	
+	public boolean isAutomatic = false; //using formulas to move things on the map
+    
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
