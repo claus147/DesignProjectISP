@@ -2,8 +2,8 @@ package com.dp1415.ips;
 
 //this class creates a state vector matrix from sensor data and converts to global coordinates 
 public class stateVector {
-	private double accelValues[];
-	private double rotateValues[];
+	private float accelValues[];
+	private float rotateValues[];
 	private double initialDistanceX;
 	private double initialDistanceY;
 	private double initialDistanceZ;
@@ -13,17 +13,16 @@ public class stateVector {
 	private double initialVelX;
 	private double initialVelY;
 	private double initialVelZ;
+
 	private long initialTime;
 	private double testInterval = 0.001; //set timeStamp to 1ms for testing purpose
 	private long timeStamp;
 	private long updatedTime;
-	private Velocities velocityStates;
 	private Distances distanceStates;
-
 	// Constructor
-	public stateVector(double[] accelValues, double[] rotateValues,double initialDistanceX, 
-			double initialDistanceY, double initialDistanceZ,double initialAccelX, double initialAccelY, double initialAccelZ,
-			double initialVelX,double initialVelY,double initialVelZ, long initialTime){
+	public stateVector(float[] accelValues, float[] rotateValues,double initialDistanceX, 
+			double initialDistanceY, double initialDistanceZ,double initialAccelX, double initialAccelY,
+			double initialAccelZ, double initialVelX,double initialVelY,double initialVelZ, long initialTime){
 		
 		this.accelValues = accelValues;
 		this.rotateValues = rotateValues;
@@ -37,12 +36,9 @@ public class stateVector {
 		this.initialVelY = initialVelY;
 		this.initialVelZ = initialVelZ;
 		this.initialTime = initialTime;	
-		distanceStates = new Distances(accelValues, rotateValues, testInterval,
-				initialAccelX, initialAccelY, initialAccelZ,
-				initialDistanceX, initialDistanceY, initialDistanceZ,
-				initialVelX, initialVelY, initialVelZ);
 	}
 	
+
 	//return accelerations
 	public final Accelerations getAcceleration(){
 		return distanceStates.getVelocity().getAcceleration();	
