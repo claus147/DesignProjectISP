@@ -58,6 +58,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private Accelerations initialAccel;
 	private Velocities initialVel;
 	private Distances initialDis;
+	private ParticleFilter particleFilter;
+	private stateVector stateVector;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -218,6 +220,35 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		    if (dataCollection){
 		    	//calls itself every 100ms delay until stop button
 		    	handle.postDelayed(collectionLoop,50);
+		    }
+	    }
+	};
+	
+	
+	public void startParticleFilter(){
+		//create state vector
+		//Rita will fix the problem where state vector constructor does not take float[]
+		//stateVector = new stateVector(accelValues, rotateValues, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, (long) 0);
+		particleFilter.initialize(100, stateVector);
+		particleFilter.propagate(stateVector);
+		//start the particle filter loop
+		handle.post(collector);
+	}
+	
+	
+	//this is for particle filter
+	Runnable collector = new Runnable() {
+	    @Override
+	    public void run(){
+	    	//stateVector.update(accelValues, rotateValues); TODO Rita will fix this, so it takes type float[]
+	    	//particleFilter.updateWeight(); TODO Claus will fix this
+	    	particleFilter.normalizeWeight();
+	    	particleFilter.resample();
+	    	particleFilter.expectation();
+	    	particleFilter.propagate(stateVector);
+		    if (true){
+		    	//calls itself every 50ms delay until stop button
+		    	handle.postDelayed(collector,50);
 		    }
 	    }
 	};
