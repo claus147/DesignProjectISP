@@ -227,8 +227,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	
 	public void startParticleFilter(){
 		//create state vector
-		//Rita will fix the problem where state vector constructor does not take float[]
-		//stateVector = new stateVector(accelValues, rotateValues, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, (long) 0);
+		stateVector = new stateVector(accelValues, rotateValues, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, (long) 0);
 		particleFilter.initialize(100, stateVector);
 		particleFilter.propagate(stateVector);
 		//start the particle filter loop
@@ -240,7 +239,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	Runnable collector = new Runnable() {
 	    @Override
 	    public void run(){
-	    	//stateVector.update(accelValues, rotateValues); TODO Rita will fix this, so it takes type float[]
+	    	stateVector.update(accelValues, rotateValues);
 	    	//particleFilter.updateWeight(); TODO Claus will fix this
 	    	particleFilter.normalizeWeight();
 	    	particleFilter.resample();
