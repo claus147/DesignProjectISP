@@ -151,6 +151,7 @@ public class ParticleFilter {
 	 * 
 	 */
 	
+
 	public void updateWeights(stateVector sv){
 		
 		double sdAX = 1, sdAY = 1, sdAZ = 1, sdQX = 1, sdQY = 1, sdQZ = 1,sdQS = 1;//standard deviations

@@ -239,10 +239,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	Runnable collector = new Runnable() {
 	    @Override
 	    public void run(){
-	    	//stateVector.update(accelValues, rotateValues); TODO Rita will fix this, so it takes type float[]
-	    	//particleFilter.updateWeight(stateVector); TODO Claus will fix this
+
 	    	stateVector.update(accelValues, rotateValues);
-	    	//particleFilter.updateWeight(); TODO Claus will fix this
+	    	//particleFilter.updateWeight(stateVector); TODO Claus will fix this
 	    	particleFilter.normalizeWeight();
 	    	particleFilter.resample();
 	    	particleFilter.expectation();
