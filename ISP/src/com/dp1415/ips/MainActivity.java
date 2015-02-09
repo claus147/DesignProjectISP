@@ -241,7 +241,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    public void run(){
 
 	    	stateVector.update(accelValues, rotateValues);
-	    	//particleFilter.updateWeight(stateVector); TODO Claus will fix this
+	    	particleFilter.updateWeights(stateVector);
 	    	particleFilter.normalizeWeight();
 	    	particleFilter.resample();
 	    	particleFilter.expectation();

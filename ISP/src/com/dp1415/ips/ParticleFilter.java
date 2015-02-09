@@ -182,7 +182,7 @@ public class ParticleFilter {
 	//helper for updateWeights() - to shorten the line basically
 	//this might not be correct... not sure
 	private double getProbAndMult(NormalDistribution distr, double particleItem){
-		return particleItem*(1 - distr.cumulativeProbability(particleItem)); //0.5 is most likely 0 is least likely
+		return (1 - distr.cumulativeProbability(particleItem)); //0.5 is most likely 0 is least likely
 	}
 	
 }
