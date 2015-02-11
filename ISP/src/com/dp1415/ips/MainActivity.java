@@ -10,9 +10,15 @@ import java.io.IOException;
 
 
 
+
+
+
+
 import android.support.v7.app.ActionBarActivity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -30,8 +36,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class MainActivity extends ActionBarActivity implements SensorEventListener{
+public class MainActivity extends ActionBarActivity{
 
 	private TextView gpsLat;
 	private TextView gpsLon;
@@ -61,6 +68,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private ParticleFilter particleFilter;
 	private stateVector stateVector;
 	
+	Intent i;
+	MyReceiver myReceiver=null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -77,11 +87,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		rotateS= (TextView) findViewById(R.id.rotateSData);
 		startCollection = (Button) findViewById(R.id.startCollect);
 		stopCollection = (Button) findViewById(R.id.stopCollect);
-		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-		accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-		rotateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-		sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_FASTEST);
-		sensorManager.registerListener(this, rotateSensor, SensorManager.SENSOR_DELAY_FASTEST);
+
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		
 		
@@ -100,6 +106,14 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	        public void onProviderDisabled(String provider) {}
 	      };
 	    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,locationListener);
+		
+	    //to receive broadcast
+	    i= new Intent(this, com.dp1415.ips.SensorService.class);
+		myReceiver = new MyReceiver();
+        IntentFilter intentFilter = new IntentFilter();      
+        intentFilter.addAction(SensorService.SENSOR_INTENT);
+        startService(i);  
+        registerReceiver(myReceiver, intentFilter);
 	}
 
 	@Override
@@ -144,6 +158,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			try {
 				File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "stateVector.csv");
 				writer = new FileWriter(outFile,false);
+				Toast.makeText(getApplicationContext(), "Data being written to " + outFile.toString(), Toast.LENGTH_SHORT).show();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -174,31 +189,32 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Toast.makeText(getApplicationContext(), "Data write successful", Toast.LENGTH_SHORT).show(); //popup notification
 	}
 	
-	public void onSensorChanged(SensorEvent event) {
-		if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
-			accelValues = event.values;
-		    // Movement
-		    accelX.setText(String.valueOf(accelValues[0]));
-		    accelY.setText(String.valueOf(accelValues[1]));
-		    accelZ.setText(String.valueOf(accelValues[2]));			
-		}
-		if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
-			rotateValues = event.values;
-		    // Movement
-			rotateX.setText(String.valueOf(rotateValues[0]));
-			rotateY.setText(String.valueOf(rotateValues[1]));
-			rotateZ.setText(String.valueOf(rotateValues[2]));	
-			rotateS.setText(String.valueOf(rotateValues[3]));	
-		}
-	}
-	
-	@Override
-	public void onAccuracyChanged(Sensor arg0, int arg1) {
-		// TODO Auto-generated method stub
-		
-	}
+//	public void onSensorChanged(SensorEvent event) {
+//		if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
+//			accelValues = event.values;
+//		    // Movement
+//		    accelX.setText(String.valueOf(accelValues[0]));
+//		    accelY.setText(String.valueOf(accelValues[1]));
+//		    accelZ.setText(String.valueOf(accelValues[2]));			
+//		}
+//		if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+//			rotateValues = event.values;
+//		    // Movement
+//			rotateX.setText(String.valueOf(rotateValues[0]));
+//			rotateY.setText(String.valueOf(rotateValues[1]));
+//			rotateZ.setText(String.valueOf(rotateValues[2]));	
+//			rotateS.setText(String.valueOf(rotateValues[3]));	
+//		}
+//	}
+//	
+//	@Override
+//	public void onAccuracyChanged(Sensor arg0, int arg1) {
+//		// TODO Auto-generated method stub
+//		
+//	}
 	
 	
 	Runnable collectionLoop = new Runnable() {
@@ -252,4 +268,31 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		    }
 	    }
 	};
+	
+	
+	private class MyReceiver extends BroadcastReceiver{
+	    @Override
+	    public void onReceive(Context context, Intent intent){
+	        if (intent.hasExtra(SensorService.ACCEL_VALUES)){
+		    	accelValues = intent.getFloatArrayExtra(SensorService.ACCEL_VALUES);        
+		        accelX.setText(String.valueOf(accelValues[0]));
+			    accelY.setText(String.valueOf(accelValues[1]));
+			    accelZ.setText(String.valueOf(accelValues[2]));
+	        }
+	        if (intent.hasExtra(SensorService.ROTATE_VALUES)){
+		    	rotateValues = intent.getFloatArrayExtra(SensorService.ROTATE_VALUES);        
+		    	rotateX.setText(String.valueOf(rotateValues[0]));
+				rotateY.setText(String.valueOf(rotateValues[1]));
+				rotateZ.setText(String.valueOf(rotateValues[2]));	
+				rotateS.setText(String.valueOf(rotateValues[3]));
+	        }
+	        try {
+				Thread.sleep(0,100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    }
+
+	}   
 }
