@@ -165,24 +165,23 @@ public class ParticleFilter {
 		NormalDistribution distrQZ = new NormalDistribution(sv.getRotationZ(),sdQZ);
 		NormalDistribution distrQS = new NormalDistribution(sv.getRotationS(),sdQZ);
 		
+		//NOT DOING ln(weight) yet 
+		
+		//pdf of measurement at a given estimate is the same as the otherway round. (saving space this way)
 		//do actual new weight assignment
 		double newWeight = 0;
 		for (int i = 0; i < particles.length; i++){
-			newWeight = getProbAndMult(distrAccelX, particles[i].getAccelX())*
-					getProbAndMult(distrAccelY, particles[i].getAccelY())*
-					getProbAndMult(distrAccelZ, particles[i].getAccelZ())*
-					getProbAndMult(distrQX, particles[i].getQX())*
-					getProbAndMult(distrQY, particles[i].getQY())*
-					getProbAndMult(distrQZ, particles[i].getQZ())*
-					getProbAndMult(distrQS, particles[i].getQS());
+			newWeight = particles[i].getWeight()*
+					distrAccelX.density(particles[i].getAccelX())*
+					distrAccelY.density(particles[i].getAccelY())*
+					distrAccelZ.density(particles[i].getAccelZ())*
+					distrQX.density(particles[i].getQX())*
+					distrQY.density(particles[i].getQY())*
+					distrQZ.density(particles[i].getQZ())*
+					distrQS.density(particles[i].getQS());
 			particles[i].setWeight(newWeight);
 		}
 	}
 
-	//helper for updateWeights() - to shorten the line basically
-	//this might not be correct... not sure
-	private double getProbAndMult(NormalDistribution distr, double particleItem){
-		return (1 - distr.cumulativeProbability(particleItem)); //0.5 is most likely 0 is least likely
-	}
 	
 }
