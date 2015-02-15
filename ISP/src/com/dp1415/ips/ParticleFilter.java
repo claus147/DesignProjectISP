@@ -17,6 +17,10 @@ public class ParticleFilter {
 			//Use Random Number Generator to propagate new particle by weight
 			//Calculate expectation to get location
 			//update it on map
+	
+	public ParticleFilter(){
+		
+	}
 
 	public void initialize(int numOfParticles,stateVector states){
 		// initialize particles

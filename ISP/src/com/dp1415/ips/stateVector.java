@@ -92,7 +92,7 @@ public class stateVector {
 		doubleNewAccel[0] = (double)nextAccelValues[0];
 		doubleNewAccel[1] = (double)nextAccelValues[1];
 		doubleNewAccel[2] = (double)nextAccelValues[2];
-		double[] doubleNewRotate=new double[3];
+		double[] doubleNewRotate=new double[4];
 		doubleNewRotate[0] = (double)nextRotateValues[0];
 		doubleNewRotate[1] = (double)nextRotateValues[1];
 		doubleNewRotate[2] = (double)nextRotateValues[2];

@@ -151,8 +151,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			if (writer!=null){
 			try {
 				//writer.write("Time (ms)" +"," + "accelX" +"," + "accelY" + "," + "accelZ" + "," + "rotateX" + "," + "rotateY" + "," + "rotateZ" + "," + "rotateS" + "," + "Latitude" + "," + "Longitude" + "\n" );
-				writer.write("Time (ms)"+ "," + "accelX" +"," + "accelY" + "," + "accelZ"+ "velocityX" +"," + "velocityY" + "," + "velocityZ"
-				+"distanceX" +"," + "distanceY" + "," + "distanceZ"+"QuaX"+"QuaY" +"," + "QuaZ" + "," + "QuaS");
+				writer.write("Time (ms)"+ "," + "accelX" +"," + "accelY" + "," + "accelZ"+ "velocityX" +"," + "velocityY" + "," + "velocityZ"+ "," 
+				+"distanceX" +"," + "distanceY" + "," + "distanceZ"+ "," +"QuaX"+ "," +"QuaY" +"," + "QuaZ" + "," + "QuaS");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -161,6 +161,10 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			}
 		// set initial time and call the recursive loop
 		initialTime = System.nanoTime();
+		stateVector = new stateVector(accelValues, rotateValues, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, (long) 0);
+		particleFilter = new ParticleFilter();
+		particleFilter.initialize(100, stateVector);
+		particleFilter.propagate(stateVector);
 		handle.post(collectionLoop);
 	}
 
@@ -208,10 +212,24 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			try {
 				long timer = System.nanoTime() - initialTime;
 			    double timerInMs = (double)timer / 1000000.0;
+			    stateVector.update(accelValues, rotateValues);
 			    //write all the sensor data
-				writer.write(timerInMs + "," + accelValues[0] + "," + accelValues[1] + "," + accelValues[2] + 
-						"," + rotateValues[0] + "," + rotateValues[1] + "," + rotateValues[2] + 
-						"," + rotateValues[3] + "," + latitude + "," + longitude + "\n");
+				writer.write(
+						timerInMs + "," + 
+						stateVector.getAcceleration().getX() + "," + 
+						stateVector.getAcceleration().getY() + "," + 
+						stateVector.getAcceleration().getZ() + "," + 
+						stateVector.getVelocity().getX() + "," + 
+						stateVector.getVelocity().getY() + "," + 
+						stateVector.getVelocity().getZ() + "," + 
+						stateVector.getDistance().getX() + "," + 
+						stateVector.getDistance().getY() + "," + 
+						stateVector.getDistance().getZ() + "," + 
+						stateVector.getRotationX() + "," + 
+						stateVector.getRotationY() + "," + 
+						stateVector.getRotationZ() + "," + 
+						stateVector.getRotationS() + "," + 
+						"\n");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -227,6 +245,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	
 	public void startParticleFilter(){
 		//create state vector
+		particleFilter = new ParticleFilter();
 		stateVector = new stateVector(accelValues, rotateValues, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, (long) 0);
 		particleFilter.initialize(100, stateVector);
 		particleFilter.propagate(stateVector);
