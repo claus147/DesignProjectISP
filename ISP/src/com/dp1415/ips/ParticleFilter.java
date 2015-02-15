@@ -21,12 +21,40 @@ public class ParticleFilter {
 	public void initialize(int numOfParticles,stateVector states){
 		// initialize particles
 		particles= new particle[numOfParticles];
+		
+		// Normal Distribution, assume standard deviation as 1
+		NormalDistribution distrDistX = new NormalDistribution(states.getDistance().getX(),1);
+		NormalDistribution distrDistY = new NormalDistribution(states.getDistance().getY(),1);
+		NormalDistribution distrDistZ = new NormalDistribution(states.getDistance().getZ(),1);
+		NormalDistribution distrVelX = new NormalDistribution(states.getVelocity().getX(),1);
+		NormalDistribution distrVelY = new NormalDistribution(states.getVelocity().getY(),1);
+		NormalDistribution distrVelZ = new NormalDistribution(states.getVelocity().getZ(),1);
+		NormalDistribution distrAccelX = new NormalDistribution(states.getAcceleration().getX(),1);
+		NormalDistribution distrAccelY = new NormalDistribution(states.getAcceleration().getY(),1);
+		NormalDistribution distrAccelZ = new NormalDistribution(states.getAcceleration().getZ(),1);
+		NormalDistribution distrQX = new NormalDistribution(states.getRotationX(),1);
+		NormalDistribution distrQY = new NormalDistribution(states.getRotationY(),1);
+		NormalDistribution distrQZ = new NormalDistribution(states.getRotationZ(),1);
+		NormalDistribution distrQS = new NormalDistribution(states.getRotationS(),1);
+		
 		// populate all the particles with equal weight and the same initial state.
 		for (int i = 0 ; i < numOfParticles; i++){
-			particles[i] = new particle(states.getDistance().getX(), states.getDistance().getY(), states.getDistance().getZ(),
-					states.getVelocity().getX(), states.getVelocity().getY(), states.getVelocity().getZ(), 
-					states.getAcceleration().getX(),states.getAcceleration().getY(),states.getAcceleration().getZ(),
-					states.getRotationX(), states.getRotationY(), states.getRotationZ(), states.getRotationS(), states.getTime(), 1/numOfParticles);
+			particles[i] = new particle(
+					distrDistX.density(states.getDistance().getX()), 
+					distrDistY.density(states.getDistance().getY()), 
+					distrDistZ.density(states.getDistance().getZ()),
+					distrVelX.density(states.getVelocity().getX()),
+					distrVelY.density(states.getVelocity().getY()), 
+					distrVelZ.density(states.getVelocity().getZ()), 
+					distrAccelX.density(states.getAcceleration().getX()),
+					distrAccelY.density(states.getAcceleration().getY()),
+					distrAccelZ.density(states.getAcceleration().getZ()),
+					distrQX.density(states.getRotationX()), 
+					distrQY.density(states.getRotationY()),
+					distrQZ.density(states.getRotationZ()),
+					distrQS.density(states.getRotationS()), 
+					states.getTime(), 
+					1/numOfParticles);
 		}
 		this.numOfParticles= numOfParticles; 
 	}
@@ -137,6 +165,7 @@ public class ParticleFilter {
 				}
 			}
 			resampled[x] = particles[mid];
+			resampled[x].setWeight(1/numOfParticles); //equalize the weights
 		}
 		particles = resampled;
 	}
