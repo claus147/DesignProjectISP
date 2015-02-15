@@ -40,19 +40,19 @@ public class ParticleFilter {
 		// populate all the particles with equal weight and the same initial state.
 		for (int i = 0 ; i < numOfParticles; i++){
 			particles[i] = new particle(
-					distrDistX.density(states.getDistance().getX()), 
-					distrDistY.density(states.getDistance().getY()), 
-					distrDistZ.density(states.getDistance().getZ()),
-					distrVelX.density(states.getVelocity().getX()),
-					distrVelY.density(states.getVelocity().getY()), 
-					distrVelZ.density(states.getVelocity().getZ()), 
-					distrAccelX.density(states.getAcceleration().getX()),
-					distrAccelY.density(states.getAcceleration().getY()),
-					distrAccelZ.density(states.getAcceleration().getZ()),
-					distrQX.density(states.getRotationX()), 
-					distrQY.density(states.getRotationY()),
-					distrQZ.density(states.getRotationZ()),
-					distrQS.density(states.getRotationS()), 
+					distrDistX.sample(), 
+					distrDistY.sample(), 
+					distrDistZ.sample(),
+					distrVelX.sample(),
+					distrVelY.sample(), 
+					distrVelZ.sample(), 
+					distrAccelX.sample(),
+					distrAccelY.sample(),
+					distrAccelZ.sample(),
+					distrQX.sample(), 
+					distrQY.sample(),
+					distrQZ.sample(),
+					distrQS.sample(), 
 					states.getTime(), 
 					1/numOfParticles);
 		}
@@ -99,7 +99,7 @@ public class ParticleFilter {
 	}
 	
 	public double[] expectation(){
-		double[] location = new double[7];
+		double[] expectation = new double[7];
 		//location is an array that contains information to be updated in gps
 		// index		variables
 		//	0			distX
@@ -110,19 +110,19 @@ public class ParticleFilter {
 		//	5			qZ
 		//	6			qS
 		for(int x = 0; x < 7; x++){
-			location[x] = 0;
+			expectation[x] = 0;
 		}
 		//go through all the particles to calculate the expectation of each component
 		for (int x = 0; x < numOfParticles; x++){
-			location[0] += particles[x].getDistX()*particles[x].getWeight();
-			location[1] += particles[x].getDistY()*particles[x].getWeight();
-			location[2] += particles[x].getDistZ()*particles[x].getWeight();
-			location[3] += particles[x].getQX()*particles[x].getWeight();
-			location[4] += particles[x].getQY()*particles[x].getWeight();
-			location[5] += particles[x].getQZ()*particles[x].getWeight();
-			location[6] += particles[x].getQS()*particles[x].getWeight();
+			expectation[0] += particles[x].getDistX()*particles[x].getWeight();
+			expectation[1] += particles[x].getDistY()*particles[x].getWeight();
+			expectation[2] += particles[x].getDistZ()*particles[x].getWeight();
+			expectation[3] += particles[x].getQX()*particles[x].getWeight();
+			expectation[4] += particles[x].getQY()*particles[x].getWeight();
+			expectation[5] += particles[x].getQZ()*particles[x].getWeight();
+			expectation[6] += particles[x].getQS()*particles[x].getWeight();
 		}
-		return location;
+		return expectation;
 		
 	}
 	
