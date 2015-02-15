@@ -1,8 +1,8 @@
 package com.dp1415.ips;
 //this class creates a state vector matrix from sensor data and converts to global coordinates 
 public class stateVector {
-	private double accelValues[];
-	private double rotateValues[];
+	private double accelValues[] = new double[3];
+	private double rotateValues[] = new double[4];
 	private double initialDistanceX;
 	private double initialDistanceY;
 	private double initialDistanceZ;
