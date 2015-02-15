@@ -151,8 +151,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			if (writer!=null){
 			try {
 				//writer.write("Time (ms)" +"," + "accelX" +"," + "accelY" + "," + "accelZ" + "," + "rotateX" + "," + "rotateY" + "," + "rotateZ" + "," + "rotateS" + "," + "Latitude" + "," + "Longitude" + "\n" );
-				writer.write("Time (ms)"+ "," + "accelX" +"," + "accelY" + "," + "accelZ"+ "velocityX" +"," + "velocityY" + "," + "velocityZ"+ "," 
-				+"distanceX" +"," + "distanceY" + "," + "distanceZ"+ "," +"QuaX"+ "," +"QuaY" +"," + "QuaZ" + "," + "QuaS");
+				writer.write("Time (ms)"+ "," + "accelX" +"," + "accelY" + "," + "accelZ"+"," + "velocityX" +"," + "velocityY" + "," + "velocityZ"+ "," 
+				+"distanceX" +"," + "distanceY" + "," + "distanceZ"+ "," +"QuaX"+ "," +"QuaY" +"," + "QuaZ" + "," + "QuaS" + "," + 
+						"E[DistX]" + "," + "E[DistY]" + "," + "E[DistZ]" + "," + "E[QuaX]" + "," + "E[QuaY]" + "," + "E[QuaZ]" + "," + "E[QuaS]"+ "\n");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -163,7 +164,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		initialTime = System.nanoTime();
 		stateVector = new stateVector(accelValues, rotateValues, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, (long) 0);
 		particleFilter = new ParticleFilter();
-		particleFilter.initialize(100, stateVector);
+		particleFilter.initialize(10, stateVector);
 		particleFilter.propagate(stateVector);
 		handle.post(collectionLoop);
 	}
@@ -208,11 +209,18 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	Runnable collectionLoop = new Runnable() {
 	    @Override
 	    public void run(){
+	    	stateVector.update(accelValues, rotateValues);
+	    	particleFilter.updateWeights(stateVector);
+	    	particleFilter.normalizeWeight();
+	    	particleFilter.resample();
+	    	double[] expectation = particleFilter.expectation();
+	    	particleFilter.propagate(stateVector);
+		    
 		    if(writer !=null){
 			try {
 				long timer = System.nanoTime() - initialTime;
 			    double timerInMs = (double)timer / 1000000.0;
-			    stateVector.update(accelValues, rotateValues);
+
 			    //write all the sensor data
 				writer.write(
 						timerInMs + "," + 
@@ -229,6 +237,13 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 						stateVector.getRotationY() + "," + 
 						stateVector.getRotationZ() + "," + 
 						stateVector.getRotationS() + "," + 
+						expectation[0] + "," + 
+						expectation[1] + "," + 
+						expectation[2] + "," + 
+						expectation[3] + "," + 
+						expectation[4] + "," + 
+						expectation[5] + "," + 
+						expectation[6] + "," + 
 						"\n");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -263,7 +278,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    	particleFilter.updateWeights(stateVector);
 	    	particleFilter.normalizeWeight();
 	    	particleFilter.resample();
-	    	particleFilter.expectation();
+	    	//particleFilter.expectation();
 	    	particleFilter.propagate(stateVector);
 		    if (true){
 		    	//calls itself every 50ms delay until stop button
