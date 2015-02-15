@@ -1,9 +1,8 @@
 package com.dp1415.ips;
-
 //this class creates a state vector matrix from sensor data and converts to global coordinates 
 public class stateVector {
-	private float accelValues[];
-	private float rotateValues[];
+	private double accelValues[];
+	private double rotateValues[];
 	private double initialDistanceX;
 	private double initialDistanceY;
 	private double initialDistanceZ;
@@ -13,19 +12,25 @@ public class stateVector {
 	private double initialVelX;
 	private double initialVelY;
 	private double initialVelZ;
-
 	private long initialTime;
 	private double testInterval = 0.001; //set timeStamp to 1ms for testing purpose
 	private long timeStamp;
 	private long updatedTime;
+	private Velocities velocityStates;
 	private Distances distanceStates;
 	// Constructor
 	public stateVector(float[] accelValues, float[] rotateValues,double initialDistanceX, 
-			double initialDistanceY, double initialDistanceZ,double initialAccelX, double initialAccelY,
-			double initialAccelZ, double initialVelX,double initialVelY,double initialVelZ, long initialTime){
+			double initialDistanceY, double initialDistanceZ,
+			double initialAccelX, double initialAccelY, double initialAccelZ, 
+			double initialVelX,double initialVelY,double initialVelZ,long initialTime){
 		
-		this.accelValues = accelValues;
-		this.rotateValues = rotateValues;
+		this.accelValues[0] = (double)accelValues[0];
+		this.accelValues[1] = (double)accelValues[1];
+		this.accelValues[2] = (double)accelValues[2];
+		this.rotateValues[0] = (double)rotateValues[0];
+		this.rotateValues[1] = (double)rotateValues[1];
+		this.rotateValues[2] = (double)rotateValues[2];
+		this.rotateValues[3] = (double)rotateValues[3];
 		this.initialDistanceX = initialDistanceX;
 		this.initialDistanceY = initialDistanceY;
 		this.initialDistanceZ = initialDistanceZ;
@@ -36,9 +41,12 @@ public class stateVector {
 		this.initialVelY = initialVelY;
 		this.initialVelZ = initialVelZ;
 		this.initialTime = initialTime;	
+		distanceStates = new Distances(this.accelValues, this.rotateValues, testInterval,
+				initialAccelX, initialAccelY, initialAccelZ,
+				initialDistanceX, initialDistanceY, initialDistanceZ,
+				initialVelX, initialVelY, initialVelZ);
 	}
 	
-
 	//return accelerations
 	public final Accelerations getAcceleration(){
 		return distanceStates.getVelocity().getAcceleration();	
@@ -71,7 +79,6 @@ public class stateVector {
 	public final double getRotationS(){
 		return rotateValues[3];
 	}
-
 	//return time since moving
 	public final long getTime(){
 		timeStamp = (long) (testInterval);
@@ -82,16 +89,16 @@ public class stateVector {
 	//update all data in state vector
 	public void update(float[] nextAccelValues, float[] nextRotateValues){
 		double[] doubleNewAccel = new double[3];
-		doubleNewAccel[0] = Double.parseDouble(new Float(nextAccelValues[0]).toString());
-		doubleNewAccel[1] = Double.parseDouble(new Float(nextAccelValues[1]).toString());
-		doubleNewAccel[2]= Double.parseDouble(new Float(nextAccelValues[2]).toString());
+		doubleNewAccel[0] = (double)nextAccelValues[0];
+		doubleNewAccel[1] = (double)nextAccelValues[1];
+		doubleNewAccel[2] = (double)nextAccelValues[2];
 		double[] doubleNewRotate=new double[3];
-		doubleNewRotate[0]=Double.parseDouble(new Float(nextRotateValues[0]).toString());
-		doubleNewRotate[1]=Double.parseDouble(new Float(nextRotateValues[1]).toString());
-		doubleNewRotate[2]=Double.parseDouble(new Float(nextRotateValues[2]).toString());
+		doubleNewRotate[0] = (double)nextRotateValues[0];
+		doubleNewRotate[1] = (double)nextRotateValues[1];
+		doubleNewRotate[2] = (double)nextRotateValues[2];
+		doubleNewRotate[3] = (double)nextRotateValues[3];
 		
 		distanceStates.update(doubleNewAccel, doubleNewRotate);
 	}
-	// return current mode (will add)
 	
 }

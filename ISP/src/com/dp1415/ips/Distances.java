@@ -10,29 +10,13 @@ public class Distances {
 	private double initialVelY;
 	private double initialVelZ;
 	private Velocities velocityStates;
-	private float accelValues[];
-	private float rotateValues[];
-	private double accelInDouble[];
-	private double rotateInDouble[];
-	
-	private void AccelToDouble(){
-		accelInDouble[0] = Double.parseDouble(new Float(accelValues[0]).toString());
-		accelInDouble[1] = Double.parseDouble(new Float(accelValues[1]).toString());
-		accelInDouble[2] = Double.parseDouble(new Float(accelValues[2]).toString());
-	}
-	
-	private void RotateToDouble(){
-		rotateInDouble[0] = Double.parseDouble(new Float(rotateValues[0]).toString());
-		rotateInDouble[1] = Double.parseDouble(new Float(rotateValues[1]).toString());
-		rotateInDouble[2] = Double.parseDouble(new Float(rotateValues[2]).toString());
-	}
 	
 	//constructor
-	public Distances(double[] accelInDouble, double[] rotateInDouble, double timeStamp, double initialAccelX,
+	public Distances(double[] accelValues, double[] rotateValues, double timeStamp, double initialAccelX,
 			double initialAccelY,double initialAccelZ, double initialDistanceX,
 			double initialDistanceY, double initialDistanceZ,double initialVelX, 
 			double initialVelY,double initialVelZ){
-		velocityStates = new Velocities(accelInDouble,rotateInDouble, timeStamp, initialAccelX, 
+		velocityStates = new Velocities(accelValues,rotateValues, timeStamp, initialAccelX, 
 				initialAccelY,initialAccelZ,initialVelX,initialVelY,initialVelZ);
 		this. timeStamp = timeStamp; 
 		this. initialDistanceX = initialDistanceX;
