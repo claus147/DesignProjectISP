@@ -162,7 +162,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			}
 		// set initial time and call the recursive loop
 		initialTime = System.nanoTime();
-		stateVector = new stateVector(accelValues, rotateValues, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, (long) 0);
+		stateVector = new stateVector(accelValues, rotateValues, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
 		particleFilter = new ParticleFilter();
 		particleFilter.initialize(10, stateVector);
 		particleFilter.propagate(stateVector);
@@ -209,7 +209,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	Runnable collectionLoop = new Runnable() {
 	    @Override
 	    public void run(){
-	    	stateVector.update(accelValues, rotateValues);
+	    	stateVector.update(accelValues, rotateValues, System.nanoTime());
 	    	particleFilter.updateWeights(stateVector);
 	    	particleFilter.normalizeWeight();
 	    	particleFilter.resample();
@@ -261,7 +261,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	public void startParticleFilter(){
 		//create state vector
 		particleFilter = new ParticleFilter();
-		stateVector = new stateVector(accelValues, rotateValues, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, (long) 0);
+		stateVector = new stateVector(accelValues, rotateValues, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
 		particleFilter.initialize(100, stateVector);
 		particleFilter.propagate(stateVector);
 		//start the particle filter loop
@@ -274,7 +274,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    @Override
 	    public void run(){
 
-	    	stateVector.update(accelValues, rotateValues);
+	    	stateVector.update(accelValues, rotateValues, System.nanoTime());
 	    	particleFilter.updateWeights(stateVector);
 	    	particleFilter.normalizeWeight();
 	    	particleFilter.resample();
