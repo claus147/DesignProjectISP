@@ -60,6 +60,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private Distances initialDis;
 	private ParticleFilter particleFilter;
 	private stateVector stateVector;
+	private int accelCounter,rotateCounter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +84,10 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_FASTEST);
 		sensorManager.registerListener(this, rotateSensor, SensorManager.SENSOR_DELAY_FASTEST);
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		accelValues = new float[]{0,0,0}; 
+		rotateValues = new float[]{0,0,0,0}; 
+		accelCounter = 0;
+		rotateCounter = 0;
 		
 		
 	    LocationListener locationListener = new LocationListener() {
@@ -161,8 +166,12 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			
 			}
 		// set initial time and call the recursive loop
+		accelValues = new float[]{0,0,0}; 
+		rotateValues = new float[]{0,0,0,0}; 
+		accelCounter = 0;
+		rotateCounter = 0;
 		initialTime = System.nanoTime();
-		stateVector = new stateVector(accelValues, rotateValues, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
+		stateVector = new stateVector(accelAverage(), rotateAverage(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
 		particleFilter = new ParticleFilter();
 		particleFilter.initialize(100, stateVector);
 		particleFilter.propagate(stateVector);
@@ -183,19 +192,22 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
-			accelValues = event.values;
+//			accelValues = event.values;
+			for (int x = 0 ; x < 3; x++){
+				accelValues[x] += event.values[x];
+			}
 		    // Movement
-		    accelX.setText(String.valueOf(accelValues[0]));
-		    accelY.setText(String.valueOf(accelValues[1]));
-		    accelZ.setText(String.valueOf(accelValues[2]));			
+		    	
+		    accelCounter++;
 		}
 		if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
-			rotateValues = event.values;
+//			rotateValues = event.values;
+			for (int x = 0 ; x < 4; x++){
+				rotateValues[x] += event.values[x];
+			}
 		    // Movement
-			rotateX.setText(String.valueOf(rotateValues[0]));
-			rotateY.setText(String.valueOf(rotateValues[1]));
-			rotateZ.setText(String.valueOf(rotateValues[2]));	
-			rotateS.setText(String.valueOf(rotateValues[3]));	
+			
+			rotateCounter++;
 		}
 	}
 	
@@ -205,11 +217,48 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		
 	}
 	
+	public float[] accelAverage(){
+		float[] accel = new float[3]; 
+		for (int x = 0 ; x < 3; x++){
+			if (accelCounter!=0){
+				accel[x] = accelValues[x]/accelCounter;
+				accelValues[x] = 0;
+			}
+			else{
+				accel[x] = 0;
+			}
+		}
+		accelX.setText(String.valueOf(accel[0]));
+	    accelY.setText(String.valueOf(accel[1]));
+	    accelZ.setText(String.valueOf(accel[2]));	
+		accelCounter = 0;
+		return accel;
+	}
+	
+	public float[] rotateAverage(){
+		float[] rotate = new float[4]; 
+		for (int x = 0 ; x < 4; x++){
+			if (rotateCounter!=0){
+				rotate[x] = rotateValues[x]/rotateCounter;
+				rotateValues[x] = 0;
+			}
+			else{
+				rotate[x] = 0;
+			}
+		}
+		rotateX.setText(String.valueOf(rotate[0]));
+		rotateY.setText(String.valueOf(rotate[1]));
+		rotateZ.setText(String.valueOf(rotate[2]));	
+		rotateS.setText(String.valueOf(rotate[3]));	
+		rotateCounter = 0;
+		return rotate;
+	}
+	
 	
 	Runnable collectionLoop = new Runnable() {
 	    @Override
 	    public void run(){
-	    	stateVector.update(accelValues, rotateValues, System.nanoTime());
+	    	stateVector.update(accelAverage(), rotateAverage(), System.nanoTime());
 	    	particleFilter.updateWeights(stateVector);
 	    	particleFilter.normalizeWeight();
 //	    	particleFilter.resample();
@@ -261,7 +310,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	public void startParticleFilter(){
 		//create state vector
 		particleFilter = new ParticleFilter();
-		stateVector = new stateVector(accelValues, rotateValues, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
+		stateVector = new stateVector(accelAverage(), rotateAverage(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
 		particleFilter.initialize(100, stateVector);
 		particleFilter.propagate(stateVector);
 		//start the particle filter loop
@@ -274,7 +323,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    @Override
 	    public void run(){
 
-	    	stateVector.update(accelValues, rotateValues, System.nanoTime());
+	    	stateVector.update(accelAverage(), rotateAverage(), System.nanoTime());
 	    	particleFilter.updateWeights(stateVector);
 	    	particleFilter.normalizeWeight();
 	    	particleFilter.resample();
