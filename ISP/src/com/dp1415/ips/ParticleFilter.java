@@ -24,6 +24,7 @@ public class ParticleFilter {
 
 	public void initialize(int numOfParticles,stateVector states){
 		// initialize particles
+		this.numOfParticles= numOfParticles;
 		particles= new particle[numOfParticles];
 		
 		// Normal Distribution, assume standard deviation as 1
@@ -58,9 +59,8 @@ public class ParticleFilter {
 					distrQZ.sample(),
 					distrQS.sample(), 
 					states.getTime(), 
-					1/numOfParticles);
+					1.0/numOfParticles);
 		}
-		this.numOfParticles= numOfParticles; 
 	}
 	
 	public void propagate(stateVector states){
@@ -134,7 +134,10 @@ public class ParticleFilter {
 	public void resample(){
 		//create a new set of particles
 		particle[] resampled = new particle[numOfParticles];
-
+		for (int i = 0 ; i < numOfParticles; i++){
+			resampled[i] = new particle(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,(long)0.0,0.0);
+		}
+		
 		//construct CDF
 		double[] cdf = new double[numOfParticles];
 		for (int i=0;i<numOfParticles;i++){
@@ -150,6 +153,15 @@ public class ParticleFilter {
 		// create random number generator
 		Random randomGenerator = new Random();
 
+//		for (int x=0;x<numOfParticles;x++){
+//			double random=randomGenerator.nextDouble();//this generates a number between 0 and 1
+//			for (int y=0 ; y<numOfParticles; y++){
+//				if (random<cdf[y]){
+//					resampled[x] = particles[y];
+//				}
+//			}
+//			resampled[x].setWeight(1.0/numOfParticles); //equalize the weights
+//		}
 		for (int x=0;x<numOfParticles;x++){
 			double random=randomGenerator.nextDouble();//this generates a number between 0 and 1
 			int low = 0;
@@ -168,10 +180,42 @@ public class ParticleFilter {
 					break;
 				}
 			}
-			resampled[x] = particles[mid];
-			resampled[x].setWeight(1/numOfParticles); //equalize the weights
+			resampled[x].setAccelX(particles[mid].getAccelX());
+			resampled[x].setAccelY(particles[mid].getAccelY());
+			resampled[x].setAccelZ(particles[mid].getAccelZ());
+			resampled[x].setVelX(particles[mid].getVelX());
+			resampled[x].setVelY(particles[mid].getVelY());
+			resampled[x].setVelZ(particles[mid].getVelZ());
+			resampled[x].setDistX(particles[mid].getDistX());
+			resampled[x].setDistY(particles[mid].getDistY());
+			resampled[x].setDistZ(particles[mid].getDistZ());
+			resampled[x].setQX(particles[mid].getQX());
+			resampled[x].setQY(particles[mid].getQY());
+			resampled[x].setQZ(particles[mid].getQZ());
+			resampled[x].setQS(particles[mid].getQS());
+			resampled[x].setTime(particles[mid].getTime());
+//			resampled[x]=particles[mid];
+//			resampled[x].setWeight(1.0/numOfParticles); //equalize the weights
 		}
-		particles = resampled;
+//		this.particles = resampled;
+		for (int x=0;x<numOfParticles;x++){
+			particles[x].setAccelX(resampled[x].getAccelX());
+			particles[x].setAccelY(resampled[x].getAccelY());
+			particles[x].setAccelZ(resampled[x].getAccelZ());
+			particles[x].setVelX(resampled[x].getVelX());
+			particles[x].setVelY(resampled[x].getVelY());
+			particles[x].setVelZ(resampled[x].getVelZ());
+			particles[x].setDistX(resampled[x].getDistX());
+			particles[x].setDistY(resampled[x].getDistY());
+			particles[x].setDistZ(resampled[x].getDistZ());
+			particles[x].setQX(resampled[x].getQX());
+			particles[x].setQY(resampled[x].getQY());
+			particles[x].setQZ(resampled[x].getQZ());
+			particles[x].setQS(resampled[x].getQS());
+			particles[x].setTime(resampled[x].getTime());
+			particles[x].setWeight(1.0/numOfParticles);
+		}
+		resampled=null;
 	}
 	
 	/**ASSUMES StateVector is the most up to date. 

@@ -53,14 +53,15 @@ public class Distances {
 		return velocityStates;
 	}
 	
-	public void update(double[] nextAccelValues, double[] nextRotateValues){
+	public void update(double[] nextAccelValues, double[] nextRotateValues, double timeStamp){
 		//update the current state velocity to be next state initial velocity
+		this.timeStamp = timeStamp;
 		initialVelX = velocityStates.getX();
 		initialVelY = velocityStates.getY();
 		initialVelZ = velocityStates.getZ();
 		
 		//update the velocity with current data from sensors
-		velocityStates.update(nextAccelValues, nextRotateValues);
+		velocityStates.update(nextAccelValues, nextRotateValues, timeStamp);
 		
 		//update the current state distance to be next state initial distance
 		initialDistanceX = distances[0];

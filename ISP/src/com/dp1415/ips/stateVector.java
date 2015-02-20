@@ -13,7 +13,7 @@ public class stateVector {
 	private double initialVelY;
 	private double initialVelZ;
 	private long initialTime;
-	private double testInterval = 0.001; //set timeStamp to 1ms for testing purpose
+	private double testInterval = 0.07; // was 0.001, set timeStamp to 1ms for testing purpose
 	private long timeStamp;
 	private long updatedTime;
 	private Velocities velocityStates;
@@ -79,15 +79,14 @@ public class stateVector {
 	public final double getRotationS(){
 		return rotateValues[3];
 	}
-	//return time since moving
 	public final long getTime(){
-		timeStamp = (long) (testInterval);
-		updatedTime = initialTime + timeStamp; 
-		return updatedTime;
+		return (long) initialTime;
 	}
 	
 	//update all data in state vector
-	public void update(float[] nextAccelValues, float[] nextRotateValues){
+	public void update(float[] nextAccelValues, float[] nextRotateValues, long currentTime){
+		timeStamp = (currentTime - initialTime)/1000000000;
+		initialTime = currentTime;
 		double[] doubleNewAccel = new double[3];
 		doubleNewAccel[0] = (double)nextAccelValues[0];
 		doubleNewAccel[1] = (double)nextAccelValues[1];
@@ -98,7 +97,7 @@ public class stateVector {
 		doubleNewRotate[2] = (double)nextRotateValues[2];
 		doubleNewRotate[3] = (double)nextRotateValues[3];
 		
-		distanceStates.update(doubleNewAccel, doubleNewRotate);
+		distanceStates.update(doubleNewAccel, doubleNewRotate, timeStamp);
 	}
 	
 }
