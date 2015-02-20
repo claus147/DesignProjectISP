@@ -12,16 +12,10 @@ public class stateVector {
 	private double initialVelX;
 	private double initialVelY;
 	private double initialVelZ;
-<<<<<<< HEAD
-	private long initialTime;
-	private double testInterval = 0.07; // was 0.001, set timeStamp to 1ms for testing purpose
-	private long timeStamp;
 	private long updatedTime;
-=======
 	private double initialTime;
 	private double initialInterval = 0;
 	private double timeStamp;
->>>>>>> 74ff4bbabd00936e4ebaf40cef06f895af843c72
 	private Velocities velocityStates;
 	private Distances distanceStates;
 	// Constructor
