@@ -164,7 +164,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		initialTime = System.nanoTime();
 		stateVector = new stateVector(accelValues, rotateValues, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
 		particleFilter = new ParticleFilter();
-		particleFilter.initialize(10, stateVector);
+		particleFilter.initialize(100, stateVector);
 		particleFilter.propagate(stateVector);
 		handle.post(collectionLoop);
 	}
@@ -212,7 +212,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    	stateVector.update(accelValues, rotateValues, System.nanoTime());
 	    	particleFilter.updateWeights(stateVector);
 	    	particleFilter.normalizeWeight();
-	    	particleFilter.resample();
+//	    	particleFilter.resample();
 	    	double[] expectation = particleFilter.expectation();
 	    	particleFilter.propagate(stateVector);
 		    
