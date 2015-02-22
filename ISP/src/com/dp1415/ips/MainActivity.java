@@ -107,6 +107,17 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	        public void onProviderDisabled(String provider) {}
 	      };
 	    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,locationListener);
+<<<<<<< HEAD
+=======
+		
+	    //to receive broadcast
+	    i= new Intent(this, com.dp1415.ips.SensorService.class);
+//		myReceiver = new MyReceiver();
+//        IntentFilter intentFilter = new IntentFilter();      
+//        intentFilter.addAction(SensorService.SENSOR_INTENT);
+//        startService(i);  
+//        registerReceiver(myReceiver, intentFilter);
+>>>>>>> service working i think
 	}
 
 	@Override
@@ -339,4 +350,71 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		    }
 	    }
 	};
+<<<<<<< HEAD
+=======
+	
+	
+	private class MyReceiver extends BroadcastReceiver{
+	    @Override
+	    public void onReceive(Context context, Intent intent){
+	        if (intent.hasExtra(SensorService.ACCEL_VALUES)){
+		    	accelValues = intent.getFloatArrayExtra(SensorService.ACCEL_VALUES);        
+		        accelX.setText(String.valueOf(accelValues[0]));
+			    accelY.setText(String.valueOf(accelValues[1]));
+			    accelZ.setText(String.valueOf(accelValues[2]));
+	        }
+	        if (intent.hasExtra(SensorService.ROTATE_VALUES)){
+		    	rotateValues = intent.getFloatArrayExtra(SensorService.ROTATE_VALUES);        
+		    	rotateX.setText(String.valueOf(rotateValues[0]));
+				rotateY.setText(String.valueOf(rotateValues[1]));
+				rotateZ.setText(String.valueOf(rotateValues[2]));	
+				rotateS.setText(String.valueOf(rotateValues[3]));
+	        }
+	        try {
+				Thread.sleep(0,100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    }
+
+	} 
+	
+	@Override 
+	public void onResume(){
+	    super.onResume();
+	    Log.e( "MA", "onResume/registering receiver" );  
+	    //Register BroadcastReceiver to receive accelerometer data from service
+	    //if (myReceiver == null){
+	        myReceiver = new MyReceiver();
+	        IntentFilter intentFilter = new IntentFilter();      
+	        intentFilter.addAction(SensorService.SENSOR_INTENT);	        
+	        startService(i);  
+	        registerReceiver(myReceiver, intentFilter);
+	    //}     
+	}
+
+	@Override 
+	public void onPause(){
+	    super.onPause();
+	    Log.e( "MA", "onPause/unregistering receiver" ); 
+	    stopService(i);
+
+	    if (myReceiver != null){
+	    	unregisterReceiver(myReceiver);
+	    	myReceiver = null;
+	    }      
+	}
+
+	@Override
+	protected void onStop(){
+	    super.onStop();
+	    Log.e( "MA", "onStop" );
+	    stopService(i);
+	    if (myReceiver != null) {
+	    	unregisterReceiver (myReceiver);
+	    }
+	    
+	}
+>>>>>>> service working i think
 }
