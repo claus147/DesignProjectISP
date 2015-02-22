@@ -109,11 +109,11 @@ public class MainActivity extends ActionBarActivity{
 		
 	    //to receive broadcast
 	    i= new Intent(this, com.dp1415.ips.SensorService.class);
-		myReceiver = new MyReceiver();
-        IntentFilter intentFilter = new IntentFilter();      
-        intentFilter.addAction(SensorService.SENSOR_INTENT);
-        startService(i);  
-        registerReceiver(myReceiver, intentFilter);
+//		myReceiver = new MyReceiver();
+//        IntentFilter intentFilter = new IntentFilter();      
+//        intentFilter.addAction(SensorService.SENSOR_INTENT);
+//        startService(i);  
+//        registerReceiver(myReceiver, intentFilter);
 	}
 
 	@Override
@@ -294,5 +294,42 @@ public class MainActivity extends ActionBarActivity{
 			}
 	    }
 
-	}   
+	} 
+	
+	@Override 
+	public void onResume(){
+	    super.onResume();
+	    Log.e( "MA", "onResume/registering receiver" );  
+	    //Register BroadcastReceiver to receive accelerometer data from service
+	    //if (myReceiver == null){
+	        myReceiver = new MyReceiver();
+	        IntentFilter intentFilter = new IntentFilter();      
+	        intentFilter.addAction(SensorService.SENSOR_INTENT);	        
+	        startService(i);  
+	        registerReceiver(myReceiver, intentFilter);
+	    //}     
+	}
+
+	@Override 
+	public void onPause(){
+	    super.onPause();
+	    Log.e( "MA", "onPause/unregistering receiver" ); 
+	    stopService(i);
+
+	    if (myReceiver != null){
+	    	unregisterReceiver(myReceiver);
+	    	myReceiver = null;
+	    }      
+	}
+
+	@Override
+	protected void onStop(){
+	    super.onStop();
+	    Log.e( "MA", "onStop" );
+	    stopService(i);
+	    if (myReceiver != null) {
+	    	unregisterReceiver (myReceiver);
+	    }
+	    
+	}
 }

@@ -1,6 +1,7 @@
 package com.dp1415.ips;
 
 import android.app.IntentService;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -11,6 +12,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 
 
 /*
@@ -54,7 +57,15 @@ public class SensorService extends IntentService implements SensorEventListener{
 		rotateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 		sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_FASTEST);
 		sensorManager.registerListener(this, rotateSensor, SensorManager.SENSOR_DELAY_FASTEST);		
+		while(true);
 	}
+	@Override
+	   public void onDestroy() {
+	        Log.e( "SS", "onDestroy" );
+	        sensorManager.unregisterListener(this);       
+	        super.onDestroy();
+	   }
+
 	
 	@Override
 	public void onSensorChanged(SensorEvent event) {
@@ -74,6 +85,7 @@ public class SensorService extends IntentService implements SensorEventListener{
 		// TODO Auto-generated method stub
 		
 	}
+
 
 
 }
