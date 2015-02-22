@@ -3,6 +3,7 @@ package com.dp1415.ips;
 import java.util.Random;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
+import com.dp1415.ips.DynamicModel.Mode;
 
 public class ParticleFilter {
 	
@@ -59,7 +60,8 @@ public class ParticleFilter {
 					distrQZ.sample(),
 					distrQS.sample(), 
 					states.getTime(), 
-					1.0/numOfParticles);
+					1.0/numOfParticles,
+					Mode.STILL);
 		}
 	}
 	
@@ -135,7 +137,7 @@ public class ParticleFilter {
 		//create a new set of particles
 		particle[] resampled = new particle[numOfParticles];
 		for (int i = 0 ; i < numOfParticles; i++){
-			resampled[i] = new particle(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,(long)0.0,0.0);
+			resampled[i] = new particle(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,(long)0.0,0.0, Mode.STILL);
 		}
 		
 		//construct CDF

@@ -1,15 +1,18 @@
 package com.dp1415.ips;
 
+import com.dp1415.ips.DynamicModel.Mode;
+
 public class particle {
 
 	private double distX,distY,distZ,velX,velY,velZ,accelX,accelY,accelZ,qX,qY,qZ,qS,weight;
 	private long time;
+	private Mode mode;
 	
 	public particle(double distX, 
 			double distY, double distZ, double velX,double velY,
 			double velZ, double accelX, double accelY, double accelZ,
 			double qX, double qY, double qZ, double qS,
-			long time, double weight){
+			long time, double weight, Mode mode){
 
 		this.distX = distX;
 		this.distY = distY;
@@ -26,6 +29,10 @@ public class particle {
 		this.qS = qS;
 		this.time = time;	
 		this.weight = weight;
+		this.mode = mode;
+		
+	}
+	public particle(){
 		
 	}
 	
@@ -146,6 +153,14 @@ public class particle {
 	
 	public void setTime(long newTime){
 		time = newTime;
+	}
+	
+	public Mode getMode(){
+		return this.mode;
+	}
+	
+	public void setMode(Mode mode){
+		this.mode = mode;
 	}
 
 }
