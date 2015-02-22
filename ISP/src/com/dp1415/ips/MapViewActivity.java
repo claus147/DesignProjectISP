@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MapViewActivity extends ActionBarActivity{
 	
@@ -171,6 +172,8 @@ public class MapViewActivity extends ActionBarActivity{
 		
     	currentLoc = newLoc;
     	//currentLoc = new LatLng(currentLoc.latitude,currentLoc.longitude);
+    	Toast.makeText(this, Float.toString(map.getCameraPosition().bearing), Toast.LENGTH_SHORT).show();
+
     	
 	}
     //VERY GOOD RESOURCE http://stackoverflow.com/questions/14320015/android-maps-auto-rotate
@@ -179,6 +182,8 @@ public class MapViewActivity extends ActionBarActivity{
     	CameraPosition curPos = map.getCameraPosition();
     	CameraPosition newPos = CameraPosition.builder(curPos).bearing(curPos.bearing + Float.parseFloat(turnAngle.getText().toString())).build();
     	map.moveCamera(CameraUpdateFactory.newCameraPosition(newPos));
+    	
+    	Toast.makeText(this, Float.toString(map.getCameraPosition().bearing), Toast.LENGTH_SHORT).show();
 	}
     
     //http://stackoverflow.com/questions/2839533/adding-distance-to-a-gps-coordinate
@@ -189,8 +194,8 @@ public class MapViewActivity extends ActionBarActivity{
 //    	double newLat = currentLoc.latitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137);//6378137 earths radius at equator
 //    	double newLng = currentLoc.longitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137);///Math.cos(Math.PI/180.0*currentLoc.longitude);
     	
-    	double newLat = currentLoc.latitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137)*Math.cos(Math.toRadians(bearing));//6378137 earths radius at equator
-    	double newLng = currentLoc.longitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137)*Math.sin(Math.toRadians(bearing));///Math.cos(Math.PI/180.0*currentLoc.longitude);
+    	double newLat = currentLoc.latitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137.0)*Math.cos(Math.toRadians(bearing));//6378137 earths radius at equator
+    	double newLng = currentLoc.longitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137.0)*Math.sin(Math.toRadians(bearing));///Math.cos(Math.PI/180.0*currentLoc.longitude);
     	
     	LatLng newLoc = new LatLng(newLat,newLng);
     	if (line != null)
@@ -232,5 +237,31 @@ public class MapViewActivity extends ActionBarActivity{
 	            return super.onOptionsItemSelected(item);
 	    }
 	}
+    
+    //want to make a method that takes the "expectation" method and uses it to update distance and heading
+    //to get bearing need to convert quaternion to euler and take the yaw (rotate abt z)
+    
+    private void updateLocation(){
+    	CameraPosition curPos = map.getCameraPosition();
+    	double[] expectation = null;
+    	double distX = 0; //these values will change when linked to other service properly
+    	double distY = 0;
+    	//expectation = expectation();
+    	//distX = expectation[0]; //the x value
+    	//distY = expectation[1]; //the y value
+    	float bearing = 0; //currently any update will not reflect on camera
+    	double newLat = currentLoc.latitude + (180.0/Math.PI)*(distY/6378137);//6378137 earths radius at equator
+    	double newLng = currentLoc.longitude + (180.0/Math.PI)*(distX/6378137);
+    	LatLng newLoc = new LatLng(newLat,newLng);
+    	if (line != null)
+    		line.remove(); // get rid of old line
+    	route.add(newLoc);
+		line = map.addPolyline(route);//adding the polyline
+		
+		CameraPosition newPos = CameraPosition.builder(curPos).target(newLoc).build();	//move camera
+    	map.moveCamera(CameraUpdateFactory.newCameraPosition(newPos));
+		
+    	currentLoc = newLoc;
+    }
     
 }
