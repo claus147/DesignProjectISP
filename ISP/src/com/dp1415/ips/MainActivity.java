@@ -49,7 +49,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends ActionBarActivity implements SensorEventListener{
+public class MainActivity extends ActionBarActivity{
 
 	private TextView gpsLat;
 	private TextView gpsLon;
@@ -62,12 +62,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private TextView rotateS;
 	private Button startCollection;
 	private Button stopCollection;
-	private SensorManager sensorManager;
-	private Sensor accelSensor;
-	private Sensor rotateSensor;
 	private FileWriter writer;
-	private float[] accelValues;
-	private float[] rotateValues;
+	private float[] accelValues = new float[]{0,0,0};
+	private float[] rotateValues = new float[]{0,0,0,0}; 
 	private double latitude;
 	private double longitude;
 	private long initialTime;
@@ -99,14 +96,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		rotateS= (TextView) findViewById(R.id.rotateSData);
 		startCollection = (Button) findViewById(R.id.startCollect);
 		stopCollection = (Button) findViewById(R.id.stopCollect);
-		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-		accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-		rotateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-		sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_FASTEST);
-		sensorManager.registerListener(this, rotateSensor, SensorManager.SENSOR_DELAY_FASTEST);
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-		accelValues = new float[]{0,0,0}; 
-		rotateValues = new float[]{0,0,0,0}; 
+//		accelValues = new float[]{0,0,0}; 
+//		rotateValues = new float[]{0,0,0,0}; 
 		accelCounter = 0;
 		rotateCounter = 0;
 		
@@ -198,16 +190,14 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			
 			}
 		// set initial time and call the recursive loop
-		accelValues = new float[]{0,0,0}; 
-		rotateValues = new float[]{0,0,0,0}; 
-		accelCounter = 0;
-		rotateCounter = 0;
-		initialTime = System.nanoTime();
-		stateVector = new stateVector(accelAverage(), rotateAverage(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
-		particleFilter = new ParticleFilter();
-		particleFilter.initialize(100, stateVector);
-		particleFilter.propagate();
-		handle.post(collectionLoop);
+//		accelCounter = 0;
+//		rotateCounter = 0;
+//		initialTime = System.nanoTime();
+//		stateVector = new stateVector(accelAverage(), rotateAverage(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
+//		particleFilter = new ParticleFilter();
+//		particleFilter.initialize(100, stateVector);
+//		particleFilter.propagate();
+//		handle.post(collectionLoop);
 	}
 
 	public void onStopClick(View view) {
@@ -221,33 +211,6 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			e.printStackTrace();
 		}
 		Toast.makeText(getApplicationContext(), "Data write successful", Toast.LENGTH_SHORT).show(); //popup notification
-	}
-	
-	public void onSensorChanged(SensorEvent event) {
-		if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
-//			accelValues = event.values;
-			for (int x = 0 ; x < 3; x++){
-				accelValues[x] += event.values[x];
-			}
-		    // Movement
-		    	
-		    accelCounter++;
-		}
-		if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
-//			rotateValues = event.values;
-			for (int x = 0 ; x < 4; x++){
-				rotateValues[x] += event.values[x];
-			}
-		    // Movement
-			
-			rotateCounter++;
-		}
-	}
-	
-	@Override
-	public void onAccuracyChanged(Sensor arg0, int arg1) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	public float[] accelAverage(){
@@ -376,26 +339,45 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    public void onReceive(Context context, Intent intent){
 	        if (intent.hasExtra(SensorService.ACCEL_VALUES)){
 		    	accelValues = intent.getFloatArrayExtra(SensorService.ACCEL_VALUES);        
-		        accelX.setText(String.valueOf(accelValues[0]));
-			    accelY.setText(String.valueOf(accelValues[1]));
-			    accelZ.setText(String.valueOf(accelValues[2]));
+//		        accelX.setText(String.valueOf(accelValues[0]));
+//			    accelY.setText(String.valueOf(accelValues[1]));
+//			    accelZ.setText(String.valueOf(accelValues[2]));
 	        }
 	        if (intent.hasExtra(SensorService.ROTATE_VALUES)){
 		    	rotateValues = intent.getFloatArrayExtra(SensorService.ROTATE_VALUES);        
-		    	rotateX.setText(String.valueOf(rotateValues[0]));
-				rotateY.setText(String.valueOf(rotateValues[1]));
-				rotateZ.setText(String.valueOf(rotateValues[2]));	
-				rotateS.setText(String.valueOf(rotateValues[3]));
+//		    	rotateX.setText(String.valueOf(rotateValues[0]));
+//				rotateY.setText(String.valueOf(rotateValues[1]));
+//				rotateZ.setText(String.valueOf(rotateValues[2]));	
+//				rotateS.setText(String.valueOf(rotateValues[3]));
 	        }
-	        try {
-				Thread.sleep(0,100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//	        try {
+//				Thread.sleep(0,100);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 	    }
 
 	} 
+	
+	//added to make the data display more smoothly
+	Runnable dataDisplay = new Runnable() {
+	    @Override
+	    public void run(){
+
+	    	accelX.setText(String.valueOf(accelValues[0]));
+			accelY.setText(String.valueOf(accelValues[1]));
+			accelZ.setText(String.valueOf(accelValues[2]));
+			rotateX.setText(String.valueOf(rotateValues[0]));
+			rotateY.setText(String.valueOf(rotateValues[1]));
+			rotateZ.setText(String.valueOf(rotateValues[2]));	
+			rotateS.setText(String.valueOf(rotateValues[3]));
+		    if (true){
+		    	//calls itself every 50ms delay until stop button
+		    	handle.postDelayed(dataDisplay,50);
+		    }
+	    }
+	};
 	
 	@Override 
 	public void onResume(){
@@ -408,7 +390,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
         if (!isMyServiceRunning(SensorService.class)){
         	startService(i); 
         }
-        registerReceiver(myReceiver, intentFilter);   
+        registerReceiver(myReceiver, intentFilter); 
+        handle.post(dataDisplay);  
 	}
 
 	@Override 
@@ -420,7 +403,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    if (myReceiver != null){
 	    	unregisterReceiver(myReceiver);
 	    	myReceiver = null;
-	    }      
+	    }  
+	    handle.removeCallbacks(dataDisplay);
 	}
 
 	@Override
@@ -430,7 +414,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    //stopService(i);
 	    if (myReceiver != null) {
 	    	unregisterReceiver (myReceiver);
+	    	myReceiver = null;
 	    }
+	    handle.removeCallbacks(dataDisplay);
 	    
 	}
 	

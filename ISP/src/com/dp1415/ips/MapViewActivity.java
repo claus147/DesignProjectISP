@@ -51,6 +51,8 @@ public class MapViewActivity extends ActionBarActivity{
 	private Marker start = null;
 	//private LatLng start = null;
 	
+	private double [] expectation = null;
+	
 	public boolean isAutomatic = false; //using formulas to move things on the map
 	
 	Intent i;
@@ -256,11 +258,8 @@ public class MapViewActivity extends ActionBarActivity{
     private void updateLocation(){
     	CameraPosition curPos = map.getCameraPosition();
     	double[] expectation = null;
-    	double distX = 0; //these values will change when linked to other service properly
-    	double distY = 0;
-    	//expectation = expectation();
-    	//distX = expectation[0]; //the x value
-    	//distY = expectation[1]; //the y value
+    	double distX = expectation[0]; //these values will change when linked to other service properly
+    	double distY = expectation[1];
     	float bearing = 0; //currently any update will not reflect on camera
     	double newLat = currentLoc.latitude + (180.0/Math.PI)*(distY/6378137);//6378137 earths radius at equator
     	double newLng = currentLoc.longitude + (180.0/Math.PI)*(distX/6378137);
@@ -289,8 +288,9 @@ public class MapViewActivity extends ActionBarActivity{
     private class MyReceiver extends BroadcastReceiver{
 	    @Override
 	    public void onReceive(Context context, Intent intent){
-	        if (intent.hasExtra(SensorService.ACCEL_VALUES)){
-	        	
+	        if (intent.hasExtra(SensorService.EXPECTATION)){
+	        	expectation = intent.getDoubleArrayExtra(SensorService.EXPECTATION);
+	        	Log.e( "Map", "recieving EXPECTATION" );  
 	        }
 
 	    }
@@ -307,6 +307,7 @@ public class MapViewActivity extends ActionBarActivity{
         intentFilter.addAction(SensorService.SENSOR_INTENT);
         //bindService(i, null, 0);
         if (!isMyServiceRunning(SensorService.class)){
+        	Log.e( "Map", "starting service" );  
         	startService(i); 
         }
         registerReceiver(myReceiver, intentFilter);   
