@@ -10,6 +10,7 @@ import java.io.IOException;
 
 
 
+
 import android.support.v7.app.ActionBarActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -30,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements SensorEventListener{
 
@@ -149,6 +151,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			try {
 				File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "stateVector.csv");
 				writer = new FileWriter(outFile,false);
+				Toast.makeText(getApplicationContext(), "Data being written to " + outFile.toString(), Toast.LENGTH_SHORT).show();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -188,6 +191,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Toast.makeText(getApplicationContext(), "Data write successful", Toast.LENGTH_SHORT).show(); //popup notification
 	}
 	
 	public void onSensorChanged(SensorEvent event) {
