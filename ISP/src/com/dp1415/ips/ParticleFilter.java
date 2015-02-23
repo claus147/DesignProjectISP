@@ -9,7 +9,7 @@ public class ParticleFilter {
 	
 	private particle[] particles;
 	private int numOfParticles;
-	private long timeStamp = (long) 0.1; // 100ms
+	private double timeInterval = 0.05; // particle filter is called every 50ms  
 	//	TO DO:
 			//Determine mode
 			//Implement dynamic models to get the next state
@@ -65,34 +65,8 @@ public class ParticleFilter {
 		}
 	}
 	
-	public void propagate(stateVector states){
-		//for constant speed, acceleration = 0
+	public void propagate(){
 		
-		for (int i = 0; i<numOfParticles; i++){
-			double speedX = particles[i].getVelX();
-			double speedY = particles[i].getVelY();
-			double speedZ = particles[i].getVelZ();
-			double initDistX = particles[i].getDistX();
-			double initDistY = particles[i].getDistY();
-			double initDistZ = particles[i].getDistZ();
-			double newDistX = initDistX + speedX*timeStamp;
-			double newDistY = initDistY + speedY*timeStamp;
-			double newDistZ = initDistZ + speedZ*timeStamp;
-			long newTime = particles[i].getTime()+timeStamp;
-			
-			Random randomGenerator = new Random();
-			double standardDev = 0.05; // standard Deviation = 0.05
-			double noise = standardDev * randomGenerator.nextGaussian();
-			
-			particles[i].setDistX(newDistX+noise);
-			particles[i].setDistY(newDistY+noise);
-			particles[i].setDistZ(newDistZ+noise);
-			particles[i].setAccelX(0);
-			particles[i].setAccelY(0);
-			particles[i].setAccelZ(0);
-			particles[i].setTime(newTime);
-			
-		}
 	}
 	public void normalizeWeight(){
 		double totalWeight = 0;

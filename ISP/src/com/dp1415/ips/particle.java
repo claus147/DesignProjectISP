@@ -4,15 +4,15 @@ import com.dp1415.ips.DynamicModel.Mode;
 
 public class particle {
 
-	private double distX,distY,distZ,velX,velY,velZ,accelX,accelY,accelZ,qX,qY,qZ,qS,weight;
-	private long time;
+	private double distX,distY,distZ,velX,velY,velZ,accelX,accelY,accelZ,qX,qY,qZ,qS,weight, time;
+
 	private Mode mode;
 	
 	public particle(double distX, 
 			double distY, double distZ, double velX,double velY,
 			double velZ, double accelX, double accelY, double accelZ,
 			double qX, double qY, double qZ, double qS,
-			long time, double weight, Mode mode){
+			double time, double weight, Mode mode){
 
 		this.distX = distX;
 		this.distY = distY;
@@ -147,11 +147,11 @@ public class particle {
 		qS = newQS;
 	}
 	
-	public final long getTime(){
+	public final double getTime(){
 		return time;
 	}
 	
-	public void setTime(long newTime){
+	public void setTime(double newTime){
 		time = newTime;
 	}
 	

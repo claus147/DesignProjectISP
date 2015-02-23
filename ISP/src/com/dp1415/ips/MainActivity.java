@@ -174,7 +174,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		stateVector = new stateVector(accelAverage(), rotateAverage(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
 		particleFilter = new ParticleFilter();
 		particleFilter.initialize(100, stateVector);
-		particleFilter.propagate(stateVector);
+		particleFilter.propagate();
 		handle.post(collectionLoop);
 	}
 
@@ -263,7 +263,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    	particleFilter.normalizeWeight();
 //	    	particleFilter.resample();
 	    	double[] expectation = particleFilter.expectation();
-	    	particleFilter.propagate(stateVector);
+	    	particleFilter.propagate();
 		    
 		    if(writer !=null){
 			try {
@@ -312,7 +312,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		particleFilter = new ParticleFilter();
 		stateVector = new stateVector(accelAverage(), rotateAverage(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
 		particleFilter.initialize(100, stateVector);
-		particleFilter.propagate(stateVector);
+		particleFilter.propagate();
 		//start the particle filter loop
 		handle.post(collector);
 	}
@@ -328,7 +328,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    	particleFilter.normalizeWeight();
 	    	particleFilter.resample();
 	    	//particleFilter.expectation();
-	    	particleFilter.propagate(stateVector);
+	    	particleFilter.propagate();
 		    if (true){
 		    	//calls itself every 50ms delay until stop button
 		    	handle.postDelayed(collector,50);
