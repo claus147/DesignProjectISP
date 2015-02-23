@@ -249,6 +249,7 @@ public class MapViewActivity extends ActionBarActivity{
 	}
     
 
+
     //want to make a method that takes the "expectation" method and uses it to update distance and heading
     //to get bearing need to convert quaternion to euler and take the yaw (rotate abt z)
     

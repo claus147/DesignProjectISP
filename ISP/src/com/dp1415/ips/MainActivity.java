@@ -12,7 +12,11 @@ import java.io.IOException;
 
 
 
+
+
 import android.support.v7.app.ActionBarActivity;
+
+
 
 
 
@@ -23,9 +27,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.BroadcastReceiver;
-
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -75,6 +79,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	private ParticleFilter particleFilter;
 	private stateVector stateVector;
 	private int accelCounter,rotateCounter;
+	
+	Intent i;
+	MyReceiver myReceiver=null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -426,7 +433,6 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	    }
 	    
 	}
-
 	
 	private boolean isMyServiceRunning(Class<?> serviceClass) {
 	    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
