@@ -52,6 +52,7 @@ public class SensorService extends IntentService implements SensorEventListener{
 	 */
 	@Override
 	protected void onHandleIntent(Intent intent) {
+		 Log.e( "SS", "onHandleIntent" );
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 		rotateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);

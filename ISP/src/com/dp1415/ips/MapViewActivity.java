@@ -15,7 +15,12 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaRouter.RouteCategory;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -46,6 +51,9 @@ public class MapViewActivity extends ActionBarActivity{
 	//private LatLng start = null;
 	
 	public boolean isAutomatic = false; //using formulas to move things on the map
+	
+	Intent i;
+	MyReceiver myReceiver=null;
     
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +106,8 @@ public class MapViewActivity extends ActionBarActivity{
             	
             }
         });
+        
+        i= new Intent(this, com.dp1415.ips.SensorService.class);
     }
     
     
@@ -231,6 +241,65 @@ public class MapViewActivity extends ActionBarActivity{
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
+	}
+    
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+	    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+	        if (serviceClass.getName().equals(service.service.getClassName())) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+    
+    private class MyReceiver extends BroadcastReceiver{
+	    @Override
+	    public void onReceive(Context context, Intent intent){
+	        if (intent.hasExtra(SensorService.ACCEL_VALUES)){
+	        	
+	        }
+
+	    }
+
+	}
+    
+    
+	@Override 
+	public void onResume(){
+	    super.onResume();
+	    Log.e( "Map", "onResume/registering receiver" );  
+        myReceiver = new MyReceiver();
+        IntentFilter intentFilter = new IntentFilter();      
+        intentFilter.addAction(SensorService.SENSOR_INTENT);
+        //bindService(i, null, 0);
+        if (!isMyServiceRunning(SensorService.class)){
+        	startService(i); 
+        }
+        registerReceiver(myReceiver, intentFilter);   
+	}
+
+	@Override 
+	public void onPause(){
+	    super.onPause();
+	    Log.e( "Map", "onPause/unregistering receiver" ); 
+	    //stopService(i);
+
+	    if (myReceiver != null){
+	    	unregisterReceiver(myReceiver);
+	    	myReceiver = null;
+	    }      
+	}
+
+	@Override
+	protected void onStop(){
+	    super.onStop();
+	    Log.e( "Map", "onStop" );
+	    //stopService(i);
+	    if (myReceiver != null) {
+	    	unregisterReceiver (myReceiver);
+	    }
+	    
 	}
     
 }
