@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaRouter.RouteCategory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -51,8 +52,8 @@ public class MapViewActivity extends ActionBarActivity{
 	private Marker start = null;
 	//private LatLng start = null;
 	
-	private double [] expectation = null;
-	
+	private double [] expectation = new double[]{0,0,0,0,0,0,0};
+	Handler handle = new Handler();
 	public boolean isAutomatic = false; //using formulas to move things on the map
 	
 	Intent i;
@@ -131,6 +132,10 @@ public class MapViewActivity extends ActionBarActivity{
     	goForward.setVisibility(View.VISIBLE);
     	move.setVisibility(View.VISIBLE);
     	distance.setVisibility(View.VISIBLE);
+    	
+    	isAutomatic = true;
+    	handle.post(expectationDisplay);
+    	
 	}
     
     public void onRedoOrientationClick(View view) {
@@ -153,6 +158,8 @@ public class MapViewActivity extends ActionBarActivity{
     	goForward.setVisibility(View.GONE);
     	move.setVisibility(View.GONE);
     	distance.setVisibility(View.GONE);
+    	
+    	isAutomatic = false;
 	}
     
     //adds a polyline in the direction the camera is facing 1m ahead
@@ -257,7 +264,6 @@ public class MapViewActivity extends ActionBarActivity{
     
     private void updateLocation(){
     	CameraPosition curPos = map.getCameraPosition();
-    	double[] expectation = null;
     	double distX = expectation[0]; //these values will change when linked to other service properly
     	double distY = expectation[1];
     	float bearing = 0; //currently any update will not reflect on camera
@@ -322,7 +328,8 @@ public class MapViewActivity extends ActionBarActivity{
 	    if (myReceiver != null){
 	    	unregisterReceiver(myReceiver);
 	    	myReceiver = null;
-	    }      
+	    }   
+	    isAutomatic = false;
 	}
 
 	@Override
@@ -332,9 +339,21 @@ public class MapViewActivity extends ActionBarActivity{
 	    //stopService(i);
 	    if (myReceiver != null) {
 	    	unregisterReceiver (myReceiver);
+	    	myReceiver = null;
 	    }
-	    
+	    isAutomatic = false;
 	}
+	
+	Runnable expectationDisplay = new Runnable() {
+	    @Override
+	    public void run(){
+	    	updateLocation();
+		    if (isAutomatic){
+		    	//calls itself every 50ms delay until stop button
+		    	handle.postDelayed(expectationDisplay,50);
+		    }
+	    }
+	};
 
     
 }
