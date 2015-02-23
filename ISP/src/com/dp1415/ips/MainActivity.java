@@ -11,7 +11,19 @@ import java.io.IOException;
 
 
 
+
 import android.support.v7.app.ActionBarActivity;
+
+
+
+
+
+
+import android.support.v7.app.ActionBarActivity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
+import android.content.BroadcastReceiver;
+
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -107,8 +119,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	        public void onProviderDisabled(String provider) {}
 	      };
 	    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,locationListener);
-<<<<<<< HEAD
-=======
+
 		
 	    //to receive broadcast
 	    i= new Intent(this, com.dp1415.ips.SensorService.class);
@@ -117,7 +128,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 //        intentFilter.addAction(SensorService.SENSOR_INTENT);
 //        startService(i);  
 //        registerReceiver(myReceiver, intentFilter);
->>>>>>> service working i think
+
 	}
 
 	@Override
@@ -350,8 +361,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 		    }
 	    }
 	};
-<<<<<<< HEAD
-=======
+
 	
 	
 	private class MyReceiver extends BroadcastReceiver{
@@ -384,21 +394,21 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	public void onResume(){
 	    super.onResume();
 	    Log.e( "MA", "onResume/registering receiver" );  
-	    //Register BroadcastReceiver to receive accelerometer data from service
-	    //if (myReceiver == null){
-	        myReceiver = new MyReceiver();
-	        IntentFilter intentFilter = new IntentFilter();      
-	        intentFilter.addAction(SensorService.SENSOR_INTENT);	        
-	        startService(i);  
-	        registerReceiver(myReceiver, intentFilter);
-	    //}     
+        myReceiver = new MyReceiver();
+        IntentFilter intentFilter = new IntentFilter();      
+        intentFilter.addAction(SensorService.SENSOR_INTENT);
+        //bindService(i, null, 0);
+        if (!isMyServiceRunning(SensorService.class)){
+        	startService(i); 
+        }
+        registerReceiver(myReceiver, intentFilter);   
 	}
 
 	@Override 
 	public void onPause(){
 	    super.onPause();
 	    Log.e( "MA", "onPause/unregistering receiver" ); 
-	    stopService(i);
+	    //stopService(i);
 
 	    if (myReceiver != null){
 	    	unregisterReceiver(myReceiver);
@@ -410,11 +420,22 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 	protected void onStop(){
 	    super.onStop();
 	    Log.e( "MA", "onStop" );
-	    stopService(i);
+	    //stopService(i);
 	    if (myReceiver != null) {
 	    	unregisterReceiver (myReceiver);
 	    }
 	    
 	}
->>>>>>> service working i think
+
+	
+	private boolean isMyServiceRunning(Class<?> serviceClass) {
+	    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+	        if (serviceClass.getName().equals(service.service.getClassName())) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+
 }
