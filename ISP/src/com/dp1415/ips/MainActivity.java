@@ -75,6 +75,7 @@ public class MainActivity extends ActionBarActivity{
 	private Distances initialDis;
 	private ParticleFilter particleFilter;
 	private stateVector stateVector;
+	private double[] expectation;
 	private int accelCounter,rotateCounter;
 	
 	Intent i;
@@ -192,12 +193,12 @@ public class MainActivity extends ActionBarActivity{
 		// set initial time and call the recursive loop
 //		accelCounter = 0;
 //		rotateCounter = 0;
-//		initialTime = System.nanoTime();
-//		stateVector = new stateVector(accelAverage(), rotateAverage(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
-//		particleFilter = new ParticleFilter();
-//		particleFilter.initialize(100, stateVector);
-//		particleFilter.propagate();
-//		handle.post(collectionLoop);
+		initialTime = System.nanoTime();
+		stateVector = new stateVector(accelAverage(), rotateAverage(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
+		particleFilter = new ParticleFilter();
+		particleFilter.initialize(100, stateVector);
+		particleFilter.propagate();
+		handle.post(collectionLoop);
 	}
 
 	public void onStopClick(View view) {
@@ -224,9 +225,9 @@ public class MainActivity extends ActionBarActivity{
 				accel[x] = 0;
 			}
 		}
-		accelX.setText(String.valueOf(accel[0]));
-	    accelY.setText(String.valueOf(accel[1]));
-	    accelZ.setText(String.valueOf(accel[2]));	
+//		accelX.setText(String.valueOf(accel[0]));
+//	    accelY.setText(String.valueOf(accel[1]));
+//	    accelZ.setText(String.valueOf(accel[2]));	
 		accelCounter = 0;
 		return accel;
 	}
@@ -242,10 +243,10 @@ public class MainActivity extends ActionBarActivity{
 				rotate[x] = 0;
 			}
 		}
-		rotateX.setText(String.valueOf(rotate[0]));
-		rotateY.setText(String.valueOf(rotate[1]));
-		rotateZ.setText(String.valueOf(rotate[2]));	
-		rotateS.setText(String.valueOf(rotate[3]));	
+//		rotateX.setText(String.valueOf(rotate[0]));
+//		rotateY.setText(String.valueOf(rotate[1]));
+//		rotateZ.setText(String.valueOf(rotate[2]));	
+//		rotateS.setText(String.valueOf(rotate[3]));	
 		rotateCounter = 0;
 		return rotate;
 	}
@@ -338,24 +339,13 @@ public class MainActivity extends ActionBarActivity{
 	    @Override
 	    public void onReceive(Context context, Intent intent){
 	        if (intent.hasExtra(SensorService.ACCEL_VALUES)){
-		    	accelValues = intent.getFloatArrayExtra(SensorService.ACCEL_VALUES);        
-//		        accelX.setText(String.valueOf(accelValues[0]));
-//			    accelY.setText(String.valueOf(accelValues[1]));
-//			    accelZ.setText(String.valueOf(accelValues[2]));
+		    	accelValues = intent.getFloatArrayExtra(SensorService.ACCEL_VALUES); 
+		    	accelCounter++;
 	        }
 	        if (intent.hasExtra(SensorService.ROTATE_VALUES)){
-		    	rotateValues = intent.getFloatArrayExtra(SensorService.ROTATE_VALUES);        
-//		    	rotateX.setText(String.valueOf(rotateValues[0]));
-//				rotateY.setText(String.valueOf(rotateValues[1]));
-//				rotateZ.setText(String.valueOf(rotateValues[2]));	
-//				rotateS.setText(String.valueOf(rotateValues[3]));
+		    	rotateValues = intent.getFloatArrayExtra(SensorService.ROTATE_VALUES); 
+		    	rotateCounter++;
 	        }
-//	        try {
-//				Thread.sleep(0,100);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
 	    }
 
 	} 

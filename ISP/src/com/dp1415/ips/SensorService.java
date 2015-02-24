@@ -118,9 +118,6 @@ public class SensorService extends IntentService implements SensorEventListener{
 				accel[x] = 0;
 			}
 		}
-//		accelX.setText(String.valueOf(accel[0]));
-//	    accelY.setText(String.valueOf(accel[1]));
-//	    accelZ.setText(String.valueOf(accel[2]));	
 		accelCounter = 0;
 		return accel;
 	}
@@ -136,10 +133,6 @@ public class SensorService extends IntentService implements SensorEventListener{
 				rotate[x] = 0;
 			}
 		}
-//		rotateX.setText(String.valueOf(rotate[0]));
-//		rotateY.setText(String.valueOf(rotate[1]));
-//		rotateZ.setText(String.valueOf(rotate[2]));	
-//		rotateS.setText(String.valueOf(rotate[3]));	
 		rotateCounter = 0;
 		return rotate;
 	}
@@ -158,46 +151,8 @@ public class SensorService extends IntentService implements SensorEventListener{
 	    	
 	    	particleFilter.propagate();
 		    
-//		    if(writer !=null){
-//			try {
-//				long timer = System.nanoTime() - initialTime;
-//			    double timerInMs = (double)timer / 1000000.0;
-//
-//			    //write all the sensor data
-//				writer.write(
-//						timerInMs + "," + 
-//						stateVector.getAcceleration().getX() + "," + 
-//						stateVector.getAcceleration().getY() + "," + 
-//						stateVector.getAcceleration().getZ() + "," + 
-//						stateVector.getVelocity().getX() + "," + 
-//						stateVector.getVelocity().getY() + "," + 
-//						stateVector.getVelocity().getZ() + "," + 
-//						stateVector.getDistance().getX() + "," + 
-//						stateVector.getDistance().getY() + "," + 
-//						stateVector.getDistance().getZ() + "," + 
-//						stateVector.getRotationX() + "," + 
-//						stateVector.getRotationY() + "," + 
-//						stateVector.getRotationZ() + "," + 
-//						stateVector.getRotationS() + "," + 
-//						expectation[0] + "," + 
-//						expectation[1] + "," + 
-//						expectation[2] + "," + 
-//						expectation[3] + "," + 
-//						expectation[4] + "," + 
-//						expectation[5] + "," + 
-//						expectation[6] + "," + 
-//						"\n");
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//		    if (dataCollection){
-//		    	//calls itself every 100ms delay until stop button
-		    	handle.postDelayed(collectionLoop,50);
+		    handle.postDelayed(collectionLoop,50);
 		    	
-		    	//sendBroadcast(intent);
-//		    }
 	    }
 	};
 
