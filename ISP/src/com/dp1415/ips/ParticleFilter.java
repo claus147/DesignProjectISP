@@ -7,17 +7,13 @@ import com.dp1415.ips.DynamicModel.Mode;
 
 public class ParticleFilter {
 	
-	private particle[] particles;
+//	private particle[] particles;
+	// Lets make particles an array of doubles instead of an object
+	private final int distX=0,distY=1,distZ=2,velX=3,velY=4,velZ=5,accelX=6,accelY=7,accelZ=8,qX=9,qY=10,qZ=11,qS=12,weight=13;
 	private int numOfParticles;
-	private double timeInterval = 0.05; // particle filter is called every 50ms  
-	//	TO DO:
-			//Determine mode
-			//Implement dynamic models to get the next state
-			//Update the weights
-			//Resample
-			//Use Random Number Generator to propagate new particle by weight
-			//Calculate expectation to get location
-			//update it on map
+	private double timeInterval = 0.05; // particle filter is called every 50ms. NOT TRUE.  
+	private double[][] particles,resampled;
+	
 	
 	public ParticleFilter(){
 		
@@ -26,7 +22,7 @@ public class ParticleFilter {
 	public void initialize(int numOfParticles,stateVector states){
 		// initialize particles
 		this.numOfParticles= numOfParticles;
-		particles= new particle[numOfParticles];
+		particles= new double[numOfParticles][14];
 		
 		// Normal Distribution, assume standard deviation as 1
 		NormalDistribution distrDistX = new NormalDistribution(states.getDistance().getX(),1);
@@ -45,23 +41,20 @@ public class ParticleFilter {
 		
 		// populate all the particles with equal weight and the same initial state.
 		for (int i = 0 ; i < numOfParticles; i++){
-			particles[i] = new particle(
-					distrDistX.sample(), 
-					distrDistY.sample(), 
-					distrDistZ.sample(),
-					distrVelX.sample(),
-					distrVelY.sample(), 
-					distrVelZ.sample(), 
-					distrAccelX.sample(),
-					distrAccelY.sample(),
-					distrAccelZ.sample(),
-					distrQX.sample(), 
-					distrQY.sample(),
-					distrQZ.sample(),
-					distrQS.sample(), 
-					states.getTime(), 
-					1.0/numOfParticles,
-					Mode.STILL);
+			particles[i][distX] = distrDistX.sample();
+			particles[i][distY] = distrDistY.sample(); 
+			particles[i][distZ] = distrDistZ.sample();
+			particles[i][velX] = distrVelX.sample();
+			particles[i][velY] = distrVelY.sample(); 
+			particles[i][velZ] = distrVelZ.sample(); 
+			particles[i][accelX] = distrAccelX.sample();
+			particles[i][accelY] = distrAccelY.sample();
+			particles[i][accelZ] = distrAccelZ.sample();
+			particles[i][qX] = distrQX.sample();
+			particles[i][qY] = distrQY.sample();
+			particles[i][qZ] = distrQZ.sample();
+			particles[i][qS] = distrQS.sample(); 
+			particles[i][weight] = 1.0/numOfParticles;
 		}
 	}
 	
@@ -71,10 +64,10 @@ public class ParticleFilter {
 	public void normalizeWeight(){
 		double totalWeight = 0;
 		for (int x = 0; x < numOfParticles; x++){
-			totalWeight+=particles[x].getWeight();
+			totalWeight+=particles[x][weight];
 		}
 		for (int x = 0; x < numOfParticles; x++){
-			particles[x].setWeight(particles[x].getWeight()/totalWeight);
+			particles[x][weight] = (particles[x][weight]/totalWeight);
 		}
 	}
 	
@@ -94,13 +87,13 @@ public class ParticleFilter {
 		}
 		//go through all the particles to calculate the expectation of each component
 		for (int x = 0; x < numOfParticles; x++){
-			expectation[0] += particles[x].getDistX()*particles[x].getWeight();
-			expectation[1] += particles[x].getDistY()*particles[x].getWeight();
-			expectation[2] += particles[x].getDistZ()*particles[x].getWeight();
-			expectation[3] += particles[x].getQX()*particles[x].getWeight();
-			expectation[4] += particles[x].getQY()*particles[x].getWeight();
-			expectation[5] += particles[x].getQZ()*particles[x].getWeight();
-			expectation[6] += particles[x].getQS()*particles[x].getWeight();
+			expectation[0] += particles[x][distX]*particles[x][weight];
+			expectation[1] += particles[x][distY]*particles[x][weight];
+			expectation[2] += particles[x][distZ]*particles[x][weight];
+			expectation[3] += particles[x][qX]*particles[x][weight];
+			expectation[4] += particles[x][qY]*particles[x][weight];
+			expectation[5] += particles[x][qZ]*particles[x][weight];
+			expectation[6] += particles[x][qS]*particles[x][weight];
 		}
 		return expectation;
 		
@@ -109,89 +102,60 @@ public class ParticleFilter {
 	
 	public void resample(){
 		//create a new set of particles
-		particle[] resampled = new particle[numOfParticles];
-		for (int i = 0 ; i < numOfParticles; i++){
-			resampled[i] = new particle(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,(long)0.0,0.0, Mode.STILL);
-		}
+		resampled = new double[numOfParticles][];
+//		for (int i = 0 ; i < numOfParticles; i++){
+//			resampled[i] = new particle(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,(long)0.0,0.0, Mode.STILL);
+//		}
 		
 		//construct CDF
 		double[] cdf = new double[numOfParticles];
 		for (int i=0;i<numOfParticles;i++){
 			if (i==0){
-				cdf[i]=particles[i].getWeight();
+				cdf[i]=particles[i][weight];
 			}
 			else{
-				cdf[i]=cdf[i-1]+particles[i].getWeight();
+				cdf[i]=cdf[i-1]+particles[i][weight];
 			}
 			//TODO: make cdf[numOfParticles]=1?
+			
+			//as well as make a copy of original particles
+			resampled[i]=particles[i].clone();
 		}
 		
 		// create random number generator
 		Random randomGenerator = new Random();
 
-//		for (int x=0;x<numOfParticles;x++){
-//			double random=randomGenerator.nextDouble();//this generates a number between 0 and 1
-//			for (int y=0 ; y<numOfParticles; y++){
-//				if (random<cdf[y]){
-//					resampled[x] = particles[y];
-//				}
-//			}
-//			resampled[x].setWeight(1.0/numOfParticles); //equalize the weights
-//		}
 		for (int x=0;x<numOfParticles;x++){
 			double random=randomGenerator.nextDouble();//this generates a number between 0 and 1
-			int low = 0;
-			int high = numOfParticles;
-			int mid = 0;
-			//binary search to find the particle
-			while (low<=high){
-				mid = low + (high-low)/2;
-				if (random<cdf[mid]){
-					high = mid;
-				}
-				else if (low>cdf[mid]){
-					low = mid+1;
-				}
-				else{
-					break;
+			for (int y=0 ; y<numOfParticles; y++){
+				if (random<cdf[y]){
+					particles[x] = resampled[y].clone();
 				}
 			}
-			resampled[x].setAccelX(particles[mid].getAccelX());
-			resampled[x].setAccelY(particles[mid].getAccelY());
-			resampled[x].setAccelZ(particles[mid].getAccelZ());
-			resampled[x].setVelX(particles[mid].getVelX());
-			resampled[x].setVelY(particles[mid].getVelY());
-			resampled[x].setVelZ(particles[mid].getVelZ());
-			resampled[x].setDistX(particles[mid].getDistX());
-			resampled[x].setDistY(particles[mid].getDistY());
-			resampled[x].setDistZ(particles[mid].getDistZ());
-			resampled[x].setQX(particles[mid].getQX());
-			resampled[x].setQY(particles[mid].getQY());
-			resampled[x].setQZ(particles[mid].getQZ());
-			resampled[x].setQS(particles[mid].getQS());
-			resampled[x].setTime(particles[mid].getTime());
-//			resampled[x]=particles[mid];
-//			resampled[x].setWeight(1.0/numOfParticles); //equalize the weights
+			particles[x][weight]=(1.0/numOfParticles); //equalize the weights
 		}
-//		this.particles = resampled;
-		for (int x=0;x<numOfParticles;x++){
-			particles[x].setAccelX(resampled[x].getAccelX());
-			particles[x].setAccelY(resampled[x].getAccelY());
-			particles[x].setAccelZ(resampled[x].getAccelZ());
-			particles[x].setVelX(resampled[x].getVelX());
-			particles[x].setVelY(resampled[x].getVelY());
-			particles[x].setVelZ(resampled[x].getVelZ());
-			particles[x].setDistX(resampled[x].getDistX());
-			particles[x].setDistY(resampled[x].getDistY());
-			particles[x].setDistZ(resampled[x].getDistZ());
-			particles[x].setQX(resampled[x].getQX());
-			particles[x].setQY(resampled[x].getQY());
-			particles[x].setQZ(resampled[x].getQZ());
-			particles[x].setQS(resampled[x].getQS());
-			particles[x].setTime(resampled[x].getTime());
-			particles[x].setWeight(1.0/numOfParticles);
-		}
-		resampled=null;
+		
+//		for (int x=0;x<numOfParticles;x++){
+//			double random=randomGenerator.nextDouble();//this generates a number between 0 and 1
+//			int low = 0;
+//			int high = numOfParticles;
+//			int mid = 0;
+//			//binary search to find the particle
+//			while (low<=high){
+//				mid = low + (high-low)/2;
+//				if (random<cdf[mid]){
+//					high = mid;
+//				}
+//				else if (low>cdf[mid]){
+//					low = mid+1;
+//				}
+//				else{
+//					break;
+//				}
+//			}
+//			particles[x]=resampled[mid].clone();
+//			particles[x][weight]=(1.0/numOfParticles); //equalize the weights
+//		}
 	}
 	
 	/**ASSUMES StateVector is the most up to date. 
@@ -224,15 +188,15 @@ public class ParticleFilter {
 		//do actual new weight assignment
 		double newWeight = 0;
 		for (int i = 0; i < particles.length; i++){
-			newWeight = particles[i].getWeight()*
-					distrAccelX.density(particles[i].getAccelX())*
-					distrAccelY.density(particles[i].getAccelY())*
-					distrAccelZ.density(particles[i].getAccelZ())*
-					distrQX.density(particles[i].getQX())*
-					distrQY.density(particles[i].getQY())*
-					distrQZ.density(particles[i].getQZ())*
-					distrQS.density(particles[i].getQS());
-			particles[i].setWeight(newWeight);
+			newWeight = particles[i][weight]*
+					distrAccelX.density(particles[i][accelX])*
+					distrAccelY.density(particles[i][accelY])*
+					distrAccelZ.density(particles[i][accelZ])*
+					distrQX.density(particles[i][qX])*
+					distrQY.density(particles[i][qY])*
+					distrQZ.density(particles[i][qZ])*
+					distrQS.density(particles[i][qS]);
+			particles[i][weight]=newWeight;
 		}
 	}
 

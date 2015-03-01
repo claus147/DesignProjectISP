@@ -258,7 +258,7 @@ public class MainActivity extends ActionBarActivity{
 	    	stateVector.update(accelAverage(), rotateAverage(), System.nanoTime());
 	    	particleFilter.updateWeights(stateVector);
 	    	particleFilter.normalizeWeight();
-//	    	particleFilter.resample();
+	    	particleFilter.resample();
 	    	double[] expectation = particleFilter.expectation();
 	    	particleFilter.propagate();
 		    
