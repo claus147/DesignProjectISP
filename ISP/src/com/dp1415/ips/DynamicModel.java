@@ -1,4 +1,6 @@
 package com.dp1415.ips;
+import java.util.Random;
+
 import org.apache.commons.math3.distribution.NormalDistribution;
 
 // this class will determine the dynamic model
@@ -45,17 +47,29 @@ public class DynamicModel {
 		
 		for(int i = 0; i < this.numberOfParticles; i++){
 			// step 1: determine mode
-			Mode nextMode = modeAnalysis(this.currentParticles[i][mode]);
+			int nextMode = modeAnalysis(this.currentParticles[i][mode]);
 			// step 2: calculate next state
-			double[] nextParticle = particleCalculation(this.currentParticles[i], nextMode.getValue());
+			double[] nextParticle = particleCalculation(this.currentParticles[i], nextMode);
 			nextParticles[i] = nextParticle;
 		}
 		
 	}
 	
 	//this method will return the next possible mode for particle
-	private Mode modeAnalysis(double currentMode){
-		return null;
+	private int modeAnalysis(double currentMode){
+		double[][] modeCDF = new double[][]{
+									{1.0/2, 1, 1},
+									{1.0/3, 2.0/3, 1},
+									{0, 1.0/2, 1}
+											};
+		Random randomGenerator = new Random();
+		double random = randomGenerator.nextDouble();
+		for (int i=0; i<modeCDF[(int) currentMode].length; i++){
+			if (random < modeCDF[(int)currentMode][i]){
+				return i;
+			}	
+		}
+		return -1;
 	}
 	
 	//this method will return a particle with next state info
