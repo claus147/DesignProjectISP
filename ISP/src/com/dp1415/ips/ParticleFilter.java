@@ -9,7 +9,7 @@ public class ParticleFilter {
 	
 //	private particle[] particles;
 	// Lets make particles an array of doubles instead of an object
-	private final int distX=0,distY=1,distZ=2,velX=3,velY=4,velZ=5,accelX=6,accelY=7,accelZ=8,qX=9,qY=10,qZ=11,qS=12,weight=13;
+	private final int distX=0,distY=1,distZ=2,velX=3,velY=4,velZ=5,accelX=6,accelY=7,accelZ=8,qX=9,qY=10,qZ=11,qS=12,weight=13,mode=14;
 	private int numOfParticles;
 	private double timeInterval = 0.05; // particle filter is called every 50ms. NOT TRUE.  
 	private double[][] particles,resampled;
@@ -22,7 +22,7 @@ public class ParticleFilter {
 	public void initialize(int numOfParticles,stateVector states){
 		// initialize particles
 		this.numOfParticles= numOfParticles;
-		particles= new double[numOfParticles][14];
+		particles= new double[numOfParticles][15];
 		
 		// Normal Distribution, assume standard deviation as 1
 		NormalDistribution distrDistX = new NormalDistribution(states.getDistance().getX(),1);
