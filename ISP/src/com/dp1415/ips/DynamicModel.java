@@ -40,18 +40,7 @@ public class DynamicModel {
 			return value;
 		}
 	}
-	public DynamicModel(double[][] particles, int numberOfParticles, double timeInterval){
-		this.currentParticles = particles;
-		this.numberOfParticles = numberOfParticles;
-		this.timeInterval = timeInterval;
-		
-		for(int i = 0; i < this.numberOfParticles; i++){
-			// step 1: determine mode
-			int nextMode = modeAnalysis(this.currentParticles[i][mode]);
-			// step 2: calculate next state
-			double[] nextParticle = particleCalculation(this.currentParticles[i], nextMode);
-			nextParticles[i] = nextParticle;
-		}
+	public DynamicModel(){
 		
 	}
 	
@@ -90,6 +79,20 @@ public class DynamicModel {
 			}
 		}
 		return nextState;
+	}
+	
+	public void propogate(double[][] particles, int numberOfParticles, double timeInterval){
+		this.currentParticles = particles;
+		this.numberOfParticles = numberOfParticles;
+		this.timeInterval = timeInterval;
+		
+		for(int i = 0; i < this.numberOfParticles; i++){
+			// step 1: determine mode
+			int nextMode = modeAnalysis(this.currentParticles[i][mode]);
+			// step 2: calculate next state
+			double[] nextParticle = particleCalculation(this.currentParticles[i], nextMode);
+			nextParticles[i] = nextParticle;
+		}
 	}
 	
 	//getter method
