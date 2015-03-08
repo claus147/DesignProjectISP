@@ -11,12 +11,13 @@ public class ParticleFilter {
 	// Lets make particles an array of doubles instead of an object
 	private final int distX=0,distY=1,distZ=2,velX=3,velY=4,velZ=5,accelX=6,accelY=7,accelZ=8,qX=9,qY=10,qZ=11,qS=12,weight=13,mode=14;
 	private int numOfParticles;
-	private double timeInterval = 0.05; // particle filter is called every 50ms. NOT TRUE.  
+	private double timestamp;
+	private double timeInterval; 
 	private double[][] particles,resampled;
-	
+	private DynamicModel propogation = new DynamicModel();
 	
 	public ParticleFilter(){
-		
+		this.timestamp = System.nanoTime();
 	}
 
 	public void initialize(int numOfParticles,stateVector states){
@@ -59,6 +60,11 @@ public class ParticleFilter {
 	}
 	
 	public void propagate(){
+		double currentTime = System.nanoTime();
+		timeInterval = (currentTime - timestamp)/1000000000;
+		timestamp = currentTime;
+		propogation.propogate(particles,numOfParticles,timeInterval);
+		particles = propogation.getParticles();
 		
 	}
 	public void normalizeWeight(){

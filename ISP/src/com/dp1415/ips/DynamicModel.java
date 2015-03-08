@@ -96,7 +96,7 @@ public class DynamicModel {
 	}
 	
 	//getter method
-	private final double[][] getParticles(){
+	public final double[][] getParticles(){
 		return nextParticles;
 	}
 	
