@@ -85,6 +85,7 @@ public class DynamicModel {
 		this.currentParticles = particles;
 		this.numberOfParticles = numberOfParticles;
 		this.timeInterval = timeInterval;
+		this.nextParticles = new double[numberOfParticles][];
 		
 		for(int i = 0; i < this.numberOfParticles; i++){
 			// step 1: determine mode
