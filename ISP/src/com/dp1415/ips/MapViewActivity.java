@@ -49,7 +49,7 @@ public class MapViewActivity extends ActionBarActivity{
 	private PolylineOptions route;
 	private Polyline line;
 	private LatLng currentLoc = null;
-	private Marker start = null;
+	private Marker currentMark = null;
 	//private LatLng start = null;
 	
 	private double [] expectation = new double[]{0,0,0,0,0,0,0};
@@ -92,13 +92,13 @@ public class MapViewActivity extends ActionBarActivity{
             @Override
             public void onMapClick(LatLng latLng) {
             	if (!isStartMarked){
-            		start = map.addMarker(startLocation
+            		currentMark = map.addMarker(startLocation
                     .position(latLng)
                     .title("Start Location")
                     .draggable(true));
             		
 
-            		start.setPosition(latLng);	//needed in order to properly update position when repositioning, otherwise it thinks marker always at original start position
+            		currentMark.setPosition(latLng);	//needed in order to properly update position when repositioning, otherwise it thinks marker always at original start position
             		currentLoc = latLng;	//current loc is the clicked start point
             		            		
             		isStartMarked = true;
@@ -117,7 +117,7 @@ public class MapViewActivity extends ActionBarActivity{
     
     
     public void onConfirmOrientationClick(View view) {
-    	currentLoc = start.getPosition();
+    	currentLoc = currentMark.getPosition();
     	route.add(currentLoc);
     	
     	map.getUiSettings().setRotateGesturesEnabled(false);
@@ -190,6 +190,7 @@ public class MapViewActivity extends ActionBarActivity{
     	map.moveCamera(CameraUpdateFactory.newCameraPosition(newPos));
 		
     	currentLoc = newLoc;
+    	currentMark.setPosition(currentLoc);
     	//currentLoc = new LatLng(currentLoc.latitude,currentLoc.longitude);
     	Toast.makeText(this, Float.toString(map.getCameraPosition().bearing), Toast.LENGTH_SHORT).show();
 
@@ -213,8 +214,11 @@ public class MapViewActivity extends ActionBarActivity{
 //    	double newLat = currentLoc.latitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137);//6378137 earths radius at equator
 //    	double newLng = currentLoc.longitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137);///Math.cos(Math.PI/180.0*currentLoc.longitude);
     	
-    	double newLat = currentLoc.latitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137.0)*Math.cos(Math.toRadians(bearing));//6378137 earths radius at equator
-    	double newLng = currentLoc.longitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137.0)*Math.sin(Math.toRadians(bearing));///Math.cos(Math.PI/180.0*currentLoc.longitude);
+//    	double newLat = currentLoc.latitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137.0)*Math.cos(Math.toRadians(bearing));//6378137 earths radius at equator
+//    	double newLng = currentLoc.longitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137.0)*Math.sin(Math.toRadians(bearing));///Math.cos(Math.PI/180.0*currentLoc.longitude);
+    	
+    	double newLat = currentLoc.latitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/6378137.0);//*Math.cos(Math.toRadians(bearing));//6378137 earths radius at equator
+    	double newLng = currentLoc.longitude + (180.0/Math.PI)*(Float.parseFloat(distance.getText().toString())/(6378137.0*Math.cos(Math.PI*currentLoc.latitude/180.0)));//*Math.sin(Math.toRadians(bearing));///Math.cos(Math.PI/180.0*currentLoc.longitude);
     	
     	LatLng newLoc = new LatLng(newLat,newLng);
     	if (line != null)
@@ -226,6 +230,7 @@ public class MapViewActivity extends ActionBarActivity{
     	map.moveCamera(CameraUpdateFactory.newCameraPosition(newPos));
 		
     	currentLoc = newLoc;
+    	currentMark.setPosition(currentLoc);
     	//currentLoc = new LatLng(currentLoc.latitude,currentLoc.longitude);
     	
 	}
@@ -266,9 +271,10 @@ public class MapViewActivity extends ActionBarActivity{
     	CameraPosition curPos = map.getCameraPosition();
     	double distX = expectation[0]; //these values will change when linked to other service properly
     	double distY = expectation[1];
-    	float bearing = 0; //currently any update will not reflect on camera
+    	
+    	System.out.println(distX +" " + distY);
     	double newLat = currentLoc.latitude + (180.0/Math.PI)*(distY/6378137);//6378137 earths radius at equator
-    	double newLng = currentLoc.longitude + (180.0/Math.PI)*(distX/6378137);
+    	double newLng = currentLoc.longitude + (180.0/Math.PI)*(distX/(6378137.0*Math.cos(Math.PI*currentLoc.latitude/180.0)));
     	LatLng newLoc = new LatLng(newLat,newLng);
     	if (line != null)
     		line.remove(); // get rid of old line
@@ -279,6 +285,22 @@ public class MapViewActivity extends ActionBarActivity{
     	map.moveCamera(CameraUpdateFactory.newCameraPosition(newPos));
 		
     	currentLoc = newLoc;
+    	currentMark.setPosition(currentLoc);
+    }
+    
+    //update the yaw - (psi)
+    //doing the quaternion conversion here
+    private void updateBearing(){
+    	double qX = expectation[3];
+    	double qY = expectation[4];
+    	double qZ = expectation[5];
+    	double qS = expectation[6];
+    	
+    	//formula from wikipedia
+    	float bearing = (float) Math.atan2(2.0*(qS*qZ+qX*qY), 1.0-2.0*(Math.pow(qY, 2)+ Math.pow(qZ,2)));
+
+    	
+    	
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
