@@ -11,6 +11,12 @@ public class DynamicModel {
 	private int numberOfParticles;
 	private double[][] nextParticles;
 	private double timeInterval;
+	private double[][] possibilityMatrix = {
+			{1.0/2, 1.0/2, 0},
+			{1.0/3, 1.0/3, 1.0/3},
+			{0, 1.0/2, 1.0/2}
+	};
+	private double[][] modeCDF = possibilityMatrix;
 	
 	private NormalDistribution distrDistX = new NormalDistribution();
 	private NormalDistribution distrDistY = new NormalDistribution();
@@ -28,7 +34,7 @@ public class DynamicModel {
 	
 	
 	public enum Mode {
-		STILL(0), CONST(1), ACCEL(2);
+		STILL(0), CONST(1), ACCEL(2), LR(3), RR(4);
 		
 		private final double value;
 		
@@ -41,16 +47,18 @@ public class DynamicModel {
 		}
 	}
 	public DynamicModel(){
-		
+		for (int i = 0; i < possibilityMatrix.length; i++){
+			for(int j = 0; j < possibilityMatrix[i].length; j++){
+				if (j == 0 ) modeCDF[i][j] = possibilityMatrix[i][j]; 
+				else {
+					modeCDF[i][j] = modeCDF[i][j-1] + possibilityMatrix[i][j];
+				}
+			}
+		}
 	}
 	
 	//this method will return the next possible mode for particle
 	private int modeAnalysis(double currentMode){
-		double[][] modeCDF = new double[][]{
-									{1.0/2, 1, 1},
-									{1.0/3, 2.0/3, 1},
-									{0, 1.0/2, 1}
-											};
 		Random randomGenerator = new Random();
 		double random = randomGenerator.nextDouble();
 		for (int i=0; i<modeCDF[(int) currentMode].length; i++){
