@@ -1,11 +1,18 @@
 package com.dp1415.ips;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+
+
+
 
 import android.app.IntentService;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -14,9 +21,11 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 
 /*
@@ -37,12 +46,20 @@ public class SensorService extends IntentService implements SensorEventListener{
 	Handler handle = new Handler();
 	private int accelCounter,rotateCounter;
 	
+	private boolean writing = false;
+	private long initialTime;
+	private FileWriter writer;
+	MyReceiver myReceiver=null;
+	
 	public final static String SENSOR_INTENT = "com.dp1415.ips.SensorService.SENSOR_READINGS";
 	public final static String ACCEL_VALUES = "ACCEL_VALUES";
 	public final static String ROTATE_VALUES = "ROTATE_VALUES";
 	public final static String EXPECTATION = "EXPECTATION";
+	public final static String WRITE = "WRITE";
 	
 	Intent intent = new Intent(SENSOR_INTENT);
+	
+	Intent i;
 	
 	
 	
@@ -70,12 +87,19 @@ public class SensorService extends IntentService implements SensorEventListener{
 		
 		accelCounter = 0;
 		rotateCounter = 0;
-		//initialTime = System.nanoTime();
+		initialTime = System.nanoTime();
 		stateVector = new stateVector(accelAverage(), rotateAverage(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
 		particleFilter = new ParticleFilter();
 		particleFilter.initialize(100, stateVector);
 		particleFilter.propagate();
 		handle.post(collectionLoop);
+		
+		myReceiver = new MyReceiver();
+		IntentFilter intentFilter = new IntentFilter();      
+        intentFilter.addAction(MainActivity.MAIN_INTENT);
+        i= new Intent(this, com.dp1415.ips.MainActivity.class);
+        registerReceiver(myReceiver, intentFilter);
+		
 		while(true);
 	}
 	@Override
@@ -90,11 +114,17 @@ public class SensorService extends IntentService implements SensorEventListener{
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
 			accelValues = event.values;
+			for (int x = 0 ; x < 3; x++){
+				accelValues[x] += event.values[x];
+			}
 			intent.putExtra(ACCEL_VALUES, accelValues);
 			accelCounter++;
 		}
 		if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
 			rotateValues = event.values;
+			for (int x = 0 ; x < 4; x++){
+				rotateValues[x] += event.values[x];
+			}
 			intent.putExtra(ROTATE_VALUES, rotateValues);
 			rotateCounter++;
 		}
@@ -144,17 +174,95 @@ public class SensorService extends IntentService implements SensorEventListener{
 	    	stateVector.update(accelAverage(), rotateAverage(), System.nanoTime());
 	    	particleFilter.updateWeights(stateVector);
 	    	particleFilter.normalizeWeight();
-//	    	particleFilter.resample();
+	    	particleFilter.resample();
 	    	double[] expectation = particleFilter.expectation();
 	    	
 	    	intent.putExtra(EXPECTATION, expectation);
 	    	
 	    	particleFilter.propagate();
 		    
+	    	if(writing && writer !=null){
+				try {
+					long timer = System.nanoTime() - initialTime;
+				    double timerInMs = (double)timer / 1000000.0;
+
+				    //write all the sensor data
+					writer.write(
+							timerInMs + "," + 
+							stateVector.getAcceleration().getX() + "," + 
+							stateVector.getAcceleration().getY() + "," + 
+							stateVector.getAcceleration().getZ() + "," + 
+							stateVector.getVelocity().getX() + "," + 
+							stateVector.getVelocity().getY() + "," + 
+							stateVector.getVelocity().getZ() + "," + 
+							stateVector.getDistance().getX() + "," + 
+							stateVector.getDistance().getY() + "," + 
+							stateVector.getDistance().getZ() + "," + 
+							stateVector.getRotationX() + "," + 
+							stateVector.getRotationY() + "," + 
+							stateVector.getRotationZ() + "," + 
+							stateVector.getRotationS() + "," + 
+							expectation[0] + "," + 
+							expectation[1] + "," + 
+							expectation[2] + "," + 
+							expectation[3] + "," + 
+							expectation[4] + "," + 
+							expectation[5] + "," + 
+							expectation[6] + "," + 
+							"\n");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	    	}
 		    handle.postDelayed(collectionLoop,50);
 		    	
 	    }
 	};
+	
+	
+	private class MyReceiver extends BroadcastReceiver{
+	    @Override
+	    public void onReceive(Context context, Intent intent){
+	        if (intent.hasExtra(WRITE)){
+	        	Log.e( "SS", "recieving WRITE" );  
+	        	//Toast.makeText(getApplicationContext(), "we are here", Toast.LENGTH_SHORT).show();
+	        	if (!writing){
+		        	try {
+						writing = true;
+		        		File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "stateVector.csv");
+						writer = new FileWriter(outFile,false);
+						Toast.makeText(getApplicationContext(), "Data being written to " + outFile.toString(), Toast.LENGTH_SHORT).show();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if (writer!=null){
+						try {
+							//writer.write("Time (ms)" +"," + "accelX" +"," + "accelY" + "," + "accelZ" + "," + "rotateX" + "," + "rotateY" + "," + "rotateZ" + "," + "rotateS" + "," + "Latitude" + "," + "Longitude" + "\n" );
+							writer.write("Time (ms)"+ "," + "accelX" +"," + "accelY" + "," + "accelZ"+"," + "velocityX" +"," + "velocityY" + "," + "velocityZ"+ "," 
+							+"distanceX" +"," + "distanceY" + "," + "distanceZ"+ "," +"QuaX"+ "," +"QuaY" +"," + "QuaZ" + "," + "QuaS" + "," + 
+									"E[DistX]" + "," + "E[DistY]" + "," + "E[DistZ]" + "," + "E[QuaX]" + "," + "E[QuaY]" + "," + "E[QuaZ]" + "," + "E[QuaS]"+ "\n");
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					
+					}
+	        	} else {
+	        		try {
+						writer.close();
+						writing = false;
+						Toast.makeText(getApplicationContext(), "Data write successful", Toast.LENGTH_SHORT).show(); //popup notification
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	        	}
+	        }
+	    }
+
+	}
 
 
 

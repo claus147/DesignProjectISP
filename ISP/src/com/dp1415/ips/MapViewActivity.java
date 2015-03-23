@@ -49,6 +49,7 @@ public class MapViewActivity extends ActionBarActivity{
 	private PolylineOptions route;
 	private Polyline line;
 	private LatLng currentLoc = null;
+	private LatLng initLoc = null;
 	private Marker currentMark = null;
 	//private LatLng start = null;
 	
@@ -100,7 +101,7 @@ public class MapViewActivity extends ActionBarActivity{
 
             		currentMark.setPosition(latLng);	//needed in order to properly update position when repositioning, otherwise it thinks marker always at original start position
             		currentLoc = latLng;	//current loc is the clicked start point
-            		            		
+            		initLoc = currentLoc;            		
             		isStartMarked = true;
             		
             		confirmOrientation.setEnabled(true); 		//can only confirm if we put a point down
@@ -273,8 +274,9 @@ public class MapViewActivity extends ActionBarActivity{
     	double distY = expectation[1];
     	
     	System.out.println(distX +" " + distY);
-    	double newLat = currentLoc.latitude + (180.0/Math.PI)*(distY/6378137);//6378137 earths radius at equator
-    	double newLng = currentLoc.longitude + (180.0/Math.PI)*(distX/(6378137.0*Math.cos(Math.PI*currentLoc.latitude/180.0)));
+    	
+    	double newLat = initLoc.latitude + (180.0/Math.PI)*(distY/6378137);//6378137 earths radius at equator
+    	double newLng = initLoc.longitude + (180.0/Math.PI)*(distX/(6378137.0*Math.cos(Math.PI*currentLoc.latitude/180.0)));
     	LatLng newLoc = new LatLng(newLat,newLng);
     	if (line != null)
     		line.remove(); // get rid of old line
@@ -318,7 +320,7 @@ public class MapViewActivity extends ActionBarActivity{
 	    public void onReceive(Context context, Intent intent){
 	        if (intent.hasExtra(SensorService.EXPECTATION)){
 	        	expectation = intent.getDoubleArrayExtra(SensorService.EXPECTATION);
-	        	Log.e( "Map", "recieving EXPECTATION" );  
+	        	//Log.e( "Map", "recieving EXPECTATION" );  
 	        }
 
 	    }

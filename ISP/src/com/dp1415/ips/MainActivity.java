@@ -14,6 +14,7 @@ import java.io.IOException;
 
 
 
+
 import android.support.v7.app.ActionBarActivity;
 
 
@@ -77,6 +78,9 @@ public class MainActivity extends ActionBarActivity{
 	private stateVector stateVector;
 	private double[] expectation;
 	private int accelCounter,rotateCounter;
+	
+	public final static String MAIN_INTENT = "com.dp1415.ips.MainActivity.WRITE_INFO";
+	Intent intent = new Intent(MAIN_INTENT);
 	
 	Intent i;
 	MyReceiver myReceiver=null;
@@ -170,48 +174,53 @@ public class MainActivity extends ActionBarActivity{
 		dataCollection = true;
 		startCollection.setVisibility(View.GONE);
 		stopCollection.setVisibility(View.VISIBLE);
-			try {
-				File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "stateVector.csv");
-				writer = new FileWriter(outFile,false);
-				Toast.makeText(getApplicationContext(), "Data being written to " + outFile.toString(), Toast.LENGTH_SHORT).show();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			if (writer!=null){
-			try {
-				//writer.write("Time (ms)" +"," + "accelX" +"," + "accelY" + "," + "accelZ" + "," + "rotateX" + "," + "rotateY" + "," + "rotateZ" + "," + "rotateS" + "," + "Latitude" + "," + "Longitude" + "\n" );
-				writer.write("Time (ms)"+ "," + "accelX" +"," + "accelY" + "," + "accelZ"+"," + "velocityX" +"," + "velocityY" + "," + "velocityZ"+ "," 
-				+"distanceX" +"," + "distanceY" + "," + "distanceZ"+ "," +"QuaX"+ "," +"QuaY" +"," + "QuaZ" + "," + "QuaS" + "," + 
-						"E[DistX]" + "," + "E[DistY]" + "," + "E[DistZ]" + "," + "E[QuaX]" + "," + "E[QuaY]" + "," + "E[QuaZ]" + "," + "E[QuaS]"+ "\n");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			}
+		intent.putExtra(SensorService.WRITE, true);
+		sendBroadcast(intent);
+//			try {
+//				File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "stateVector.csv");
+//				writer = new FileWriter(outFile,false);
+//				Toast.makeText(getApplicationContext(), "Data being written to " + outFile.toString(), Toast.LENGTH_SHORT).show();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			if (writer!=null){
+//				try {
+//					//writer.write("Time (ms)" +"," + "accelX" +"," + "accelY" + "," + "accelZ" + "," + "rotateX" + "," + "rotateY" + "," + "rotateZ" + "," + "rotateS" + "," + "Latitude" + "," + "Longitude" + "\n" );
+//					writer.write("Time (ms)"+ "," + "accelX" +"," + "accelY" + "," + "accelZ"+"," + "velocityX" +"," + "velocityY" + "," + "velocityZ"+ "," 
+//					+"distanceX" +"," + "distanceY" + "," + "distanceZ"+ "," +"QuaX"+ "," +"QuaY" +"," + "QuaZ" + "," + "QuaS" + "," + 
+//							"E[DistX]" + "," + "E[DistY]" + "," + "E[DistZ]" + "," + "E[QuaX]" + "," + "E[QuaY]" + "," + "E[QuaZ]" + "," + "E[QuaS]"+ "\n");
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			
+//			}
 		// set initial time and call the recursive loop
 //		accelCounter = 0;
 //		rotateCounter = 0;
-		initialTime = System.nanoTime();
-		stateVector = new stateVector(accelAverage(), rotateAverage(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
-		particleFilter = new ParticleFilter();
-		particleFilter.initialize(100, stateVector);
-		particleFilter.propagate();
-		handle.post(collectionLoop);
+//		initialTime = System.nanoTime();
+//		stateVector = new stateVector(accelAverage(), rotateAverage(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
+//		particleFilter = new ParticleFilter();
+//		particleFilter.initialize(100, stateVector);
+//		particleFilter.propagate();
+//		handle.post(collectionLoop);
 	}
 
 	public void onStopClick(View view) {
 		dataCollection = false;
 		startCollection.setVisibility(View.VISIBLE);
 		stopCollection.setVisibility(View.GONE);
-		try {
-			writer.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Toast.makeText(getApplicationContext(), "Data write successful", Toast.LENGTH_SHORT).show(); //popup notification
+		
+		intent.putExtra(SensorService.WRITE, false);
+		sendBroadcast(intent);
+//		try {
+//			writer.close();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		//Toast.makeText(getApplicationContext(), "Data write successful", Toast.LENGTH_SHORT).show(); //popup notification
 	}
 	
 	public float[] accelAverage(){
