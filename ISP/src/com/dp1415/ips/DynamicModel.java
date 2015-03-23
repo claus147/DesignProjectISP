@@ -1,9 +1,7 @@
 package com.dp1415.ips;
 import java.util.Random;
+import java.lang.Math;
 
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.CholeskyDecomposition;
-import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.distribution.NormalDistribution;
 
 // this class will determine the dynamic model
@@ -14,7 +12,12 @@ public class DynamicModel {
 	private int numberOfParticles;
 	private double[][] nextParticles;
 	private double timeInterval;
-	private double[] noise;
+	private double[][] possibilityMatrix = {
+			{1.0/2, 1.0/2, 0},
+			{1.0/3, 1.0/3, 1.0/3},
+			{0, 1.0/2, 1.0/2}
+	};
+	private double[][] modeCDF = possibilityMatrix;
 	
 	private NormalDistribution distrDistX = new NormalDistribution();
 	private NormalDistribution distrDistY = new NormalDistribution();
@@ -31,7 +34,6 @@ public class DynamicModel {
 	private NormalDistribution QuaS = new NormalDistribution();
 	
 	
-	
 	public enum Mode {
 		STILL(0), CONST(1), ACCEL(2);
 		
@@ -46,16 +48,18 @@ public class DynamicModel {
 		}
 	}
 	public DynamicModel(){
-		
+		for (int i = 0; i < possibilityMatrix.length; i++){
+			for(int j = 0; j < possibilityMatrix[i].length; j++){
+				if (j == 0 ) modeCDF[i][j] = possibilityMatrix[i][j]; 
+				else {
+					modeCDF[i][j] = modeCDF[i][j-1] + possibilityMatrix[i][j];
+				}
+			}
+		}
 	}
 	
 	//this method will return the next possible mode for particle
 	private int modeAnalysis(double currentMode){
-		double[][] modeCDF = new double[][]{
-									{1.0/2, 1, 1},
-									{1.0/3, 2.0/3, 1},
-									{0, 1.0/2, 1}
-											};
 		Random randomGenerator = new Random();
 		double random = randomGenerator.nextDouble();
 		for (int i=0; i<modeCDF[(int) currentMode].length; i++){
@@ -64,22 +68,6 @@ public class DynamicModel {
 			}	
 		}
 		return -1;
-	}
-	
-	private double[] corelatedNoise(){
-		double variance = 1; 
-		double[][] QMatrix = new double[][]{
-				{variance*Math.pow(timeInterval,5)/20, variance*Math.pow(timeInterval,4)/8, variance*Math.pow(timeInterval,3)/6},
-				{variance*Math.pow(timeInterval,4)/8,  variance*Math.pow(timeInterval,3)/3, variance*Math.pow(timeInterval,2)/2},
-				{variance*Math.pow(timeInterval,3)/6,  variance*Math.pow(timeInterval,2)/2, variance*timeInterval}
-			};
-		RealMatrix transition = new Array2DRowRealMatrix(QMatrix);
-		CholeskyDecomposition cholesky = new CholeskyDecomposition(transition);
-		RealMatrix GMatrix = cholesky.getLT();
-		
-		
-		return noise;
-		
 	}
 	
 	//this method will return a particle with next state info
@@ -133,12 +121,9 @@ public class DynamicModel {
 		particle[accelX] = particle[accelX] + distrAccelX.sample();
 		particle[accelY] = particle[accelY] + distrAccelY.sample();
 		particle[accelZ] = particle[accelZ] + distrAccelZ.sample();
-		particle[qX] = particle[qX] + QuaX.sample();
-		particle[qY] = particle[qY] + QuaY.sample();
-		particle[qZ] = particle[qZ] + QuaZ.sample();
-		particle[qS] = particle[qS] + QuaS.sample();
+
 		
-		return particle;
+		return turnCalculation(particle);
 	}
 	
 	//ACCEL mode calculation
@@ -162,12 +147,9 @@ public class DynamicModel {
 		particle[accelX] = tempAccelX + distrAccelX.sample();
 		particle[accelY] = tempAccelY + distrAccelY.sample();
 		particle[accelZ] = tempAccelZ + distrAccelZ.sample();
-		particle[qX] = particle[qX] + QuaX.sample();
-		particle[qY] = particle[qY] + QuaY.sample();
-		particle[qZ] = particle[qZ] + QuaZ.sample();
-		particle[qS] = particle[qS] + QuaS.sample();
+
 	
-		return particle;
+		return turnCalculation(particle);
 	}
 	
 	//CONST mode calculation
@@ -185,12 +167,73 @@ public class DynamicModel {
 		particle[accelX] = particle[accelX] + distrAccelX.sample();
 		particle[accelY] = particle[accelY] + distrAccelY.sample();
 		particle[accelZ] = particle[accelZ] + distrAccelZ.sample();
-		particle[qX] = particle[qX] + QuaX.sample();
-		particle[qY] = particle[qY] + QuaY.sample();
-		particle[qZ] = particle[qZ] + QuaZ.sample();
-		particle[qS] = particle[qS] + QuaS.sample();
+
 		
+		return turnCalculation(particle);
+	}
+	
+	private double[] turnCalculation(double[] particle){
+		Random randomGenerator = new Random();
+		double random = randomGenerator.nextDouble();
+		double radians = randomGenerator.nextDouble() * Math.PI/6;
+		//no turning
+		if (random < 1.0/3){
+			particle[qX] = particle[qX] + QuaX.sample();
+			particle[qY] = particle[qY] + QuaY.sample();
+			particle[qZ] = particle[qZ] + QuaZ.sample();
+			particle[qS] = particle[qS] + QuaS.sample();
+		}
+		//left turning
+		else if (random < 2.0/3 ){
+			double[] q = {particle[qX],particle[qY],particle[qZ],particle[qS]};
+			q = leftTurn(q,radians);
+			particle[qX] = q[0] + QuaS.sample();
+			particle[qY] = q[1] + QuaS.sample();
+			particle[qZ] = q[2] + QuaS.sample();
+			particle[qS] = q[3] + QuaS.sample();
+		}
+		//right turning
+		else{
+			double[] q = {particle[qX],particle[qY],particle[qZ],particle[qS]};
+			q = rightTurn(q,radians);
+			particle[qX] = q[0] + QuaS.sample();
+			particle[qY] = q[1] + QuaS.sample();
+			particle[qZ] = q[2] + QuaS.sample();
+			particle[qS] = q[3] + QuaS.sample();
+		}
+		
+		double number = Math.sqrt(Math.pow(particle[qX], 2) + Math.pow(particle[qY], 2)
+				+ Math.pow(particle[qZ], 2) + Math.pow(particle[qS], 2));
+		particle[qX] = particle[qX]/number;
+		particle[qY] = particle[qY]/number;
+		particle[qZ] = particle[qZ]/number;
+		particle[qS] = particle[qS]/number;
 		return particle;
+	}
+
+	//this method will return the orientation after a certain radian left turn
+	private double[] leftTurn(double[] q, double radians){
+		double[] rotate = {0,0,Math.sin(radians),Math.cos(radians)};
+		q = quaternionMultiplication(rotate,q);
+		return q;
+		
+	}
+	
+	//this method will return the orientation after a certain radian right turn
+	private double[] rightTurn(double[] q, double radians){
+		double[] rotate = {0,0,Math.sin(2*Math.PI - radians),Math.cos(2*Math.PI - radians)};
+		q = quaternionMultiplication(rotate,q);
+		return q;
+	}
+	
+	//this method will operate a quaternion multiplication {x,y,z,s}
+	private double[] quaternionMultiplication(double[] fa, double[] sa){
+		return new double[]{
+			fa[3] * sa[0] + fa[0] * sa[3] + fa[1] * sa[2] - fa[2] * sa[1],
+			fa[3] * sa[1] + fa[1] * sa[3] + fa[2] * sa[0] - fa[0] * sa[2],
+			fa[3] * sa[2] + fa[2] * sa[3] + fa[0] * sa[1] - fa[1] * sa[0],
+			fa[3] * sa[3] - fa[0] * sa[0] - fa[1] * sa[1] - fa[2] * sa[2]
+		};
 	}
 }
 
