@@ -4,26 +4,7 @@ package com.dp1415.ips;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
-
-
-
-
-
-
-
-
-
-
 import android.support.v7.app.ActionBarActivity;
-
-
-
-
-
-
-
-
 import android.support.v7.app.ActionBarActivity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;

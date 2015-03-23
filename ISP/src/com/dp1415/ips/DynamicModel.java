@@ -21,10 +21,10 @@ public class DynamicModel {
 	private double[][] modeCDF = possibilityMatrix;
 	private double[] noise = new double[3];
 
-	private NormalDistribution QuaX = new NormalDistribution();
-	private NormalDistribution QuaY = new NormalDistribution();
-	private NormalDistribution QuaZ = new NormalDistribution();
-	private NormalDistribution QuaS = new NormalDistribution();
+	private NormalDistribution QuaX = new NormalDistribution(0,0.001);
+	private NormalDistribution QuaY = new NormalDistribution(0,0.001);
+	private NormalDistribution QuaZ = new NormalDistribution(0,0.001);
+	private NormalDistribution QuaS = new NormalDistribution(0,0.001);
 	
 	
 	
@@ -128,9 +128,9 @@ public class DynamicModel {
 	
 	//STILL mode calculation
 	private double[] stationary(double[] particle){	
-		double varianceX=1;
-		double varianceY=1;
-		double varianceZ=1;
+		double varianceX=0.001;
+		double varianceY=0.001;
+		double varianceZ=0.001;
 		
 		double[] noiseX = correlatedNoise(varianceX);
 		double[] noiseY = correlatedNoise(varianceY);
@@ -162,9 +162,9 @@ public class DynamicModel {
 		double nextDistY = particle[distY] + (particle[velY] + nextVelY) * 0.5 * timeInterval;
 		double nextDistZ = particle[distZ] + (particle[velZ] + nextVelZ) * 0.5 * timeInterval;
 		
-		double varianceX=1;
-		double varianceY=1;
-		double varianceZ=1;
+		double varianceX=0.001;
+		double varianceY=0.001;
+		double varianceZ=0.001;
 		
 		double[] noiseX = correlatedNoise(varianceX);
 		double[] noiseY = correlatedNoise(varianceY);
@@ -190,9 +190,9 @@ public class DynamicModel {
 		double tempDistY = particle[distY] + particle[velY] * timeInterval;
 		double tempDistZ = particle[distZ] + particle[velZ] * timeInterval;
 		
-		double varianceX=1;
-		double varianceY=1;
-		double varianceZ=1;
+		double varianceX=0.001;
+		double varianceY=0.001;
+		double varianceZ=0.001;
 		
 		double[] noiseX = correlatedNoise(varianceX);
 		double[] noiseY = correlatedNoise(varianceY);

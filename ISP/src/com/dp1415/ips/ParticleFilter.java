@@ -26,19 +26,19 @@ public class ParticleFilter {
 		particles= new double[numOfParticles][15];
 		
 		// Normal Distribution, assume standard deviation as 1
-		NormalDistribution distrDistX = new NormalDistribution(states.getDistance().getX(),1);
-		NormalDistribution distrDistY = new NormalDistribution(states.getDistance().getY(),1);
-		NormalDistribution distrDistZ = new NormalDistribution(states.getDistance().getZ(),1);
-		NormalDistribution distrVelX = new NormalDistribution(states.getVelocity().getX(),1);
-		NormalDistribution distrVelY = new NormalDistribution(states.getVelocity().getY(),1);
-		NormalDistribution distrVelZ = new NormalDistribution(states.getVelocity().getZ(),1);
-		NormalDistribution distrAccelX = new NormalDistribution(states.getAcceleration().getX(),1);
-		NormalDistribution distrAccelY = new NormalDistribution(states.getAcceleration().getY(),1);
-		NormalDistribution distrAccelZ = new NormalDistribution(states.getAcceleration().getZ(),1);
-		NormalDistribution distrQX = new NormalDistribution(states.getRotationX(),1);
-		NormalDistribution distrQY = new NormalDistribution(states.getRotationY(),1);
-		NormalDistribution distrQZ = new NormalDistribution(states.getRotationZ(),1);
-		NormalDistribution distrQS = new NormalDistribution(states.getRotationS(),1);
+		NormalDistribution distrDistX = new NormalDistribution(states.getDistance().getX(),0.001);
+		NormalDistribution distrDistY = new NormalDistribution(states.getDistance().getY(),0.001);
+		NormalDistribution distrDistZ = new NormalDistribution(states.getDistance().getZ(),0.001);
+		NormalDistribution distrVelX = new NormalDistribution(states.getVelocity().getX(),0.001);
+		NormalDistribution distrVelY = new NormalDistribution(states.getVelocity().getY(),0.001);
+		NormalDistribution distrVelZ = new NormalDistribution(states.getVelocity().getZ(),0.001);
+		NormalDistribution distrAccelX = new NormalDistribution(states.getAcceleration().getX(),0.001);
+		NormalDistribution distrAccelY = new NormalDistribution(states.getAcceleration().getY(),0.001);
+		NormalDistribution distrAccelZ = new NormalDistribution(states.getAcceleration().getZ(),0.001);
+		NormalDistribution distrQX = new NormalDistribution(states.getRotationX(),0.001);
+		NormalDistribution distrQY = new NormalDistribution(states.getRotationY(),0.001);
+		NormalDistribution distrQZ = new NormalDistribution(states.getRotationZ(),0.001);
+		NormalDistribution distrQS = new NormalDistribution(states.getRotationS(),0.001);
 		
 		// populate all the particles with equal weight and the same initial state.
 		for (int i = 0 ; i < numOfParticles; i++){
@@ -177,7 +177,7 @@ public class ParticleFilter {
 
 	public void updateWeights(stateVector sv){
 		
-		double sdAX = 1, sdAY = 1, sdAZ = 1, sdQX = 1, sdQY = 1, sdQZ = 1,sdQS = 1;//standard deviations
+		double sdAX = 0.001, sdAY = 0.001, sdAZ = 0.001, sdQX = 0.001, sdQY = 0.001, sdQZ = 0.001, sdQS = 0.001;//standard deviations
 				
 		//get normal distributions of each measurement
 		NormalDistribution distrAccelX = new NormalDistribution(sv.getAcceleration().getX(),sdAX);
