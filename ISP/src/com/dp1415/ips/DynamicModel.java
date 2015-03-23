@@ -1,7 +1,9 @@
 package com.dp1415.ips;
 import java.util.Random;
 import java.lang.Math;
-
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.CholeskyDecomposition;
+import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.distribution.NormalDistribution;
 
 // this class will determine the dynamic model
@@ -18,20 +20,13 @@ public class DynamicModel {
 			{0, 1.0/2, 1.0/2}
 	};
 	private double[][] modeCDF = possibilityMatrix;
-	
-	private NormalDistribution distrDistX = new NormalDistribution();
-	private NormalDistribution distrDistY = new NormalDistribution();
-	private NormalDistribution distrDistZ = new NormalDistribution();
-	private NormalDistribution distrVelX = new NormalDistribution();
-	private NormalDistribution distrVelY = new NormalDistribution();
-	private NormalDistribution distrVelZ = new NormalDistribution();
-	private NormalDistribution distrAccelX = new NormalDistribution();
-	private NormalDistribution distrAccelY = new NormalDistribution();
-	private NormalDistribution distrAccelZ = new NormalDistribution();
+	private double[] noise;
+
 	private NormalDistribution QuaX = new NormalDistribution();
 	private NormalDistribution QuaY = new NormalDistribution();
 	private NormalDistribution QuaZ = new NormalDistribution();
 	private NormalDistribution QuaS = new NormalDistribution();
+	
 	
 	
 	public enum Mode {
@@ -69,6 +64,28 @@ public class DynamicModel {
 		}
 		return -1;
 	}
+	
+	private double[] correlatedNoise(double variance){ 
+		double[][] QMatrix = new double[][]{
+				{variance*Math.pow(timeInterval,5)/20, variance*Math.pow(timeInterval,4)/8, variance*Math.pow(timeInterval,3)/6},
+				{variance*Math.pow(timeInterval,4)/8,  variance*Math.pow(timeInterval,3)/3, variance*Math.pow(timeInterval,2)/2},
+				{variance*Math.pow(timeInterval,3)/6,  variance*Math.pow(timeInterval,2)/2, variance*timeInterval}
+			};
+		RealMatrix transition = new Array2DRowRealMatrix(QMatrix);
+		CholeskyDecomposition cholesky = new CholeskyDecomposition(transition);
+		RealMatrix RM_G = cholesky.getL();
+		
+		NormalDistribution accelNoise = new NormalDistribution();
+		NormalDistribution velocityNoise = new NormalDistribution();
+		NormalDistribution distNoise = new NormalDistribution();
+		double[] vectorH = new double[]{distNoise.sample(),velocityNoise.sample(),accelNoise.sample()};
+		double[][] GMatrix = new double[][]{RM_G.getRow(0),RM_G.getRow(1),RM_G.getRow(2) };
+		noise[0] = GMatrix[0][0]*vectorH[0] + GMatrix[0][1]*vectorH[1] + GMatrix[0][2]*vectorH[2];
+		noise[1] = GMatrix[1][0]*vectorH[0] + GMatrix[1][1]*vectorH[1] + GMatrix[1][2]*vectorH[2];
+		noise[2] = GMatrix[2][0]*vectorH[0] + GMatrix[2][1]*vectorH[1] + GMatrix[2][2]*vectorH[2];
+		return noise;	
+	}
+	
 	
 	//this method will return a particle with next state info
 	private double[] particleCalculation(double[] particle, double nextMode){
@@ -112,15 +129,23 @@ public class DynamicModel {
 	
 	//STILL mode calculation
 	private double[] stationary(double[] particle){	
-		particle[distX] = particle[distX] + distrDistX.sample();
-		particle[distY] = particle[distY] + distrDistY.sample();
-		particle[distZ] = particle[distZ] + distrDistZ.sample();
-		particle[velX] = particle[velX] + distrVelX.sample();
-		particle[velY] = particle[velY] + distrVelY.sample();
-		particle[velZ] = particle[velZ] + distrVelZ.sample();
-		particle[accelX] = particle[accelX] + distrAccelX.sample();
-		particle[accelY] = particle[accelY] + distrAccelY.sample();
-		particle[accelZ] = particle[accelZ] + distrAccelZ.sample();
+		double varianceX=1;
+		double varianceY=1;
+		double varianceZ=1;
+		
+		double[] noiseX = correlatedNoise(varianceX);
+		double[] noiseY = correlatedNoise(varianceY);
+		double[] noiseZ = correlatedNoise(varianceZ);
+		
+		particle[distX] = particle[distX] + noiseX[0];
+		particle[distY] = particle[distY] + noiseY[0];
+		particle[distZ] = particle[distZ] + noiseZ[0];
+		particle[velX] = particle[velX] + noiseX[1];
+		particle[velY] = particle[velY] + noiseY[1];
+		particle[velZ] = particle[velZ] + noiseZ[1];
+		particle[accelX] = particle[accelX] + noiseX[2];
+		particle[accelY] = particle[accelY] + noiseY[2];
+		particle[accelZ] = particle[accelZ] + noiseZ[2];
 
 		
 		return turnCalculation(particle);
@@ -138,15 +163,23 @@ public class DynamicModel {
 		double nextDistY = particle[distY] + (particle[velY] + nextVelY) * 0.5 * timeInterval;
 		double nextDistZ = particle[distZ] + (particle[velZ] + nextVelZ) * 0.5 * timeInterval;
 		
-		particle[distX] = nextDistX + distrDistX.sample();
-		particle[distY] = nextDistY + distrDistY.sample();
-		particle[distZ] = nextDistZ + distrDistZ.sample();
-		particle[velX] = nextVelX + distrVelX.sample();
-		particle[velY] = nextVelY + distrVelY.sample();
-		particle[velZ] = nextVelZ + distrVelZ.sample();
-		particle[accelX] = tempAccelX + distrAccelX.sample();
-		particle[accelY] = tempAccelY + distrAccelY.sample();
-		particle[accelZ] = tempAccelZ + distrAccelZ.sample();
+		double varianceX=1;
+		double varianceY=1;
+		double varianceZ=1;
+		
+		double[] noiseX = correlatedNoise(varianceX);
+		double[] noiseY = correlatedNoise(varianceY);
+		double[] noiseZ = correlatedNoise(varianceZ);
+		
+		particle[distX] = nextDistX + noiseX[0];
+		particle[distY] = nextDistY + noiseY[0];
+		particle[distZ] = nextDistZ + noiseZ[0];
+		particle[velX] = nextVelX + noiseX[1];
+		particle[velY] = nextVelY + noiseY[1];
+		particle[velZ] = nextVelZ + noiseZ[1];
+		particle[accelX] = tempAccelX + noiseX[2];
+		particle[accelY] = tempAccelY + noiseY[2];
+		particle[accelZ] = tempAccelZ + noiseZ[2];
 
 	
 		return turnCalculation(particle);
@@ -158,15 +191,23 @@ public class DynamicModel {
 		double tempDistY = particle[distY] + particle[velY] * timeInterval;
 		double tempDistZ = particle[distZ] + particle[velZ] * timeInterval;
 		
-		particle[distX] = tempDistX + distrDistX.sample();
-		particle[distY] = tempDistY + distrDistY.sample();
-		particle[distZ] = tempDistZ + distrDistZ.sample();
-		particle[velX] = particle[velX]+ distrVelX.sample();
-		particle[velY] = particle[velY]+ distrVelY.sample();
-		particle[velZ] = particle[velZ]+ distrVelZ.sample();
-		particle[accelX] = particle[accelX] + distrAccelX.sample();
-		particle[accelY] = particle[accelY] + distrAccelY.sample();
-		particle[accelZ] = particle[accelZ] + distrAccelZ.sample();
+		double varianceX=1;
+		double varianceY=1;
+		double varianceZ=1;
+		
+		double[] noiseX = correlatedNoise(varianceX);
+		double[] noiseY = correlatedNoise(varianceY);
+		double[] noiseZ = correlatedNoise(varianceZ);
+		
+		particle[distX] = tempDistX + noiseX[0];
+		particle[distY] = tempDistY + noiseY[0];
+		particle[distZ] = tempDistZ + noiseZ[0];
+		particle[velX] = particle[velX]+ noiseX[1];
+		particle[velY] = particle[velY]+ noiseY[1];
+		particle[velZ] = particle[velZ]+ noiseZ[1];
+		particle[accelX] = particle[accelX] + noiseX[2];
+		particle[accelY] = particle[accelY] + noiseY[2];
+		particle[accelZ] = particle[accelZ] + noiseZ[2];
 
 		
 		return turnCalculation(particle);
