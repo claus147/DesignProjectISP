@@ -1,10 +1,9 @@
 package com.dp1415.ips;
 import java.util.Random;
 import java.lang.Math;
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.CholeskyDecomposition;
-import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.distribution.NormalDistribution;
+import Jama.Matrix;
+import Jama.CholeskyDecomposition;
 
 // this class will determine the dynamic model
 public class DynamicModel {
@@ -20,7 +19,7 @@ public class DynamicModel {
 			{0, 1.0/2, 1.0/2}
 	};
 	private double[][] modeCDF = possibilityMatrix;
-	private double[] noise;
+	private double[] noise = new double[3];
 
 	private NormalDistribution QuaX = new NormalDistribution();
 	private NormalDistribution QuaY = new NormalDistribution();
@@ -71,15 +70,15 @@ public class DynamicModel {
 				{variance*Math.pow(timeInterval,4)/8,  variance*Math.pow(timeInterval,3)/3, variance*Math.pow(timeInterval,2)/2},
 				{variance*Math.pow(timeInterval,3)/6,  variance*Math.pow(timeInterval,2)/2, variance*timeInterval}
 			};
-		RealMatrix transition = new Array2DRowRealMatrix(QMatrix);
+		Matrix transition = new Matrix(QMatrix);
 		CholeskyDecomposition cholesky = new CholeskyDecomposition(transition);
-		RealMatrix RM_G = cholesky.getL();
+		transition = cholesky.getL();
 		
 		NormalDistribution accelNoise = new NormalDistribution();
 		NormalDistribution velocityNoise = new NormalDistribution();
 		NormalDistribution distNoise = new NormalDistribution();
 		double[] vectorH = new double[]{distNoise.sample(),velocityNoise.sample(),accelNoise.sample()};
-		double[][] GMatrix = new double[][]{RM_G.getRow(0),RM_G.getRow(1),RM_G.getRow(2) };
+		double[][] GMatrix = transition.getArray();
 		noise[0] = GMatrix[0][0]*vectorH[0] + GMatrix[0][1]*vectorH[1] + GMatrix[0][2]*vectorH[2];
 		noise[1] = GMatrix[1][0]*vectorH[0] + GMatrix[1][1]*vectorH[1] + GMatrix[1][2]*vectorH[2];
 		noise[2] = GMatrix[2][0]*vectorH[0] + GMatrix[2][1]*vectorH[1] + GMatrix[2][2]*vectorH[2];
