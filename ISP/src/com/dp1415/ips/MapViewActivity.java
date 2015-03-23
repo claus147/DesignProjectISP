@@ -101,7 +101,7 @@ public class MapViewActivity extends ActionBarActivity{
 
             		currentMark.setPosition(latLng);	//needed in order to properly update position when repositioning, otherwise it thinks marker always at original start position
             		currentLoc = latLng;	//current loc is the clicked start point
-            		initLoc = currentLoc;            		
+            		            		
             		isStartMarked = true;
             		
             		confirmOrientation.setEnabled(true); 		//can only confirm if we put a point down
@@ -119,6 +119,7 @@ public class MapViewActivity extends ActionBarActivity{
     
     public void onConfirmOrientationClick(View view) {
     	currentLoc = currentMark.getPosition();
+    	initLoc = currentLoc; 
     	route.add(currentLoc);
     	
     	map.getUiSettings().setRotateGesturesEnabled(false);
