@@ -1,5 +1,6 @@
 package com.dp1415.ips;
 import java.util.Random;
+import java.lang.Math;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 
@@ -34,7 +35,7 @@ public class DynamicModel {
 	
 	
 	public enum Mode {
-		STILL(0), CONST(1), ACCEL(2), LR(3), RR(4);
+		STILL(0), CONST(1), ACCEL(2);
 		
 		private final double value;
 		
@@ -120,12 +121,9 @@ public class DynamicModel {
 		particle[accelX] = particle[accelX] + distrAccelX.sample();
 		particle[accelY] = particle[accelY] + distrAccelY.sample();
 		particle[accelZ] = particle[accelZ] + distrAccelZ.sample();
-		particle[qX] = particle[qX] + QuaX.sample();
-		particle[qY] = particle[qY] + QuaY.sample();
-		particle[qZ] = particle[qZ] + QuaZ.sample();
-		particle[qS] = particle[qS] + QuaS.sample();
+
 		
-		return particle;
+		return turnCalculation(particle);
 	}
 	
 	//ACCEL mode calculation
@@ -149,12 +147,9 @@ public class DynamicModel {
 		particle[accelX] = tempAccelX + distrAccelX.sample();
 		particle[accelY] = tempAccelY + distrAccelY.sample();
 		particle[accelZ] = tempAccelZ + distrAccelZ.sample();
-		particle[qX] = particle[qX] + QuaX.sample();
-		particle[qY] = particle[qY] + QuaY.sample();
-		particle[qZ] = particle[qZ] + QuaZ.sample();
-		particle[qS] = particle[qS] + QuaS.sample();
+
 	
-		return particle;
+		return turnCalculation(particle);
 	}
 	
 	//CONST mode calculation
@@ -172,12 +167,73 @@ public class DynamicModel {
 		particle[accelX] = particle[accelX] + distrAccelX.sample();
 		particle[accelY] = particle[accelY] + distrAccelY.sample();
 		particle[accelZ] = particle[accelZ] + distrAccelZ.sample();
-		particle[qX] = particle[qX] + QuaX.sample();
-		particle[qY] = particle[qY] + QuaY.sample();
-		particle[qZ] = particle[qZ] + QuaZ.sample();
-		particle[qS] = particle[qS] + QuaS.sample();
+
 		
+		return turnCalculation(particle);
+	}
+	
+	private double[] turnCalculation(double[] particle){
+		Random randomGenerator = new Random();
+		double random = randomGenerator.nextDouble();
+		double radians = randomGenerator.nextDouble() * Math.PI/6;
+		//no turning
+		if (random < 1.0/3){
+			particle[qX] = particle[qX] + QuaX.sample();
+			particle[qY] = particle[qY] + QuaY.sample();
+			particle[qZ] = particle[qZ] + QuaZ.sample();
+			particle[qS] = particle[qS] + QuaS.sample();
+		}
+		//left turning
+		else if (random < 2.0/3 ){
+			double[] q = {particle[qX],particle[qY],particle[qZ],particle[qS]};
+			q = leftTurn(q,radians);
+			particle[qX] = q[0] + QuaS.sample();
+			particle[qY] = q[1] + QuaS.sample();
+			particle[qZ] = q[2] + QuaS.sample();
+			particle[qS] = q[3] + QuaS.sample();
+		}
+		//right turning
+		else{
+			double[] q = {particle[qX],particle[qY],particle[qZ],particle[qS]};
+			q = rightTurn(q,radians);
+			particle[qX] = q[0] + QuaS.sample();
+			particle[qY] = q[1] + QuaS.sample();
+			particle[qZ] = q[2] + QuaS.sample();
+			particle[qS] = q[3] + QuaS.sample();
+		}
+		
+		double number = Math.sqrt(Math.pow(particle[qX], 2) + Math.pow(particle[qY], 2)
+				+ Math.pow(particle[qZ], 2) + Math.pow(particle[qS], 2));
+		particle[qX] = particle[qX]/number;
+		particle[qY] = particle[qY]/number;
+		particle[qZ] = particle[qZ]/number;
+		particle[qS] = particle[qS]/number;
 		return particle;
+	}
+
+	//this method will return the orientation after a certain radian left turn
+	private double[] leftTurn(double[] q, double radians){
+		double[] rotate = {0,0,Math.sin(radians),Math.cos(radians)};
+		q = quaternionMultiplication(rotate,q);
+		return q;
+		
+	}
+	
+	//this method will return the orientation after a certain radian right turn
+	private double[] rightTurn(double[] q, double radians){
+		double[] rotate = {0,0,Math.sin(2*Math.PI - radians),Math.cos(2*Math.PI - radians)};
+		q = quaternionMultiplication(rotate,q);
+		return q;
+	}
+	
+	//this method will operate a quaternion multiplication {x,y,z,s}
+	private double[] quaternionMultiplication(double[] fa, double[] sa){
+		return new double[]{
+			fa[3] * sa[0] + fa[0] * sa[3] + fa[1] * sa[2] - fa[2] * sa[1],
+			fa[3] * sa[1] + fa[1] * sa[3] + fa[2] * sa[0] - fa[0] * sa[2],
+			fa[3] * sa[2] + fa[2] * sa[3] + fa[0] * sa[1] - fa[1] * sa[0],
+			fa[3] * sa[3] - fa[0] * sa[0] - fa[1] * sa[1] - fa[2] * sa[2]
+		};
 	}
 }
 
