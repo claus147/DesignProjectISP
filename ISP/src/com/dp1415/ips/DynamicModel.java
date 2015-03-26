@@ -136,6 +136,8 @@ public class DynamicModel {
 		double[] noiseY = correlatedNoise(varianceY);
 		double[] noiseZ = correlatedNoise(varianceZ);
 		
+		particle = turnCalculation(particle);
+		
 		particle[distX] = particle[distX] + noiseX[0];
 		particle[distY] = particle[distY] + noiseY[0];
 		particle[distZ] = particle[distZ] + noiseZ[0];
@@ -147,7 +149,7 @@ public class DynamicModel {
 		particle[accelZ] = particle[accelZ] + noiseZ[2];
 
 		
-		return turnCalculation(particle);
+		return particle;
 	}
 	
 	//ACCEL mode calculation
@@ -170,6 +172,8 @@ public class DynamicModel {
 		double[] noiseY = correlatedNoise(varianceY);
 		double[] noiseZ = correlatedNoise(varianceZ);
 		
+		particle = turnCalculation(particle);
+		
 		particle[distX] = nextDistX + noiseX[0];
 		particle[distY] = nextDistY + noiseY[0];
 		particle[distZ] = nextDistZ + noiseZ[0];
@@ -181,7 +185,7 @@ public class DynamicModel {
 		particle[accelZ] = tempAccelZ + noiseZ[2];
 
 	
-		return turnCalculation(particle);
+		return particle;
 	}
 	
 	//CONST mode calculation
@@ -198,6 +202,8 @@ public class DynamicModel {
 		double[] noiseY = correlatedNoise(varianceY);
 		double[] noiseZ = correlatedNoise(varianceZ);
 		
+		particle = turnCalculation(particle);
+		
 		particle[distX] = tempDistX + noiseX[0];
 		particle[distY] = tempDistY + noiseY[0];
 		particle[distZ] = tempDistZ + noiseZ[0];
@@ -209,9 +215,10 @@ public class DynamicModel {
 		particle[accelZ] = particle[accelZ] + noiseZ[2];
 
 		
-		return turnCalculation(particle);
+		return particle;
 	}
 	
+	//this method will add turn mode and return orientation after turns
 	private double[] turnCalculation(double[] particle){
 		Random randomGenerator = new Random();
 		double random = randomGenerator.nextDouble();
@@ -231,6 +238,16 @@ public class DynamicModel {
 			particle[qY] = q[1] + QuaS.sample();
 			particle[qZ] = q[2] + QuaS.sample();
 			particle[qS] = q[3] + QuaS.sample();
+			//calculate new acceleration direction after quaternion changed
+			double[] rotate = {0,0,Math.sin(radians),Math.cos(radians)};
+			double[] rotate_con = {0,0,-Math.sin(radians),Math.cos(radians)};
+			double[] accel_old = {particle[accelX],particle[accelY],particle[accelZ],0};
+			double[] accel_new = quaternionMultiplication(
+					quaternionMultiplication(rotate,accel_old),rotate_con);
+			particle[accelX] = accel_new[0];
+			particle[accelY] = accel_new[1];
+			particle[accelZ] = accel_new[2];
+			
 		}
 		//right turning
 		else{
@@ -240,6 +257,15 @@ public class DynamicModel {
 			particle[qY] = q[1] + QuaS.sample();
 			particle[qZ] = q[2] + QuaS.sample();
 			particle[qS] = q[3] + QuaS.sample();
+			//calculate new acceleration direction after quaternion changed
+			double[] rotate = {0,0,Math.sin(2*Math.PI - radians),Math.cos(2*Math.PI - radians)};
+			double[] rotate_con = {0,0,-Math.sin(2*Math.PI - radians),Math.cos(2*Math.PI - radians)};
+			double[] accel_old = {particle[accelX],particle[accelY],particle[accelZ],0};
+			double[] accel_new = quaternionMultiplication(
+					quaternionMultiplication(rotate,accel_old),rotate_con);
+			particle[accelX] = accel_new[0];
+			particle[accelY] = accel_new[1];
+			particle[accelZ] = accel_new[2];
 		}
 		
 		double number = Math.sqrt(Math.pow(particle[qX], 2) + Math.pow(particle[qY], 2)
