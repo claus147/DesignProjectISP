@@ -56,7 +56,10 @@ public class ParticleFilter {
 			particles[i][qZ] = distrQZ.sample();
 			particles[i][qS] = distrQS.sample(); 
 			particles[i][weight] = 1.0/numOfParticles;
+			System.out.println("accel X: " +particles[i][accelX]);
 		}
+		
+		
 	}
 	
 	public void propagate(){
@@ -65,6 +68,9 @@ public class ParticleFilter {
 		timestamp = currentTime;
 		propogation.propogate(particles,numOfParticles,timeInterval);
 		particles = propogation.getParticles();
+		//for (int i = 0 ; i < numOfParticles; i++){
+			System.out.println("after accel X: " +particles[0][accelX]);
+		//}
 		
 	}
 	public void normalizeWeight(){
@@ -134,7 +140,7 @@ public class ParticleFilter {
 		for (int x=0;x<numOfParticles;x++){
 			double random=randomGenerator.nextDouble();//this generates a number between 0 and 1
 			for (int y=0 ; y<numOfParticles; y++){
-				if (random<cdf[y]){
+				if (random<=cdf[y]){
 					particles[x] = resampled[y].clone();
 				}
 			}
@@ -197,13 +203,24 @@ public class ParticleFilter {
 			newWeight = particles[i][weight]*
 					distrAccelX.density(particles[i][accelX])*
 					distrAccelY.density(particles[i][accelY])*
-					distrAccelZ.density(particles[i][accelZ])*
-					distrQX.density(particles[i][qX])*
-					distrQY.density(particles[i][qY])*
-					distrQZ.density(particles[i][qZ])*
-					distrQS.density(particles[i][qS]);
+					distrAccelZ.density(particles[i][accelZ]);//*
+//					distrQX.density(particles[i][qX])*
+//					distrQY.density(particles[i][qY])*
+//					distrQZ.density(particles[i][qZ])*
+//					distrQS.density(particles[i][qS]);
+			
+			
 			particles[i][weight]=newWeight;
 		}
+		System.out.println("accel density: " +distrAccelX.density(particles[0][accelX])+"sv accel: " + sv.getAcceleration().getX()+"particle accel: " +particles[0][accelX]);
+	}
+
+	public String getWeights(){
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < numOfParticles; i++){
+			sb.append(particles[i][weight]+", ");
+		}
+		return sb.toString();
 	}
 
 	

@@ -49,17 +49,22 @@ public class SensorService extends IntentService implements SensorEventListener{
 	private boolean writing = false;
 	private long initialTime;
 	private FileWriter writer;
-	MyReceiver myReceiver=null;
+	MainActivityReceiver mainAcReceiver=null;
+	MapActivityReceiver mapReceiver = null;
+	
+	private boolean doReset = false;
 	
 	public final static String SENSOR_INTENT = "com.dp1415.ips.SensorService.SENSOR_READINGS";
 	public final static String ACCEL_VALUES = "ACCEL_VALUES";
 	public final static String ROTATE_VALUES = "ROTATE_VALUES";
 	public final static String EXPECTATION = "EXPECTATION";
 	public final static String WRITE = "WRITE";
+	public final static String RESET = "RESET";
 	
 	Intent intent = new Intent(SENSOR_INTENT);
 	
 	Intent i;
+	Intent j;
 	
 	
 	
@@ -85,6 +90,26 @@ public class SensorService extends IntentService implements SensorEventListener{
 		sensorManager.registerListener(this, accelSensor, SensorManager.SENSOR_DELAY_FASTEST);
 		sensorManager.registerListener(this, rotateSensor, SensorManager.SENSOR_DELAY_FASTEST);		
 		
+		resetParticleFilter();
+		Log.e( "SS", "after init weight: " + particleFilter.getWeights() );
+		handle.post(collectionLoop);
+		
+		mainAcReceiver = new MainActivityReceiver();
+		IntentFilter intentFilter = new IntentFilter();      
+        intentFilter.addAction(MainActivity.MAIN_INTENT);
+        i= new Intent(this, com.dp1415.ips.MainActivity.class);
+        registerReceiver(mainAcReceiver, intentFilter);
+        
+        mapReceiver = new MapActivityReceiver();
+		IntentFilter mapIntentFilter = new IntentFilter();      
+        mapIntentFilter.addAction(MapViewActivity.MAP_INTENT);
+        j= new Intent(this, com.dp1415.ips.MapViewActivity.class);
+        registerReceiver(mapReceiver, mapIntentFilter);
+		
+		while(true);
+	}
+	
+	private void resetParticleFilter(){
 		accelCounter = 0;
 		rotateCounter = 0;
 		initialTime = System.nanoTime();
@@ -92,22 +117,14 @@ public class SensorService extends IntentService implements SensorEventListener{
 		particleFilter = new ParticleFilter();
 		particleFilter.initialize(100, stateVector);
 		particleFilter.propagate();
-		handle.post(collectionLoop);
-		
-		myReceiver = new MyReceiver();
-		IntentFilter intentFilter = new IntentFilter();      
-        intentFilter.addAction(MainActivity.MAIN_INTENT);
-        i= new Intent(this, com.dp1415.ips.MainActivity.class);
-        registerReceiver(myReceiver, intentFilter);
-		
-		while(true);
 	}
+	
 	@Override
-	   public void onDestroy() {
-	        Log.e( "SS", "onDestroy" );
-	        sensorManager.unregisterListener(this);       
-	        super.onDestroy();
-	   }
+	public void onDestroy() {
+		Log.e( "SS", "onDestroy" );
+	    sensorManager.unregisterListener(this);       
+	    super.onDestroy();
+	}
 
 	
 	@Override
@@ -171,9 +188,17 @@ public class SensorService extends IntentService implements SensorEventListener{
 	Runnable collectionLoop = new Runnable() {
 	    @Override
 	    public void run(){
+	    	Log.e( "SS", "before update weight: " + particleFilter.getWeights() );
+	    	if (doReset){
+	    		resetParticleFilter();
+	    		doReset = false;
+	    	}
+	    	
 	    	stateVector.update(accelAverage(), rotateAverage(), System.nanoTime());
 	    	particleFilter.updateWeights(stateVector);
+	    	Log.e( "SS", "after update weight: " + particleFilter.getWeights() );
 	    	particleFilter.normalizeWeight();
+	    	Log.e( "SS", "after normalise " + particleFilter.getWeights() );
 	    	particleFilter.resample();
 	    	double[] expectation = particleFilter.expectation();
 	    	
@@ -181,6 +206,7 @@ public class SensorService extends IntentService implements SensorEventListener{
 	    	
 	    	particleFilter.propagate();
 		    
+	    	//the saving of info into CSV file
 	    	if(writing && writer !=null){
 				try {
 					long timer = System.nanoTime() - initialTime;
@@ -221,7 +247,7 @@ public class SensorService extends IntentService implements SensorEventListener{
 	};
 	
 	
-	private class MyReceiver extends BroadcastReceiver{
+	private class MainActivityReceiver extends BroadcastReceiver{
 	    @Override
 	    public void onReceive(Context context, Intent intent){
 	        if (intent.hasExtra(WRITE)){
@@ -260,10 +286,17 @@ public class SensorService extends IntentService implements SensorEventListener{
 					}
 	        	}
 	        }
-	    }
-
+	    } 
+	    
 	}
-
+	private class MapActivityReceiver extends BroadcastReceiver{
+	    @Override
+	    public void onReceive(Context context, Intent intent){
+	    	if (intent.hasExtra(RESET)){
+	    		doReset = true;
+	    	}
+	    }
+    }
 
 
 }

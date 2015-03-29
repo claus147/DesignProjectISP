@@ -59,6 +59,9 @@ public class MapViewActivity extends ActionBarActivity{
 	
 	Intent i;
 	MyReceiver myReceiver=null;
+	
+	public final static String MAP_INTENT = "com.dp1415.ips.MapViewActivity.RESET";
+	Intent intent = new Intent(MAP_INTENT);
     
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +141,9 @@ public class MapViewActivity extends ActionBarActivity{
     	isAutomatic = true;
     	handle.post(expectationDisplay);
     	
+    	intent.putExtra(SensorService.RESET, true);
+		sendBroadcast(intent);
+		System.out.println(initLoc);
 	}
     
     public void onRedoOrientationClick(View view) {
@@ -162,6 +168,8 @@ public class MapViewActivity extends ActionBarActivity{
     	distance.setVisibility(View.GONE);
     	
     	isAutomatic = false;
+    	
+    	
 	}
     
     //adds a polyline in the direction the camera is facing 1m ahead
