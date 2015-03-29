@@ -202,8 +202,8 @@ public class ParticleFilter {
 		for (int i = 0; i < particles.length; i++){
 			newWeight = particles[i][weight]*
 					distrAccelX.density(particles[i][accelX])*
-					distrAccelY.density(particles[i][accelY])*
-					distrAccelZ.density(particles[i][accelZ]);//*
+					distrAccelY.density(particles[i][accelY]);//*
+					//distrAccelZ.density(particles[i][accelZ]);//*
 //					distrQX.density(particles[i][qX])*
 //					distrQY.density(particles[i][qY])*
 //					distrQZ.density(particles[i][qZ])*
