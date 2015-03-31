@@ -26,19 +26,19 @@ public class ParticleFilter {
 		particles= new double[numOfParticles][15];
 		
 		// Normal Distribution, assume standard deviation as 1
-		NormalDistribution distrDistX = new NormalDistribution(states.getDistance().getX(),0.001);
-		NormalDistribution distrDistY = new NormalDistribution(states.getDistance().getY(),0.001);
-		NormalDistribution distrDistZ = new NormalDistribution(states.getDistance().getZ(),0.001);
-		NormalDistribution distrVelX = new NormalDistribution(states.getVelocity().getX(),0.001);
-		NormalDistribution distrVelY = new NormalDistribution(states.getVelocity().getY(),0.001);
-		NormalDistribution distrVelZ = new NormalDistribution(states.getVelocity().getZ(),0.001);
-		NormalDistribution distrAccelX = new NormalDistribution(states.getAcceleration().getX(),0.001);
-		NormalDistribution distrAccelY = new NormalDistribution(states.getAcceleration().getY(),0.001);
-		NormalDistribution distrAccelZ = new NormalDistribution(states.getAcceleration().getZ(),0.001);
-		NormalDistribution distrQX = new NormalDistribution(states.getRotationX(),0.001);
-		NormalDistribution distrQY = new NormalDistribution(states.getRotationY(),0.001);
-		NormalDistribution distrQZ = new NormalDistribution(states.getRotationZ(),0.001);
-		NormalDistribution distrQS = new NormalDistribution(states.getRotationS(),0.001);
+		NormalDistribution distrDistX = new NormalDistribution(states.getDistance().getX(),0.0001);
+		NormalDistribution distrDistY = new NormalDistribution(states.getDistance().getY(),0.0001);
+		NormalDistribution distrDistZ = new NormalDistribution(states.getDistance().getZ(),0.0001);
+		NormalDistribution distrVelX = new NormalDistribution(states.getVelocity().getX(),0.0001);
+		NormalDistribution distrVelY = new NormalDistribution(states.getVelocity().getY(),0.0001);
+		NormalDistribution distrVelZ = new NormalDistribution(states.getVelocity().getZ(),0.0001);
+		NormalDistribution distrAccelX = new NormalDistribution(states.getAcceleration().getX(),0.0001);
+		NormalDistribution distrAccelY = new NormalDistribution(states.getAcceleration().getY(),0.0001);
+		NormalDistribution distrAccelZ = new NormalDistribution(states.getAcceleration().getZ(),0.0001);
+		NormalDistribution distrQX = new NormalDistribution(states.getRotationX(),0.0001);
+		NormalDistribution distrQY = new NormalDistribution(states.getRotationY(),0.0001);
+		NormalDistribution distrQZ = new NormalDistribution(states.getRotationZ(),0.0001);
+		NormalDistribution distrQS = new NormalDistribution(states.getRotationS(),0.0001);
 		
 		// populate all the particles with equal weight and the same initial state.
 		for (int i = 0 ; i < numOfParticles; i++){
@@ -56,7 +56,7 @@ public class ParticleFilter {
 			particles[i][qZ] = distrQZ.sample();
 			particles[i][qS] = distrQS.sample(); 
 			particles[i][weight] = 1.0/numOfParticles;
-			System.out.println("accel X: " +particles[i][accelX]);
+			System.out.println(i+": accel X: " +particles[i][accelX]+ ", accel Y: "+ particles[i][accelY]);
 		}
 		
 		
@@ -183,36 +183,50 @@ public class ParticleFilter {
 
 	public void updateWeights(stateVector sv){
 		
-		double sdAX = 0.001, sdAY = 0.001, sdAZ = 0.001, sdQX = 0.001, sdQY = 0.001, sdQZ = 0.001, sdQS = 0.001;//standard deviations
+		double sdAX = 0.0001, sdAY = 0.0001, sdAZ = 0.001, sdQX = 0.001, sdQY = 0.001, sdQZ = 0.001, sdQS = 0.001;//standard deviations
 				
 		//get normal distributions of each measurement
-		NormalDistribution distrAccelX = new NormalDistribution(sv.getAcceleration().getX(),sdAX);
-		NormalDistribution distrAccelY = new NormalDistribution(sv.getAcceleration().getY(),sdAY);
-		NormalDistribution distrAccelZ = new NormalDistribution(sv.getAcceleration().getZ(),sdAZ);
-		NormalDistribution distrQX = new NormalDistribution(sv.getRotationX(),sdQX);
-		NormalDistribution distrQY = new NormalDistribution(sv.getRotationY(),sdQY);
-		NormalDistribution distrQZ = new NormalDistribution(sv.getRotationZ(),sdQZ);
-		NormalDistribution distrQS = new NormalDistribution(sv.getRotationS(),sdQZ);
+		
+//		NormalDistribution distrAccelX = new NormalDistribution(sv.getAcceleration().getX(),sdAX);
+//		NormalDistribution distrAccelY = new NormalDistribution(sv.getAcceleration().getY(),sdAY);
+//		NormalDistribution distrAccelZ = new NormalDistribution(sv.getAcceleration().getZ(),sdAZ);
+//		NormalDistribution distrQX = new NormalDistribution(sv.getRotationX(),sdQX);
+//		NormalDistribution distrQY = new NormalDistribution(sv.getRotationY(),sdQY);
+//		NormalDistribution distrQZ = new NormalDistribution(sv.getRotationZ(),sdQZ);
+//		NormalDistribution distrQS = new NormalDistribution(sv.getRotationS(),sdQZ);
 		
 		//NOT DOING ln(weight) yet 
 		
 		//pdf of measurement at a given estimate is the same as the otherway round. (saving space this way)
 		//do actual new weight assignment
+		
+		double AXpdf = 0, AYpdf = 0;
 		double newWeight = 0;
 		for (int i = 0; i < particles.length; i++){
-			newWeight = particles[i][weight]*
-					distrAccelX.density(particles[i][accelX])*
-					distrAccelY.density(particles[i][accelY]);//*
+			NormalDistribution AX = new NormalDistribution(particles[i][accelX],sdAX);
+			NormalDistribution AY = new NormalDistribution(particles[i][accelY],sdAY);
+			
+			AXpdf = AX.density(sv.getAcceleration().getX());
+			AYpdf = AY.density(sv.getAcceleration().getY());
+//			if (AXpdf > 1)
+//				AXpdf = 0;
+//			if (AYpdf > 1)
+//				AYpdf = 0;
+			newWeight = particles[i][weight]*AXpdf*AYpdf;
+//			newWeight = particles[i][weight]*
+//					distrAccelX.density(particles[i][accelX])*
+//					distrAccelY.density(particles[i][accelY]);//*
 					//distrAccelZ.density(particles[i][accelZ]);//*
 //					distrQX.density(particles[i][qX])*
 //					distrQY.density(particles[i][qY])*
 //					distrQZ.density(particles[i][qZ])*
 //					distrQS.density(particles[i][qS]);
 			
+			System.out.println(i+", accelX density: " +AXpdf +"sv accelX: " + sv.getAcceleration().getX()+"particle accelX: " +particles[i][accelX]+", accelY density: " +AYpdf+"sv accelY: " + sv.getAcceleration().getY()+"particle accelY: " +particles[i][accelY]);
+
 			
 			particles[i][weight]=newWeight;
 		}
-		System.out.println("accel density: " +distrAccelX.density(particles[0][accelX])+"sv accel: " + sv.getAcceleration().getX()+"particle accel: " +particles[0][accelX]);
 	}
 
 	public String getWeights(){

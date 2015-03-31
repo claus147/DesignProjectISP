@@ -241,7 +241,7 @@ public class SensorService extends IntentService implements SensorEventListener{
 					e.printStackTrace();
 				}
 	    	}
-		    handle.postDelayed(collectionLoop,50);
+		    handle.postDelayed(collectionLoop,200);
 		    	
 	    }
 	};

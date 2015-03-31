@@ -14,6 +14,7 @@ public class DynamicModel {
 	private double[][] nextParticles;
 	private double timeInterval;
 	private double[][] possibilityMatrix = {
+//			{1.0, 0.0, 0.0},{0.0,1.0,0.0},{0.0,0.0,1.0}};
 			{1.0/2, 1.0/2, 0},
 			{1.0/3, 1.0/3, 1.0/3},
 			{0, 1.0/2, 1.0/2}
@@ -128,9 +129,9 @@ public class DynamicModel {
 	
 	//STILL mode calculation
 	private double[] stationary(double[] particle){	
-		double varianceX=0.001;
-		double varianceY=0.001;
-		double varianceZ=0.001;
+		double varianceX=0.00000001;
+		double varianceY=0.00000001;
+		double varianceZ=0.00000001;
 		
 		double[] noiseX = correlatedNoise(varianceX);
 		double[] noiseY = correlatedNoise(varianceY);
@@ -164,9 +165,9 @@ public class DynamicModel {
 		double nextDistY = particle[distY] + (particle[velY] + nextVelY) * 0.5 * timeInterval;
 		double nextDistZ = particle[distZ] + (particle[velZ] + nextVelZ) * 0.5 * timeInterval;
 		
-		double varianceX=0.001;
-		double varianceY=0.001;
-		double varianceZ=0.001;
+		double varianceX=Math.pow((1.4*timeInterval)/3.0,2);
+		double varianceY=Math.pow((1.4*timeInterval)/3.0,2);
+		double varianceZ=Math.pow((1.4*timeInterval)/3.0,2);
 		
 		double[] noiseX = correlatedNoise(varianceX);
 		double[] noiseY = correlatedNoise(varianceY);
@@ -194,9 +195,9 @@ public class DynamicModel {
 		double tempDistY = particle[distY] + particle[velY] * timeInterval;
 		double tempDistZ = particle[distZ] + particle[velZ] * timeInterval;
 		
-		double varianceX=0.001;
-		double varianceY=0.001;
-		double varianceZ=0.001;
+		double varianceX=0.0001;
+		double varianceY=0.0001;
+		double varianceZ=0.0001;
 		
 		double[] noiseX = correlatedNoise(varianceX);
 		double[] noiseY = correlatedNoise(varianceY);
