@@ -208,7 +208,8 @@ public class SensorService extends IntentService implements SensorEventListener{
 		    
 	    	//the saving of info into CSV file
 	    	if(writing && writer !=null){
-				try {
+	    		resetParticleFilter();
+	    		try {
 					long timer = System.nanoTime() - initialTime;
 				    double timerInMs = (double)timer / 1000000.0;
 
