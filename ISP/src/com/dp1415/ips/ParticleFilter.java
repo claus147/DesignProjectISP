@@ -15,6 +15,7 @@ public class ParticleFilter {
 	private double timeInterval; 
 	private double[][] particles,resampled;
 	private DynamicModel propogation = new DynamicModel();
+	private double resampleThreshold = 0.5; // if the effective number of particles is less than 50%, resample!
 	
 	public ParticleFilter(){
 		this.timestamp = System.nanoTime();
@@ -113,61 +114,72 @@ public class ParticleFilter {
 	
 	
 	public void resample(){
-		//create a new set of particles
-		resampled = new double[numOfParticles][];
-//		for (int i = 0 ; i < numOfParticles; i++){
-//			resampled[i] = new particle(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,(long)0.0,0.0, Mode.STILL);
-//		}
-		
-		//construct CDF
-		double[] cdf = new double[numOfParticles];
-		for (int i=0;i<numOfParticles;i++){
-			if (i==0){
-				cdf[i]=particles[i][weight];
-			}
-			else{
-				cdf[i]=cdf[i-1]+particles[i][weight];
-			}
-			//TODO: make cdf[numOfParticles]=1?
-			
-			//as well as make a copy of original particles
-			resampled[i]=particles[i].clone();
+		double sum = 0;
+		//check if resample is needed by calculating the effective number of particles
+		for (int x = 0; x < numOfParticles; x++){
+			sum+=particles[x][weight]*particles[x][weight];
 		}
+		double effNumOfParticles = 1/sum;
 		
-		// create random number generator
-		Random randomGenerator = new Random();
+		// resample only if the effective number of particles is less than the threshold
+		if (effNumOfParticles < resampleThreshold*numOfParticles)
+		{
+			//create a new set of particles
+			resampled = new double[numOfParticles][];
+			//		for (int i = 0 ; i < numOfParticles; i++){
+			//			resampled[i] = new particle(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,(long)0.0,0.0, Mode.STILL);
+			//		}
 
-		for (int x=0;x<numOfParticles;x++){
-			double random=randomGenerator.nextDouble();//this generates a number between 0 and 1
-			for (int y=0 ; y<numOfParticles; y++){
-				if (random<=cdf[y]){
-					particles[x] = resampled[y].clone();
+			//construct CDF
+			double[] cdf = new double[numOfParticles];
+			for (int i=0;i<numOfParticles;i++){
+				if (i==0){
+					cdf[i]=particles[i][weight];
 				}
+				else{
+					cdf[i]=cdf[i-1]+particles[i][weight];
+				}
+				//TODO: make cdf[numOfParticles]=1?
+
+				//as well as make a copy of original particles
+				resampled[i]=particles[i].clone();
 			}
-			particles[x][weight]=(1.0/numOfParticles); //equalize the weights
+
+			// create random number generator
+			Random randomGenerator = new Random();
+
+			for (int x=0;x<numOfParticles;x++){
+				double random=randomGenerator.nextDouble();//this generates a number between 0 and 1
+				for (int y=0 ; y<numOfParticles; y++){
+					if (random<=cdf[y]){
+						particles[x] = resampled[y].clone();
+					}
+				}
+				particles[x][weight]=(1.0/numOfParticles); //equalize the weights
+			}
+
+			//		for (int x=0;x<numOfParticles;x++){
+			//			double random=randomGenerator.nextDouble();//this generates a number between 0 and 1
+			//			int low = 0;
+			//			int high = numOfParticles;
+			//			int mid = 0;
+			//			//binary search to find the particle
+			//			while (low<=high){
+			//				mid = low + (high-low)/2;
+			//				if (random<cdf[mid]){
+			//					high = mid;
+			//				}
+			//				else if (low>cdf[mid]){
+			//					low = mid+1;
+			//				}
+			//				else{
+			//					break;
+			//				}
+			//			}
+			//			particles[x]=resampled[mid].clone();
+			//			particles[x][weight]=(1.0/numOfParticles); //equalize the weights
+			//		}
 		}
-		
-//		for (int x=0;x<numOfParticles;x++){
-//			double random=randomGenerator.nextDouble();//this generates a number between 0 and 1
-//			int low = 0;
-//			int high = numOfParticles;
-//			int mid = 0;
-//			//binary search to find the particle
-//			while (low<=high){
-//				mid = low + (high-low)/2;
-//				if (random<cdf[mid]){
-//					high = mid;
-//				}
-//				else if (low>cdf[mid]){
-//					low = mid+1;
-//				}
-//				else{
-//					break;
-//				}
-//			}
-//			particles[x]=resampled[mid].clone();
-//			particles[x][weight]=(1.0/numOfParticles); //equalize the weights
-//		}
 	}
 	
 	/**ASSUMES StateVector is the most up to date. 
