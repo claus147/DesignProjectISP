@@ -208,7 +208,7 @@ public class SensorService extends IntentService implements SensorEventListener{
 		    
 	    	//the saving of info into CSV file
 	    	if(writing && writer !=null){
-	    		resetParticleFilter();
+	    		
 	    		try {
 					long timer = System.nanoTime() - initialTime;
 				    double timerInMs = (double)timer / 1000000.0;
@@ -259,6 +259,7 @@ public class SensorService extends IntentService implements SensorEventListener{
 						writing = true;
 		        		File outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "stateVector.csv");
 						writer = new FileWriter(outFile,false);
+						resetParticleFilter();
 						Toast.makeText(getApplicationContext(), "Data being written to " + outFile.toString(), Toast.LENGTH_SHORT).show();
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
