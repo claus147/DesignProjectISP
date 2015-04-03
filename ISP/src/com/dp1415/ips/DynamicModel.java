@@ -15,9 +15,8 @@ public class DynamicModel {
 	private double timeInterval;
 	private double[][] possibilityMatrix = {
 //			{1.0, 0.0, 0.0},{0.0,1.0,0.0},{0.0,0.0,1.0}};
-			{1.0/2, 1.0/2, 0},
-			{1.0/3, 1.0/3, 1.0/3},
-			{0, 1.0/2, 1.0/2}
+			{2.0/3, 1.0/3},
+			{1.0/3, 2.0/3}
 	};
 	private double[][] modeCDF = possibilityMatrix;
 	private double[] noise = new double[3];
@@ -30,7 +29,7 @@ public class DynamicModel {
 	
 	
 	public enum Mode {
-		STILL(0), CONST(1), ACCEL(2);
+		STILL(0), ACCEL(1);
 		
 		private final double value;
 		
@@ -99,10 +98,10 @@ public class DynamicModel {
 				nextState = acceleration(particle);
 				break;
 			}
-			case 2: {
-				nextState = constant(particle);
-				break;
-			}
+			//case 2: {
+				//nextState = constant(particle);
+				//break;
+			//}
 		}
 		return nextState;
 	}
@@ -190,7 +189,8 @@ public class DynamicModel {
 	}
 	
 	//CONST mode calculation
-	private double[] constant(double[] particle){
+	/*
+	 * private double[] constant(double[] particle){
 		double tempDistX = particle[distX] + particle[velX] * timeInterval;
 		double tempDistY = particle[distY] + particle[velY] * timeInterval;
 		double tempDistZ = particle[distZ] + particle[velZ] * timeInterval;
@@ -218,6 +218,8 @@ public class DynamicModel {
 		
 		return particle;
 	}
+	
+	*/
 	
 	//this method will add turn mode and return orientation after turns
 	private double[] turnCalculation(double[] particle){
