@@ -87,17 +87,15 @@ public class stateVector {
 	public void update(float[] nextAccelValues, float[] nextRotateValues, long currentTime){
 		timeStamp = (currentTime - initialTime)/1000000000;
 		initialTime = currentTime;
-		double[] doubleNewAccel = new double[3];
-		doubleNewAccel[0] = (double)nextAccelValues[0];
-		doubleNewAccel[1] = (double)nextAccelValues[1];
-		doubleNewAccel[2] = (double)nextAccelValues[2];
-		double[] doubleNewRotate=new double[4];
-		doubleNewRotate[0] = (double)nextRotateValues[0];
-		doubleNewRotate[1] = (double)nextRotateValues[1];
-		doubleNewRotate[2] = (double)nextRotateValues[2];
-		doubleNewRotate[3] = (double)nextRotateValues[3];
+		this.accelValues[0] = (double)nextAccelValues[0];
+		this.accelValues[1] = (double)nextAccelValues[1];
+		this.accelValues[2] = (double)nextAccelValues[2];
+		this.rotateValues[0] = (double)nextRotateValues[0];
+		this.rotateValues[1] = (double)nextRotateValues[1];
+		this.rotateValues[2] = (double)nextRotateValues[2];
+		this.rotateValues[3] = (double)nextRotateValues[3];
 		
-		distanceStates.update(doubleNewAccel, doubleNewRotate, timeStamp);
+		distanceStates.update(this.accelValues, this.rotateValues, timeStamp);
 	}
 	
 }
