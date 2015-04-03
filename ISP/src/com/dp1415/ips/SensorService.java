@@ -110,6 +110,7 @@ public class SensorService extends IntentService implements SensorEventListener{
 	}
 	
 	private void resetParticleFilter(){
+		accelValues = new float[]{0,0,0}; 
 		accelCounter = 0;
 		rotateCounter = 0;
 		initialTime = System.nanoTime();
