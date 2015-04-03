@@ -130,7 +130,7 @@ public class SensorService extends IntentService implements SensorEventListener{
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
-			accelValues = event.values;
+			//accelValues = event.values;
 			for (int x = 0 ; x < 3; x++){
 				accelValues[x] += event.values[x];
 			}
@@ -139,11 +139,7 @@ public class SensorService extends IntentService implements SensorEventListener{
 		}
 		if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
 			rotateValues = event.values;
-			for (int x = 0 ; x < 4; x++){
-				rotateValues[x] += event.values[x];
-			}
 			intent.putExtra(ROTATE_VALUES, rotateValues);
-			rotateCounter++;
 		}
 		sendBroadcast(intent);
 	}
@@ -194,7 +190,7 @@ public class SensorService extends IntentService implements SensorEventListener{
 	    		doReset = false;
 	    	}
 	    	
-	    	stateVector.update(accelAverage(), rotateAverage(), System.nanoTime());
+	    	stateVector.update(accelAverage(), rotateValues, System.nanoTime());
 	    	particleFilter.updateWeights(stateVector);
 	    	Log.e( "SS", "after update weight: " + particleFilter.getWeights() );
 	    	particleFilter.normalizeWeight();
