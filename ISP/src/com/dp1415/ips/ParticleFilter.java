@@ -15,7 +15,7 @@ public class ParticleFilter {
 	private double timeInterval; 
 	private double[][] particles,resampled;
 	private DynamicModel propogation = new DynamicModel();
-	private double resampleThreshold = 0.5; // if the effective number of particles is less than 50%, resample!
+	private double resampleThreshold = 0.66; // if the effective number of particles is less than 50%, resample!
 	
 	public ParticleFilter(){
 		this.timestamp = System.nanoTime();
@@ -120,10 +120,11 @@ public class ParticleFilter {
 			sum+=particles[x][weight]*particles[x][weight];
 		}
 		double effNumOfParticles = 1/sum;
-		
+		System.out.println("effNumOfParticles is " + effNumOfParticles);
 		// resample only if the effective number of particles is less than the threshold
 		if (effNumOfParticles < resampleThreshold*numOfParticles)
 		{
+			System.out.println("!!!!RESAMPLE!!!!! effNumOfParticles is " + effNumOfParticles);
 			//create a new set of particles
 			resampled = new double[numOfParticles][];
 			//		for (int i = 0 ; i < numOfParticles; i++){
@@ -195,7 +196,7 @@ public class ParticleFilter {
 
 	public void updateWeights(stateVector sv){
 		
-		double sdAX = 0.0001, sdAY = 0.0001, sdAZ = 0.001, sdQX = 0.001, sdQY = 0.001, sdQZ = 0.001, sdQS = 0.001;//standard deviations
+		double sdAX = 1, sdAY = 1, sdAZ = 0.001, sdQX = 0.001, sdQY = 0.001, sdQZ = 0.001, sdQS = 0.001;//standard deviations
 				
 		//get normal distributions of each measurement
 		
