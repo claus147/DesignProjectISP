@@ -82,29 +82,12 @@ public class MainActivity extends ActionBarActivity{
 		rotateS= (TextView) findViewById(R.id.rotateSData);
 		startCollection = (Button) findViewById(R.id.startCollect);
 		stopCollection = (Button) findViewById(R.id.stopCollect);
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+//		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 //		accelValues = new float[]{0,0,0}; 
 //		rotateValues = new float[]{0,0,0,0}; 
 		accelCounter = 0;
 		rotateCounter = 0;
 		
-		
-	    LocationListener locationListener = new LocationListener() {
-	        public void onLocationChanged(Location location) {
-	        	latitude = location.getLatitude();
-	        	longitude = location.getLongitude();
-	        	gpsLat.setText(String.valueOf(location.getLatitude()));  
-	    		gpsLon.setText(String.valueOf(location.getLongitude())); 
-	        }
-
-	        public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-	        public void onProviderEnabled(String provider) {}
-
-	        public void onProviderDisabled(String provider) {}
-	      };
-	    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,locationListener);
-
 		
 	    //to receive broadcast
 	    i= new Intent(this, com.dp1415.ips.SensorService.class);
