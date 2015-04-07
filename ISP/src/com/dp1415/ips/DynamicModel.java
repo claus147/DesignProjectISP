@@ -14,9 +14,10 @@ public class DynamicModel {
 	private double[][] nextParticles;
 	private double timeInterval;
 	private double[][] possibilityMatrix = {
-//			{1.0, 0.0, 0.0},{0.0,1.0,0.0},{0.0,0.0,1.0}};
+//			{1.0, 0.0},{0.0,1.0}};//only stationary or only acceleration
+			
 			{2.0/3, 1.0/3},
-			{1.0/3, 2.0/3}
+			{3.0/4, 1.0/4}
 	};
 	private double[][] modeCDF = possibilityMatrix;
 	private double[] noise = new double[3];
@@ -128,9 +129,13 @@ public class DynamicModel {
 	
 	//STILL mode calculation
 	private double[] stationary(double[] particle){	
-		double varianceX=0.00000001;
-		double varianceY=0.00000001;
-		double varianceZ=0.00000001;
+		double varianceX=0.0004;
+		double varianceY=0.0004;
+		double varianceZ=0.0004;
+		
+//		double varianceX=0.00000001;
+//		double varianceY=0.00000001;
+//		double varianceZ=0.00000001;
 		
 		double[] noiseX = correlatedNoise(varianceX);
 		double[] noiseY = correlatedNoise(varianceY);
@@ -144,9 +149,9 @@ public class DynamicModel {
 		particle[velX] = particle[velX] + noiseX[1];
 		particle[velY] = particle[velY] + noiseY[1];
 		particle[velZ] = particle[velZ] + noiseZ[1];
-		particle[accelX] = particle[accelX] + noiseX[2];
-		particle[accelY] = particle[accelY] + noiseY[2];
-		particle[accelZ] = particle[accelZ] + noiseZ[2];
+		particle[accelX] = noiseX[2];
+		particle[accelY] = noiseY[2];
+		particle[accelZ] = noiseZ[2];
 		particle[mode] = Mode.STILL.getValue();
 		
 		return particle;
@@ -164,9 +169,13 @@ public class DynamicModel {
 		double nextDistY = particle[distY] + (particle[velY] + nextVelY) * 0.5 * timeInterval;
 		double nextDistZ = particle[distZ] + (particle[velZ] + nextVelZ) * 0.5 * timeInterval;
 		
-		double varianceX=Math.pow((1.4*timeInterval)/3.0,2);
-		double varianceY=Math.pow((1.4*timeInterval)/3.0,2);
-		double varianceZ=Math.pow((1.4*timeInterval)/3.0,2);
+		double varianceX=0.356*0.356;
+		double varianceY=0.356*0.356;;
+		double varianceZ=0.356*0.356;;
+		
+//		double varianceX=Math.pow((1.4*timeInterval)/3.0,2);
+//		double varianceY=Math.pow((1.4*timeInterval)/3.0,2);
+//		double varianceZ=Math.pow((1.4*timeInterval)/3.0,2);
 		
 		double[] noiseX = correlatedNoise(varianceX);
 		double[] noiseY = correlatedNoise(varianceY);

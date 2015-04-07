@@ -60,6 +60,7 @@ public class SensorService extends IntentService implements SensorEventListener{
 	public final static String EXPECTATION = "EXPECTATION";
 	public final static String WRITE = "WRITE";
 	public final static String RESET = "RESET";
+	private static final int numParticles = 100;
 	
 	Intent intent = new Intent(SENSOR_INTENT);
 	
@@ -116,7 +117,7 @@ public class SensorService extends IntentService implements SensorEventListener{
 		initialTime = System.nanoTime();
 		stateVector = new stateVector(accelAverage(), rotateAverage(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, System.nanoTime());
 		particleFilter = new ParticleFilter();
-		particleFilter.initialize(100, stateVector);
+		particleFilter.initialize(numParticles, stateVector);
 		particleFilter.propagate();
 	}
 	
@@ -185,7 +186,7 @@ public class SensorService extends IntentService implements SensorEventListener{
 	Runnable collectionLoop = new Runnable() {
 	    @Override
 	    public void run(){
-	    	Log.e( "SS", "before update weight: " + particleFilter.getWeights() );
+	    	//Log.e( "SS", "before update weight: " + particleFilter.getWeights() );
 	    	if (doReset){
 	    		resetParticleFilter();
 	    		doReset = false;
@@ -193,13 +194,16 @@ public class SensorService extends IntentService implements SensorEventListener{
 	    	
 	    	stateVector.update(accelAverage(), rotateValues, System.nanoTime());
 	    	particleFilter.updateWeights(stateVector);
-	    	Log.e( "SS", "after update weight: " + particleFilter.getWeights() );
+	    //	Log.e( "SS", "after update weight: " + particleFilter.getWeights() );
 	    	particleFilter.normalizeWeight();
-	    	Log.e( "SS", "after normalise " + particleFilter.getWeights() );
+	    	//Log.e( "SS", "after normalise " + particleFilter.getWeights() );
 	    	particleFilter.resample();
 	    	double[] expectation = particleFilter.expectation();
 	    	
 	    	intent.putExtra(EXPECTATION, expectation);
+	    	
+	   
+//	    	intent.putExtra("particles", particleFilter.particles.clone());
 	    	
 	    	particleFilter.propagate();
 		    

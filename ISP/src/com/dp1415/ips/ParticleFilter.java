@@ -57,6 +57,7 @@ public class ParticleFilter {
 			particles[i][qZ] = distrQZ.sample();
 			particles[i][qS] = distrQS.sample(); 
 			particles[i][weight] = 1.0/numOfParticles;
+			particles[i][mode] = 0;
 			System.out.println(i+": accel X: " +particles[i][accelX]+ ", accel Y: "+ particles[i][accelY]);
 		}
 		
@@ -196,12 +197,12 @@ public class ParticleFilter {
 
 	public void updateWeights(stateVector sv){
 		
-		double sdAX = 1, sdAY = 1, sdAZ = 0.001, sdQX = 0.001, sdQY = 0.001, sdQZ = 0.001, sdQS = 0.001;//standard deviations
+		double sdAX = 0.02, sdAY = 0.02, sdAZ = 0.001, sdQX = 0.001, sdQY = 0.001, sdQZ = 0.001, sdQS = 0.001;//standard deviations
 				
 		//get normal distributions of each measurement
 		
-//		NormalDistribution distrAccelX = new NormalDistribution(sv.getAcceleration().getX(),sdAX);
-//		NormalDistribution distrAccelY = new NormalDistribution(sv.getAcceleration().getY(),sdAY);
+		NormalDistribution distrAccelX = new NormalDistribution(sv.getAcceleration().getX(),sdAX);
+		NormalDistribution distrAccelY = new NormalDistribution(sv.getAcceleration().getY(),sdAY);
 //		NormalDistribution distrAccelZ = new NormalDistribution(sv.getAcceleration().getZ(),sdAZ);
 //		NormalDistribution distrQX = new NormalDistribution(sv.getRotationX(),sdQX);
 //		NormalDistribution distrQY = new NormalDistribution(sv.getRotationY(),sdQY);
@@ -219,23 +220,19 @@ public class ParticleFilter {
 			NormalDistribution AX = new NormalDistribution(particles[i][accelX],sdAX);
 			NormalDistribution AY = new NormalDistribution(particles[i][accelY],sdAY);
 			
-			AXpdf = AX.density(sv.getAcceleration().getX());
-			AYpdf = AY.density(sv.getAcceleration().getY());
-//			if (AXpdf > 1)
-//				AXpdf = 0;
-//			if (AYpdf > 1)
-//				AYpdf = 0;
-			newWeight = particles[i][weight]*AXpdf*AYpdf;
-//			newWeight = particles[i][weight]*
-//					distrAccelX.density(particles[i][accelX])*
-//					distrAccelY.density(particles[i][accelY]);//*
+//			AXpdf = AX.density(sv.getAcceleration().getX());
+//			AYpdf = AY.density(sv.getAcceleration().getY());
+			//newWeight = particles[i][weight]*AXpdf*AYpdf;
+			newWeight = particles[i][weight]*
+					distrAccelX.density(particles[i][accelX])*
+					distrAccelY.density(particles[i][accelY]);//*
 					//distrAccelZ.density(particles[i][accelZ]);//*
 //					distrQX.density(particles[i][qX])*
 //					distrQY.density(particles[i][qY])*
 //					distrQZ.density(particles[i][qZ])*
 //					distrQS.density(particles[i][qS]);
 			
-			System.out.println(i+", accelX density: " +AXpdf +"sv accelX: " + sv.getAcceleration().getX()+"particle accelX: " +particles[i][accelX]+", accelY density: " +AYpdf+"sv accelY: " + sv.getAcceleration().getY()+"particle accelY: " +particles[i][accelY]);
+			//System.out.println(i+", accelX density: " +AXpdf +"sv accelX: " + sv.getAcceleration().getX()+"particle accelX: " +particles[i][accelX]+", accelY density: " +AYpdf+"sv accelY: " + sv.getAcceleration().getY()+"particle accelY: " +particles[i][accelY]);
 
 			
 			particles[i][weight]=newWeight;
