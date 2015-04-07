@@ -147,7 +147,7 @@ public class DynamicModel {
 		particle[accelX] = particle[accelX] + noiseX[2];
 		particle[accelY] = particle[accelY] + noiseY[2];
 		particle[accelZ] = particle[accelZ] + noiseZ[2];
-
+		particle[mode] = Mode.STILL.getValue();
 		
 		return particle;
 	}
@@ -183,7 +183,7 @@ public class DynamicModel {
 		particle[accelX] = tempAccelX + noiseX[2];
 		particle[accelY] = tempAccelY + noiseY[2];
 		particle[accelZ] = tempAccelZ + noiseZ[2];
-
+		particle[mode] = Mode.ACCEL.getValue();
 	
 		return particle;
 	}
