@@ -159,6 +159,8 @@ public class DynamicModel {
 	
 	//ACCEL mode calculation
 	private double[] acceleration(double[] particle){
+		
+		particle = turnCalculation(particle);
 		double tempAccelX = particle[accelX];
 		double tempAccelY = particle[accelY];
 		double tempAccelZ = particle[accelZ];
@@ -180,8 +182,6 @@ public class DynamicModel {
 		double[] noiseX = correlatedNoise(varianceX);
 		double[] noiseY = correlatedNoise(varianceY);
 		double[] noiseZ = correlatedNoise(varianceZ);
-		
-		particle = turnCalculation(particle);
 		
 		particle[distX] = nextDistX + noiseX[0];
 		particle[distY] = nextDistY + noiseY[0];
