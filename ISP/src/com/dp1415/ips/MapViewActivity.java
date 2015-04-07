@@ -88,7 +88,7 @@ public class MapViewActivity extends ActionBarActivity{
         LatLng mcgill = new LatLng(45.504785,-73.577151);		//lat lon coordinates of McGill
       
         //map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(mcgill, 15));	//15 is a good zoom level
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(mcgill, 17));	//15 is a good zoom level
         map.setOnMapClickListener(new OnMapClickListener() {	//add pin on click
         	
         	//PolylineOptions route = new PolylineOptions();
@@ -132,11 +132,11 @@ public class MapViewActivity extends ActionBarActivity{
     	confirmOrientation.setVisibility(View.GONE);
     	redoOrientation.setVisibility(View.VISIBLE);
     	
-    	turn.setVisibility(View.VISIBLE);
-    	turnAngle.setVisibility(View.VISIBLE);
-    	goForward.setVisibility(View.VISIBLE);
-    	move.setVisibility(View.VISIBLE);
-    	distance.setVisibility(View.VISIBLE);
+//    	turn.setVisibility(View.VISIBLE);
+//    	turnAngle.setVisibility(View.VISIBLE);
+//    	goForward.setVisibility(View.VISIBLE);
+//    	move.setVisibility(View.VISIBLE);
+//    	distance.setVisibility(View.VISIBLE);
     	
     	isAutomatic = true;
     	handle.post(expectationDisplay);
