@@ -15,9 +15,9 @@ public class DynamicModel {
 	private double timeInterval;
 	private double[][] possibilityMatrix = {
 //			{1.0, 0.0},{0.0,1.0}};//only stationary or only acceleration
-			
+//			{0, 1.0},{0.0,1.0}};//only stationary or only acceleration			
 			{2.0/3, 1.0/3},
-			{3.0/4, 1.0/4}
+			{1.0/3, 2.0/3}
 	};
 	private double[][] modeCDF = possibilityMatrix;
 	private double[] noise = new double[3];
@@ -171,9 +171,9 @@ public class DynamicModel {
 		double nextDistY = particle[distY] + (particle[velY] + nextVelY) * 0.5 * timeInterval;
 		double nextDistZ = particle[distZ] + (particle[velZ] + nextVelZ) * 0.5 * timeInterval;
 		
-		double varianceX=0.356*0.356;
-		double varianceY=0.356*0.356;;
-		double varianceZ=0.356*0.356;;
+		double varianceX=0.1;
+		double varianceY=0.1;
+		double varianceZ=0.1;
 		
 //		double varianceX=Math.pow((1.4*timeInterval)/3.0,2);
 //		double varianceY=Math.pow((1.4*timeInterval)/3.0,2);
@@ -234,7 +234,7 @@ public class DynamicModel {
 	private double[] turnCalculation(double[] particle){
 		Random randomGenerator = new Random();
 		double random = randomGenerator.nextDouble();
-		double radians = randomGenerator.nextDouble() * Math.PI/6;
+		double radians = randomGenerator.nextDouble() * Math.PI;
 		//no turning
 		if (random < 1.0/3){
 			particle[qX] = particle[qX] + QuaX.sample();
